@@ -16,13 +16,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.l2jserver.gameserver.model;
+package com.l2jserver.gameserver.model.actor.group;
 
 import java.util.List;
 
 import javolution.util.FastList;
 
 import com.l2jserver.Config;
+import com.l2jserver.gameserver.model.L2Object;
 import com.l2jserver.gameserver.model.actor.L2Character;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.interfaces.IL2Procedure;
@@ -236,7 +237,7 @@ public class L2CommandChannel extends AbstractPlayerGroup
 	
 	/**
 	 * Iterates over all command channel members without the need to allocate a new list
-	 * @see com.l2jserver.gameserver.model.AbstractPlayerGroup#forEachMember(IL2Procedure)
+	 * @see com.l2jserver.gameserver.model.actor.group.AbstractPlayerGroup#forEachMember(IL2Procedure)
 	 */
 	@Override
 	public boolean forEachMember(IL2Procedure<L2PcInstance> procedure)

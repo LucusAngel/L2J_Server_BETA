@@ -26,7 +26,7 @@ import com.l2jserver.Config;
 import com.l2jserver.gameserver.SevenSignsFestival;
 import com.l2jserver.gameserver.enums.PrivateStoreType;
 import com.l2jserver.gameserver.instancemanager.AntiFeedManager;
-import com.l2jserver.gameserver.model.L2Party;
+import com.l2jserver.gameserver.model.actor.group.L2Party;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.network.L2GameClient;
 import com.l2jserver.gameserver.network.L2GameClient.GameClientState;

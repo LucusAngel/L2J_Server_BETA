@@ -18,7 +18,7 @@
  */
 package com.l2jserver.gameserver.network.serverpackets;
 
-import com.l2jserver.gameserver.model.L2Party;
+import com.l2jserver.gameserver.model.actor.group.L2Party;
 
 /**
  * @author chris_00
