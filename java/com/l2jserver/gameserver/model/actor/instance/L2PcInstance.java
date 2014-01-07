@@ -14963,9 +14963,7 @@ public final class L2PcInstance extends L2Playable
 				{
 					if (list == null)
 					{
-						list = new ArrayList<>(1);
-						list.add(L2PcInstance.this);
-						list = Collections.unmodifiableList(list);
+						list = Arrays.asList(L2PcInstance.this);
 					}
 					return list;
 				}
