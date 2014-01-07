@@ -74,6 +74,12 @@ public class ConfirmDlg extends L2GameServerPacket
 		_messageId = messageId.getId();
 	}
 	
+	public ConfirmDlg(String text)
+	{
+		this(SystemMessageId.S1);
+		addString(text);
+	}
+	
 	public ConfirmDlg addString(String text)
 	{
 		_info.add(new CnfDlgData(TYPE_TEXT, text));
