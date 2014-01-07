@@ -21,8 +21,8 @@ package com.l2jserver.gameserver.network.serverpackets;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.l2jserver.gameserver.model.L2Party;
 import com.l2jserver.gameserver.model.Location;
+import com.l2jserver.gameserver.model.actor.group.L2Party;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 
 /**
