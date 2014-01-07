@@ -38,7 +38,6 @@ import com.l2jserver.gameserver.GeoData;
 import com.l2jserver.gameserver.ThreadPoolManager;
 import com.l2jserver.gameserver.enums.HtmlActionScope;
 import com.l2jserver.gameserver.enums.IllegalActionPunishmentType;
-import com.l2jserver.gameserver.model.AbstractPlayerGroup;
 import com.l2jserver.gameserver.model.L2Object;
 import com.l2jserver.gameserver.model.actor.L2Character;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
@@ -861,25 +860,5 @@ public final class Util
 			}
 		}
 		return max;
-	}
-	
-	/**
-	 * @param player
-	 * @return player's top tier group (if he is in command channel, the command channel)
-	 */
-	public static AbstractPlayerGroup getPlayerGroup(final L2PcInstance player)
-	{
-		if (player.getParty() == null)
-		{
-			return player.asPlayerGroup();
-		}
-		else if (player.getParty().getCommandChannel() == null)
-		{
-			return player.getParty();
-		}
-		else
-		{
-			return player.getParty().getCommandChannel();
-		}
 	}
 }

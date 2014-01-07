@@ -15006,4 +15006,23 @@ public final class L2PcInstance extends L2Playable
 			}
 		};
 	}
+	
+	/**
+	 * @return player's top tier group (if he is in command channel, the command channel)
+	 */
+	public AbstractPlayerGroup getGroup()
+	{
+		if (getParty() == null)
+		{
+			return asPlayerGroup();
+		}
+		else if (getParty().getCommandChannel() == null)
+		{
+			return getParty();
+		}
+		else
+		{
+			return getParty().getCommandChannel();
+		}
+	}
 }
