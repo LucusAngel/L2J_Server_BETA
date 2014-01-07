@@ -6841,6 +6841,19 @@ public final class L2PcInstance extends L2Playable
 	}
 	
 	/**
+	 * @param fallbackToSoloPlayer if {@code true} allows returning L2PcInstance#asPlayerGroup() if player is solo, if {@code false} the return of L2PcInstance#getParty() is always given instead
+	 * @return the player's party, if player is in a party, otherwise return is given by the parameter
+	 */
+	public AbstractPlayerGroup getParty(boolean fallbackToSoloPlayer)
+	{
+		if (isInParty() || !fallbackToSoloPlayer)
+		{
+			return getParty();
+		}
+		return asPlayerGroup();
+	}
+	
+	/**
 	 * Return True if the L2PcInstance is a GM.
 	 */
 	@Override
@@ -15019,11 +15032,11 @@ public final class L2PcInstance extends L2Playable
 	 */
 	public AbstractPlayerGroup getGroup()
 	{
-		if (getParty() == null)
+		if (!isInParty())
 		{
 			return asPlayerGroup();
 		}
-		else if (getParty().getCommandChannel() == null)
+		else if (!getParty().isInCommandChannel())
 		{
 			return getParty();
 		}
