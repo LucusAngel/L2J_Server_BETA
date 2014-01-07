@@ -6841,12 +6841,11 @@ public final class L2PcInstance extends L2Playable
 	}
 	
 	/**
-	 * @param fallbackToSoloPlayer if {@code true} allows returning L2PcInstance#asPlayerGroup() if player is solo, if {@code false} the return of L2PcInstance#getParty() is always given instead
-	 * @return the player's party, if player is in a party, otherwise return is given by the parameter
+	 * @return the player's party, if player is in a party, {@link L2PcInstance#asPlayerGroup()} otherwise
 	 */
-	public AbstractPlayerGroup getParty(boolean fallbackToSoloPlayer)
+	public AbstractPlayerGroup getRewardGroup()
 	{
-		if (isInParty() || !fallbackToSoloPlayer)
+		if (isInParty())
 		{
 			return getParty();
 		}
