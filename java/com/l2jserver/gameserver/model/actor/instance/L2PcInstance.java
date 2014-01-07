@@ -14926,7 +14926,7 @@ public final class L2PcInstance extends L2Playable
 		return (_actionMask & act.getMask()) == act.getMask();
 	}
 	
-	AbstractPlayerGroup _group;
+	private AbstractPlayerGroup _group;
 	
 	/**
 	 * @return view on this player as a group containing solo player
