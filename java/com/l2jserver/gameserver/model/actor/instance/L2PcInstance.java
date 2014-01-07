@@ -164,6 +164,7 @@ import com.l2jserver.gameserver.model.actor.events.PlayerEvents;
 import com.l2jserver.gameserver.model.actor.group.AbstractPlayerGroup;
 import com.l2jserver.gameserver.model.actor.group.L2CommandChannel;
 import com.l2jserver.gameserver.model.actor.group.L2Party;
+import com.l2jserver.gameserver.model.actor.group.SoloPlayerGroup;
 import com.l2jserver.gameserver.model.actor.group.L2Party.messageType;
 import com.l2jserver.gameserver.model.actor.knownlist.PcKnownList;
 import com.l2jserver.gameserver.model.actor.stat.PcStat;
@@ -207,7 +208,6 @@ import com.l2jserver.gameserver.model.fishing.L2Fishing;
 import com.l2jserver.gameserver.model.holders.ItemHolder;
 import com.l2jserver.gameserver.model.holders.PlayerEventHolder;
 import com.l2jserver.gameserver.model.holders.SkillUseHolder;
-import com.l2jserver.gameserver.model.interfaces.IL2Procedure;
 import com.l2jserver.gameserver.model.interfaces.ILocational;
 import com.l2jserver.gameserver.model.itemcontainer.Inventory;
 import com.l2jserver.gameserver.model.itemcontainer.ItemContainer;
@@ -14951,79 +14951,7 @@ public final class L2PcInstance extends L2Playable
 			{
 				if (_group == null)
 				{
-					_group = new AbstractPlayerGroup()
-					{
-						private List<L2PcInstance> list;
-						
-						@Override
-						public void setLeader(L2PcInstance leader)
-						{
-							// do nothing
-							
-						}
-						
-						@Override
-						public List<L2PcInstance> getMembers()
-						{
-							if (list == null)
-							{
-								list = Arrays.asList(L2PcInstance.this);
-							}
-							return list;
-						}
-						
-						@Override
-						public int getLevel()
-						{
-							return L2PcInstance.this.getLevel();
-						}
-						
-						@Override
-						public L2PcInstance getLeader()
-						{
-							return L2PcInstance.this;
-						}
-						
-						/*
-						 * (non-Javadoc)
-						 * @see com.l2jserver.gameserver.model.AbstractPlayerGroup#forEachMember(com.l2jserver.gameserver.model.interfaces.IL2Procedure)
-						 */
-						@Override
-						public boolean forEachMember(IL2Procedure<L2PcInstance> procedure)
-						{
-							return procedure.execute(L2PcInstance.this);
-						}
-						
-						/*
-						 * (non-Javadoc)
-						 * @see com.l2jserver.gameserver.model.AbstractPlayerGroup#getMemberCount()
-						 */
-						@Override
-						public int getMemberCount()
-						{
-							return 1;
-						}
-						
-						/*
-						 * (non-Javadoc)
-						 * @see com.l2jserver.gameserver.model.AbstractPlayerGroup#containsPlayer(com.l2jserver.gameserver.model.actor.instance.L2PcInstance)
-						 */
-						@Override
-						public boolean containsPlayer(L2PcInstance player)
-						{
-							return L2PcInstance.this.equals(player);
-						}
-						
-						/*
-						 * (non-Javadoc)
-						 * @see com.l2jserver.gameserver.model.AbstractPlayerGroup#getRandomPlayer()
-						 */
-						@Override
-						public L2PcInstance getRandomPlayer()
-						{
-							return L2PcInstance.this;
-						}
-					};
+					_group = new SoloPlayerGroup(this);
 				}
 			}
 		}
