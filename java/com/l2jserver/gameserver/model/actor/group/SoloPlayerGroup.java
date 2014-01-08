@@ -34,6 +34,7 @@ public class SoloPlayerGroup extends AbstractPlayerGroup
 	private final L2PcInstance _player;
 	
 	/**
+	 * This constructor <font color=#FF0000><b>shouldn't</b></font> be used directly, use {@link L2PcInstance#asPlayerGroup()} instead
 	 * @param player to wrap
 	 */
 	public SoloPlayerGroup(L2PcInstance player)
