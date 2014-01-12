@@ -35,6 +35,11 @@ import com.l2jserver.gameserver.network.serverpackets.NpcHtmlMessage;
 public class L2DoormenInstance extends L2NpcInstance
 {
 	/**
+	 * 
+	 */
+	public static final String HTML_PATH = "data/html/doormen/";
+	
+	/**
 	 * @param objectID
 	 * @param template
 	 */
@@ -102,11 +107,11 @@ public class L2DoormenInstance extends L2NpcInstance
 		
 		if (!isOwnerClan(player))
 		{
-			html.setFile(player.getHtmlPrefix(), "data/html/doormen/" + getTemplate().getId() + "-no.htm");
+			getNoHtml(html, player);
 		}
 		else
 		{
-			html.setFile(player.getHtmlPrefix(), "data/html/doormen/" + getTemplate().getId() + ".htm");
+			getDefaultHtml(html, player);
 		}
 		
 		html.replace("%objectId%", String.valueOf(getObjectId()));
@@ -140,7 +145,7 @@ public class L2DoormenInstance extends L2NpcInstance
 		player.sendPacket(ActionFailed.STATIC_PACKET);
 		
 		final NpcHtmlMessage html = new NpcHtmlMessage(getObjectId());
-		html.setFile(player.getHtmlPrefix(), "data/html/doormen/" + getTemplate().getId() + "-busy.htm");
+		getBusyHtml(html, player);
 		player.sendPacket(html);
 	}
 	
@@ -171,5 +176,25 @@ public class L2DoormenInstance extends L2NpcInstance
 	protected boolean isUnderSiege()
 	{
 		return false;
+	}
+	
+	protected boolean getDefaultHtml(NpcHtmlMessage html, L2PcInstance player)
+	{
+		return getHtml(html, player, ".htm");
+	}
+	
+	protected boolean getHtml(NpcHtmlMessage html, L2PcInstance player, String file)
+	{
+		return html.setFile(player.getHtmlPrefix(), HTML_PATH + getTemplate().getId() + file);
+	}
+	
+	protected boolean getNoHtml(NpcHtmlMessage html, L2PcInstance player)
+	{
+		return getHtml(html, player, "-no.htm");
+	}
+	
+	protected boolean getBusyHtml(NpcHtmlMessage html, L2PcInstance player)
+	{
+		return getHtml(html, player, "-busy.htm");
 	}
 }

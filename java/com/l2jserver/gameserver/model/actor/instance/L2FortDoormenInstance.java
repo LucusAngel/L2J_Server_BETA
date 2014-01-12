@@ -42,15 +42,15 @@ public class L2FortDoormenInstance extends L2DoormenInstance
 		
 		if (!isOwnerClan(player))
 		{
-			html.setFile(player.getHtmlPrefix(), "data/html/doormen/" + getTemplate().getId() + "-no.htm");
+			getNoHtml(html, player);
 		}
 		else if (isUnderSiege())
 		{
-			html.setFile(player.getHtmlPrefix(), "data/html/doormen/" + getTemplate().getId() + "-busy.htm");
+			getBusyHtml(html, player);
 		}
 		else
 		{
-			html.setFile(player.getHtmlPrefix(), "data/html/doormen/" + getTemplate().getId() + ".htm");
+			getDefaultHtml(html, player);
 		}
 		
 		html.replace("%objectId%", String.valueOf(getObjectId()));
