@@ -35,6 +35,33 @@ public final class NpcHtmlMessage extends AbstractHtmlPacket
 		public static final String LEADERNAME = "%leadername%";
 		public static final String HALLNAME = "%hallname%";
 		public static final String OBJECT_ID = "%objectId%";
+		public static final String DATE = "%date%";
+		public static final String RENT = "%rent%";
+		public static final String MP_REGEN = "%mp_regen%";
+		public static final String HP_REGEN = "%hp_regen%";
+		public static final String XP_REGEN = "%xp_regen%";
+		public static final String HP_PERIOD = "%hp_period%";
+		public static final String HP_RECOVERY = "%hp_recovery%";
+		public static final String CHANGE_HP = "%change_hp%";
+		public static final String CHANGE_MP = "%change_mp%";
+		public static final String EXP_PERIOD = "%exp_period%";
+		public static final String EXP_RECOVERY = "%exp_recovery%";
+		public static final String MP_PERIOD = "%mp_period%";
+		public static final String MP_RECOVERY = "%mp_recovery%";
+		public static final String CHANGE_EXP = "%change_exp%";
+		public static final String NAME = "%name%";
+		public static final String APPLY = "%apply%";
+		public static final String USE = "%use%";
+		public static final String COST = "%cost%";
+		public static final String SUPPORT_PERIOD = "%support_period%";
+		public static final String SUPPORT = "%support%";
+		public static final String TELE = "%tele%";
+		public static final String CHANGE_TELE = "%change_tele%";
+		public static final String TELE_PERIOD = "%tele_period%";
+		public static final String CHANGE_SUPPORT = "%change_support%";
+		public static final String NPC_ID = "%npcId%";
+		public static final String MP = "%mp%";
+		public static final String NPCNAME = "%npcname%";
 		
 		private CommonStrings()
 		{
