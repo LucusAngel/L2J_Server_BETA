@@ -1362,7 +1362,7 @@ public class L2Npc extends L2Character
 		{
 			if (Config.LIST_PET_RENT_NPC.contains(npcId))
 			{
-				html.replace("_Quest", "_RentPet\">Rent Pet</a><br><a action=\"bypass -h npc_%objectId%_Quest");
+				html.replace("_Quest", "_RentPet\">Rent Pet</a><br><a action=\"" + CommonStrings.QUEST_BYPASS);
 			}
 		}
 		

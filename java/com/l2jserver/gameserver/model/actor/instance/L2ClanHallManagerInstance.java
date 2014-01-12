@@ -46,6 +46,7 @@ import com.l2jserver.gameserver.network.serverpackets.NpcHtmlMessage.CommonStrin
 public class L2ClanHallManagerInstance extends L2MerchantInstance
 {
 	
+	private static final String INVALID_SKILL_LEVEL_CONTACT_YOUR_ADMIN = "Invalid skill level, contact your admin!";
 	protected static final int COND_OWNER_FALSE = 0;
 	protected static final int COND_ALL_FALSE = 1;
 	protected static final int COND_BUSY_BECAUSE_OF_SIEGE = 2;
@@ -621,18 +622,18 @@ public class L2ClanHallManagerInstance extends L2MerchantInstance
 						}
 						final NpcHtmlMessage html = new NpcHtmlMessage(getObjectId());
 						html.setFile(player.getHtmlPrefix(), "data/html/clanHallManager/edit_recovery.htm");
-						String hp_grade0 = "[<a action=\"bypass -h npc_%objectId%_manage recovery edit_hp 20\">20%</a>][<a action=\"bypass -h npc_%objectId%_manage recovery edit_hp 40\">40%</a>][<a action=\"bypass -h npc_%objectId%_manage recovery edit_hp 220\">220%</a>]";
-						String hp_grade1 = "[<a action=\"bypass -h npc_%objectId%_manage recovery edit_hp 40\">40%</a>][<a action=\"bypass -h npc_%objectId%_manage recovery edit_hp 100\">100%</a>][<a action=\"bypass -h npc_%objectId%_manage recovery edit_hp 160\">160%</a>]";
-						String hp_grade2 = "[<a action=\"bypass -h npc_%objectId%_manage recovery edit_hp 80\">80%</a>][<a action=\"bypass -h npc_%objectId%_manage recovery edit_hp 140\">140%</a>][<a action=\"bypass -h npc_%objectId%_manage recovery edit_hp 200\">200%</a>][<a action=\"bypass -h npc_%objectId%_manage recovery edit_hp 260\">260%</a>]";
-						String hp_grade3 = "[<a action=\"bypass -h npc_%objectId%_manage recovery edit_hp 80\">80%</a>][<a action=\"bypass -h npc_%objectId%_manage recovery edit_hp 120\">120%</a>][<a action=\"bypass -h npc_%objectId%_manage recovery edit_hp 180\">180%</a>][<a action=\"bypass -h npc_%objectId%_manage recovery edit_hp 240\">240%</a>][<a action=\"bypass -h npc_%objectId%_manage recovery edit_hp 300\">300%</a>]";
-						String exp_grade0 = "[<a action=\"bypass -h npc_%objectId%_manage recovery edit_exp 5\">5%</a>][<a action=\"bypass -h npc_%objectId%_manage recovery edit_exp 10\">10%</a>][<a action=\"bypass -h npc_%objectId%_manage recovery edit_exp 25\">25%</a>]";
-						String exp_grade1 = "[<a action=\"bypass -h npc_%objectId%_manage recovery edit_exp 5\">5%</a>][<a action=\"bypass -h npc_%objectId%_manage recovery edit_exp 15\">15%</a>][<a action=\"bypass -h npc_%objectId%_manage recovery edit_exp 30\">30%</a>]";
-						String exp_grade2 = "[<a action=\"bypass -h npc_%objectId%_manage recovery edit_exp 5\">5%</a>][<a action=\"bypass -h npc_%objectId%_manage recovery edit_exp 15\">15%</a>][<a action=\"bypass -h npc_%objectId%_manage recovery edit_exp 25\">25%</a>][<a action=\"bypass -h npc_%objectId%_manage recovery edit_exp 40\">40%</a>]";
-						String exp_grade3 = "[<a action=\"bypass -h npc_%objectId%_manage recovery edit_exp 15\">15%</a>][<a action=\"bypass -h npc_%objectId%_manage recovery edit_exp 25\">25%</a>][<a action=\"bypass -h npc_%objectId%_manage recovery edit_exp 35\">35%</a>][<a action=\"bypass -h npc_%objectId%_manage recovery edit_exp 50\">50%</a>]";
-						String mp_grade0 = "[<a action=\"bypass -h npc_%objectId%_manage recovery edit_mp 5\">5%</a>][<a action=\"bypass -h npc_%objectId%_manage recovery edit_mp 10\">10%</a>][<a action=\"bypass -h npc_%objectId%_manage recovery edit_mp 25\">25%</a>]";
-						String mp_grade1 = "[<a action=\"bypass -h npc_%objectId%_manage recovery edit_mp 5\">5%</a>][<a action=\"bypass -h npc_%objectId%_manage recovery edit_mp 15\">15%</a>][<a action=\"bypass -h npc_%objectId%_manage recovery edit_mp 25\">25%</a>]";
-						String mp_grade2 = "[<a action=\"bypass -h npc_%objectId%_manage recovery edit_mp 5\">5%</a>][<a action=\"bypass -h npc_%objectId%_manage recovery edit_mp 15\">15%</a>][<a action=\"bypass -h npc_%objectId%_manage recovery edit_mp 30\">30%</a>]";
-						String mp_grade3 = "[<a action=\"bypass -h npc_%objectId%_manage recovery edit_mp 5\">5%</a>][<a action=\"bypass -h npc_%objectId%_manage recovery edit_mp 15\">15%</a>][<a action=\"bypass -h npc_%objectId%_manage recovery edit_mp 30\">30%</a>][<a action=\"bypass -h npc_%objectId%_manage recovery edit_mp 40\">40%</a>]";
+						String hp_grade0 = "[<a action=\"" + CommonStrings.MANAGE_BYPASS + " recovery edit_hp 20\">20%</a>][<a action=\"" + CommonStrings.MANAGE_BYPASS + " recovery edit_hp 40\">40%</a>][<a action=\"" + CommonStrings.MANAGE_BYPASS + " recovery edit_hp 220\">220%</a>]";
+						String hp_grade1 = "[<a action=\"" + CommonStrings.MANAGE_BYPASS + " recovery edit_hp 40\">40%</a>][<a action=\"" + CommonStrings.MANAGE_BYPASS + " recovery edit_hp 100\">100%</a>][<a action=\"" + CommonStrings.MANAGE_BYPASS + " recovery edit_hp 160\">160%</a>]";
+						String hp_grade2 = "[<a action=\"" + CommonStrings.MANAGE_BYPASS + " recovery edit_hp 80\">80%</a>][<a action=\"" + CommonStrings.MANAGE_BYPASS + " recovery edit_hp 140\">140%</a>][<a action=\"" + CommonStrings.MANAGE_BYPASS + " recovery edit_hp 200\">200%</a>][<a action=\"" + CommonStrings.MANAGE_BYPASS + " recovery edit_hp 260\">260%</a>]";
+						String hp_grade3 = "[<a action=\"" + CommonStrings.MANAGE_BYPASS + " recovery edit_hp 80\">80%</a>][<a action=\"" + CommonStrings.MANAGE_BYPASS + " recovery edit_hp 120\">120%</a>][<a action=\"" + CommonStrings.MANAGE_BYPASS + " recovery edit_hp 180\">180%</a>][<a action=\"" + CommonStrings.MANAGE_BYPASS + " recovery edit_hp 240\">240%</a>][<a action=\"" + CommonStrings.MANAGE_BYPASS + " recovery edit_hp 300\">300%</a>]";
+						String exp_grade0 = "[<a action=\"" + CommonStrings.MANAGE_BYPASS + " recovery edit_exp 5\">5%</a>][<a action=\"" + CommonStrings.MANAGE_BYPASS + " recovery edit_exp 10\">10%</a>][<a action=\"" + CommonStrings.MANAGE_BYPASS + " recovery edit_exp 25\">25%</a>]";
+						String exp_grade1 = "[<a action=\"" + CommonStrings.MANAGE_BYPASS + " recovery edit_exp 5\">5%</a>][<a action=\"" + CommonStrings.MANAGE_BYPASS + " recovery edit_exp 15\">15%</a>][<a action=\"" + CommonStrings.MANAGE_BYPASS + " recovery edit_exp 30\">30%</a>]";
+						String exp_grade2 = "[<a action=\"" + CommonStrings.MANAGE_BYPASS + " recovery edit_exp 5\">5%</a>][<a action=\"" + CommonStrings.MANAGE_BYPASS + " recovery edit_exp 15\">15%</a>][<a action=\"" + CommonStrings.MANAGE_BYPASS + " recovery edit_exp 25\">25%</a>][<a action=\"" + CommonStrings.MANAGE_BYPASS + " recovery edit_exp 40\">40%</a>]";
+						String exp_grade3 = "[<a action=\"" + CommonStrings.MANAGE_BYPASS + " recovery edit_exp 15\">15%</a>][<a action=\"" + CommonStrings.MANAGE_BYPASS + " recovery edit_exp 25\">25%</a>][<a action=\"" + CommonStrings.MANAGE_BYPASS + " recovery edit_exp 35\">35%</a>][<a action=\"" + CommonStrings.MANAGE_BYPASS + " recovery edit_exp 50\">50%</a>]";
+						String mp_grade0 = "[<a action=\"" + CommonStrings.MANAGE_BYPASS + " recovery edit_mp 5\">5%</a>][<a action=\"" + CommonStrings.MANAGE_BYPASS + " recovery edit_mp 10\">10%</a>][<a action=\"" + CommonStrings.MANAGE_BYPASS + " recovery edit_mp 25\">25%</a>]";
+						String mp_grade1 = "[<a action=\"" + CommonStrings.MANAGE_BYPASS + " recovery edit_mp 5\">5%</a>][<a action=\"" + CommonStrings.MANAGE_BYPASS + " recovery edit_mp 15\">15%</a>][<a action=\"" + CommonStrings.MANAGE_BYPASS + " recovery edit_mp 25\">25%</a>]";
+						String mp_grade2 = "[<a action=\"" + CommonStrings.MANAGE_BYPASS + " recovery edit_mp 5\">5%</a>][<a action=\"" + CommonStrings.MANAGE_BYPASS + " recovery edit_mp 15\">15%</a>][<a action=\"" + CommonStrings.MANAGE_BYPASS + " recovery edit_mp 30\">30%</a>]";
+						String mp_grade3 = "[<a action=\"" + CommonStrings.MANAGE_BYPASS + " recovery edit_mp 5\">5%</a>][<a action=\"" + CommonStrings.MANAGE_BYPASS + " recovery edit_mp 15\">15%</a>][<a action=\"" + CommonStrings.MANAGE_BYPASS + " recovery edit_mp 30\">30%</a>][<a action=\"" + CommonStrings.MANAGE_BYPASS + " recovery edit_mp 40\">40%</a>]";
 						if (getClanHall().getFunction(ClanHall.FUNC_RESTORE_HP) != null)
 						{
 							html.replace(CommonStrings.HP_RECOVERY, String.valueOf(getClanHall().getFunction(ClanHall.FUNC_RESTORE_HP).getLvl()) + "%</font> (<font color=\"FFAABB\">" + String.valueOf(getClanHall().getFunction(ClanHall.FUNC_RESTORE_HP).getLease()) + "</font>Adena /" + String.valueOf(Config.CH_HPREG_FEE_RATIO / 1000 / 60 / 60 / 24) + " Day)");
@@ -641,16 +642,16 @@ public class L2ClanHallManagerInstance extends L2MerchantInstance
 							switch (grade)
 							{
 								case 0:
-									html.replace(CommonStrings.CHANGE_HP, "[<a action=\"bypass -h npc_%objectId%_manage recovery hp_cancel\">Deactivate</a>]" + hp_grade0);
+									html.replace(CommonStrings.CHANGE_HP, "[<a action=\"" + CommonStrings.MANAGE_BYPASS + " recovery hp_cancel\">Deactivate</a>]" + hp_grade0);
 									break;
 								case 1:
-									html.replace(CommonStrings.CHANGE_HP, "[<a action=\"bypass -h npc_%objectId%_manage recovery hp_cancel\">Deactivate</a>]" + hp_grade1);
+									html.replace(CommonStrings.CHANGE_HP, "[<a action=\"" + CommonStrings.MANAGE_BYPASS + " recovery hp_cancel\">Deactivate</a>]" + hp_grade1);
 									break;
 								case 2:
-									html.replace(CommonStrings.CHANGE_HP, "[<a action=\"bypass -h npc_%objectId%_manage recovery hp_cancel\">Deactivate</a>]" + hp_grade2);
+									html.replace(CommonStrings.CHANGE_HP, "[<a action=\"" + CommonStrings.MANAGE_BYPASS + " recovery hp_cancel\">Deactivate</a>]" + hp_grade2);
 									break;
 								case 3:
-									html.replace(CommonStrings.CHANGE_HP, "[<a action=\"bypass -h npc_%objectId%_manage recovery hp_cancel\">Deactivate</a>]" + hp_grade3);
+									html.replace(CommonStrings.CHANGE_HP, "[<a action=\"" + CommonStrings.MANAGE_BYPASS + " recovery hp_cancel\">Deactivate</a>]" + hp_grade3);
 									break;
 							}
 						}
@@ -683,16 +684,16 @@ public class L2ClanHallManagerInstance extends L2MerchantInstance
 							switch (grade)
 							{
 								case 0:
-									html.replace(CommonStrings.CHANGE_EXP, "[<a action=\"bypass -h npc_%objectId%_manage recovery exp_cancel\">Deactivate</a>]" + exp_grade0);
+									html.replace(CommonStrings.CHANGE_EXP, "[<a action=\"" + CommonStrings.MANAGE_BYPASS + " recovery exp_cancel\">Deactivate</a>]" + exp_grade0);
 									break;
 								case 1:
-									html.replace(CommonStrings.CHANGE_EXP, "[<a action=\"bypass -h npc_%objectId%_manage recovery exp_cancel\">Deactivate</a>]" + exp_grade1);
+									html.replace(CommonStrings.CHANGE_EXP, "[<a action=\"" + CommonStrings.MANAGE_BYPASS + " recovery exp_cancel\">Deactivate</a>]" + exp_grade1);
 									break;
 								case 2:
-									html.replace(CommonStrings.CHANGE_EXP, "[<a action=\"bypass -h npc_%objectId%_manage recovery exp_cancel\">Deactivate</a>]" + exp_grade2);
+									html.replace(CommonStrings.CHANGE_EXP, "[<a action=\"" + CommonStrings.MANAGE_BYPASS + " recovery exp_cancel\">Deactivate</a>]" + exp_grade2);
 									break;
 								case 3:
-									html.replace(CommonStrings.CHANGE_EXP, "[<a action=\"bypass -h npc_%objectId%_manage recovery exp_cancel\">Deactivate</a>]" + exp_grade3);
+									html.replace(CommonStrings.CHANGE_EXP, "[<a action=\"" + CommonStrings.MANAGE_BYPASS + " recovery exp_cancel\">Deactivate</a>]" + exp_grade3);
 									break;
 							}
 						}
@@ -725,16 +726,16 @@ public class L2ClanHallManagerInstance extends L2MerchantInstance
 							switch (grade)
 							{
 								case 0:
-									html.replace(CommonStrings.CHANGE_MP, "[<a action=\"bypass -h npc_%objectId%_manage recovery mp_cancel\">Deactivate</a>]" + mp_grade0);
+									html.replace(CommonStrings.CHANGE_MP, "[<a action=\"" + CommonStrings.MANAGE_BYPASS + " recovery mp_cancel\">Deactivate</a>]" + mp_grade0);
 									break;
 								case 1:
-									html.replace(CommonStrings.CHANGE_MP, "[<a action=\"bypass -h npc_%objectId%_manage recovery mp_cancel\">Deactivate</a>]" + mp_grade1);
+									html.replace(CommonStrings.CHANGE_MP, "[<a action=\"" + CommonStrings.MANAGE_BYPASS + " recovery mp_cancel\">Deactivate</a>]" + mp_grade1);
 									break;
 								case 2:
-									html.replace(CommonStrings.CHANGE_MP, "[<a action=\"bypass -h npc_%objectId%_manage recovery mp_cancel\">Deactivate</a>]" + mp_grade2);
+									html.replace(CommonStrings.CHANGE_MP, "[<a action=\"" + CommonStrings.MANAGE_BYPASS + " recovery mp_cancel\">Deactivate</a>]" + mp_grade2);
 									break;
 								case 3:
-									html.replace(CommonStrings.CHANGE_MP, "[<a action=\"bypass -h npc_%objectId%_manage recovery mp_cancel\">Deactivate</a>]" + mp_grade3);
+									html.replace(CommonStrings.CHANGE_MP, "[<a action=\"" + CommonStrings.MANAGE_BYPASS + " recovery mp_cancel\">Deactivate</a>]" + mp_grade3);
 									break;
 							}
 						}
@@ -1061,17 +1062,17 @@ public class L2ClanHallManagerInstance extends L2MerchantInstance
 						}
 						final NpcHtmlMessage html = new NpcHtmlMessage(getObjectId());
 						html.setFile(player.getHtmlPrefix(), "data/html/clanHallManager/edit_other.htm");
-						String tele = "[<a action=\"bypass -h npc_%objectId%_manage other edit_tele 1\">Level 1</a>][<a action=\"bypass -h npc_%objectId%_manage other edit_tele 2\">Level 2</a>]";
-						String support_grade0 = "[<a action=\"bypass -h npc_%objectId%_manage other edit_support 1\">Level 1</a>][<a action=\"bypass -h npc_%objectId%_manage other edit_support 2\">Level 2</a>]";
-						String support_grade1 = "[<a action=\"bypass -h npc_%objectId%_manage other edit_support 1\">Level 1</a>][<a action=\"bypass -h npc_%objectId%_manage other edit_support 2\">Level 2</a>][<a action=\"bypass -h npc_%objectId%_manage other edit_support 4\">Level 4</a>]";
-						String support_grade2 = "[<a action=\"bypass -h npc_%objectId%_manage other edit_support 3\">Level 3</a>][<a action=\"bypass -h npc_%objectId%_manage other edit_support 4\">Level 4</a>][<a action=\"bypass -h npc_%objectId%_manage other edit_support 5\">Level 5</a>]";
-						String support_grade3 = "[<a action=\"bypass -h npc_%objectId%_manage other edit_support 3\">Level 3</a>][<a action=\"bypass -h npc_%objectId%_manage other edit_support 5\">Level 5</a>][<a action=\"bypass -h npc_%objectId%_manage other edit_support 7\">Level 7</a>][<a action=\"bypass -h npc_%objectId%_manage other edit_support 8\">Level 8</a>]";
-						String item = "[<a action=\"bypass -h npc_%objectId%_manage other edit_item 1\">Level 1</a>][<a action=\"bypass -h npc_%objectId%_manage other edit_item 2\">Level 2</a>][<a action=\"bypass -h npc_%objectId%_manage other edit_item 3\">Level 3</a>]";
+						String tele = "[<a action=\"" + CommonStrings.MANAGE_BYPASS + " other edit_tele 1\">Level 1</a>][<a action=\"" + CommonStrings.MANAGE_BYPASS + " other edit_tele 2\">Level 2</a>]";
+						String support_grade0 = "[<a action=\"" + CommonStrings.MANAGE_BYPASS + " other edit_support 1\">Level 1</a>][<a action=\"" + CommonStrings.MANAGE_BYPASS + " other edit_support 2\">Level 2</a>]";
+						String support_grade1 = "[<a action=\"" + CommonStrings.MANAGE_BYPASS + " other edit_support 1\">Level 1</a>][<a action=\"" + CommonStrings.MANAGE_BYPASS + " other edit_support 2\">Level 2</a>][<a action=\"" + CommonStrings.MANAGE_BYPASS + " other edit_support 4\">Level 4</a>]";
+						String support_grade2 = "[<a action=\"" + CommonStrings.MANAGE_BYPASS + " other edit_support 3\">Level 3</a>][<a action=\"" + CommonStrings.MANAGE_BYPASS + " other edit_support 4\">Level 4</a>][<a action=\"" + CommonStrings.MANAGE_BYPASS + " other edit_support 5\">Level 5</a>]";
+						String support_grade3 = "[<a action=\"" + CommonStrings.MANAGE_BYPASS + " other edit_support 3\">Level 3</a>][<a action=\"" + CommonStrings.MANAGE_BYPASS + " other edit_support 5\">Level 5</a>][<a action=\"" + CommonStrings.MANAGE_BYPASS + " other edit_support 7\">Level 7</a>][<a action=\"" + CommonStrings.MANAGE_BYPASS + " other edit_support 8\">Level 8</a>]";
+						String item = "[<a action=\"" + CommonStrings.MANAGE_BYPASS + " other edit_item 1\">Level 1</a>][<a action=\"" + CommonStrings.MANAGE_BYPASS + " other edit_item 2\">Level 2</a>][<a action=\"" + CommonStrings.MANAGE_BYPASS + " other edit_item 3\">Level 3</a>]";
 						if (getClanHall().getFunction(ClanHall.FUNC_TELEPORT) != null)
 						{
 							html.replace(CommonStrings.TELE, "Stage " + String.valueOf(getClanHall().getFunction(ClanHall.FUNC_TELEPORT).getLvl()) + "</font> (<font color=\"FFAABB\">" + String.valueOf(getClanHall().getFunction(ClanHall.FUNC_TELEPORT).getLease()) + "</font>Adena /" + String.valueOf(Config.CH_TELE_FEE_RATIO / 1000 / 60 / 60 / 24) + " Day)");
 							html.replace(CommonStrings.TELE_PERIOD, "Withdraw the fee for the next time at " + format.format(getClanHall().getFunction(ClanHall.FUNC_TELEPORT).getEndTime()));
-							html.replace(CommonStrings.CHANGE_TELE, "[<a action=\"bypass -h npc_%objectId%_manage other tele_cancel\">Deactivate</a>]" + tele);
+							html.replace(CommonStrings.CHANGE_TELE, "[<a action=\"" + CommonStrings.MANAGE_BYPASS + " other tele_cancel\">Deactivate</a>]" + tele);
 						}
 						else
 						{
@@ -1085,18 +1086,18 @@ public class L2ClanHallManagerInstance extends L2MerchantInstance
 							html.replace(CommonStrings.SUPPORT_PERIOD, "Withdraw the fee for the next time at " + format.format(getClanHall().getFunction(ClanHall.FUNC_SUPPORT).getEndTime()));
 							int grade = getClanHall().getGrade();
 							switch (grade)
-							{
+							{// FIXME: refactor me
 								case 0:
-									html.replace(CommonStrings.CHANGE_SUPPORT, "[<a action=\"bypass -h npc_%objectId%_manage other support_cancel\">Deactivate</a>]" + support_grade0);
+									html.replace(CommonStrings.CHANGE_SUPPORT, "[<a action=\"" + CommonStrings.MANAGE_BYPASS + " other support_cancel\">Deactivate</a>]" + support_grade0);
 									break;
 								case 1:
-									html.replace(CommonStrings.CHANGE_SUPPORT, "[<a action=\"bypass -h npc_%objectId%_manage other support_cancel\">Deactivate</a>]" + support_grade1);
+									html.replace(CommonStrings.CHANGE_SUPPORT, "[<a action=\"" + CommonStrings.MANAGE_BYPASS + " other support_cancel\">Deactivate</a>]" + support_grade1);
 									break;
 								case 2:
-									html.replace(CommonStrings.CHANGE_SUPPORT, "[<a action=\"bypass -h npc_%objectId%_manage other support_cancel\">Deactivate</a>]" + support_grade2);
+									html.replace(CommonStrings.CHANGE_SUPPORT, "[<a action=\"" + CommonStrings.MANAGE_BYPASS + " other support_cancel\">Deactivate</a>]" + support_grade2);
 									break;
 								case 3:
-									html.replace(CommonStrings.CHANGE_SUPPORT, "[<a action=\"bypass -h npc_%objectId%_manage other support_cancel\">Deactivate</a>]" + support_grade3);
+									html.replace(CommonStrings.CHANGE_SUPPORT, "[<a action=\"" + CommonStrings.MANAGE_BYPASS + " other support_cancel\">Deactivate</a>]" + support_grade3);
 									break;
 							}
 						}
@@ -1123,15 +1124,15 @@ public class L2ClanHallManagerInstance extends L2MerchantInstance
 						}
 						if (getClanHall().getFunction(ClanHall.FUNC_ITEM_CREATE) != null)
 						{
-							html.replace("%item%", "Stage " + String.valueOf(getClanHall().getFunction(ClanHall.FUNC_ITEM_CREATE).getLvl()) + "</font> (<font color=\"FFAABB\">" + String.valueOf(getClanHall().getFunction(ClanHall.FUNC_ITEM_CREATE).getLease()) + "</font>Adena /" + String.valueOf(Config.CH_ITEM_FEE_RATIO / 1000 / 60 / 60 / 24) + " Day)");
-							html.replace("%item_period%", "Withdraw the fee for the next time at " + format.format(getClanHall().getFunction(ClanHall.FUNC_ITEM_CREATE).getEndTime()));
-							html.replace("%change_item%", "[<a action=\"bypass -h npc_%objectId%_manage other item_cancel\">Deactivate</a>]" + item);
+							html.replace(CommonStrings.ITEM, "Stage " + String.valueOf(getClanHall().getFunction(ClanHall.FUNC_ITEM_CREATE).getLvl()) + "</font> (<font color=\"FFAABB\">" + String.valueOf(getClanHall().getFunction(ClanHall.FUNC_ITEM_CREATE).getLease()) + "</font>Adena /" + String.valueOf(Config.CH_ITEM_FEE_RATIO / 1000 / 60 / 60 / 24) + " Day)");
+							html.replace(CommonStrings.ITEM_PERIOD, "Withdraw the fee for the next time at " + format.format(getClanHall().getFunction(ClanHall.FUNC_ITEM_CREATE).getEndTime()));
+							html.replace(CommonStrings.CHANGE_ITEM, "[<a action=\"" + CommonStrings.MANAGE_BYPASS + " other item_cancel\">Deactivate</a>]" + item);
 						}
 						else
 						{
-							html.replace("%item%", "none");
-							html.replace("%item_period%", "none");
-							html.replace("%change_item%", item);
+							html.replace(CommonStrings.ITEM, "none");
+							html.replace(CommonStrings.ITEM_PERIOD, "none");
+							html.replace(CommonStrings.CHANGE_ITEM, item);
 						}
 						sendHtmlMessage(player, html);
 					}
@@ -1308,31 +1309,31 @@ public class L2ClanHallManagerInstance extends L2MerchantInstance
 						}
 						final NpcHtmlMessage html = new NpcHtmlMessage(getObjectId());
 						html.setFile(player.getHtmlPrefix(), "data/html/clanHallManager/deco.htm");
-						String curtains = "[<a action=\"bypass -h npc_%objectId%_manage deco edit_curtains 1\">Level 1</a>][<a action=\"bypass -h npc_%objectId%_manage deco edit_curtains 2\">Level 2</a>]";
-						String fixtures = "[<a action=\"bypass -h npc_%objectId%_manage deco edit_fixtures 1\">Level 1</a>][<a action=\"bypass -h npc_%objectId%_manage deco edit_fixtures 2\">Level 2</a>]";
+						String curtains = "[<a action=\"" + CommonStrings.MANAGE_BYPASS + " deco edit_curtains 1\">Level 1</a>][<a action=\"" + CommonStrings.MANAGE_BYPASS + " deco edit_curtains 2\">Level 2</a>]";
+						String fixtures = "[<a action=\"" + CommonStrings.MANAGE_BYPASS + " deco edit_fixtures 1\">Level 1</a>][<a action=\"" + CommonStrings.MANAGE_BYPASS + " deco edit_fixtures 2\">Level 2</a>]";
 						if (getClanHall().getFunction(ClanHall.FUNC_DECO_CURTAINS) != null)
 						{
-							html.replace("%curtain%", "Stage " + String.valueOf(getClanHall().getFunction(ClanHall.FUNC_DECO_CURTAINS).getLvl()) + "</font> (<font color=\"FFAABB\">" + String.valueOf(getClanHall().getFunction(ClanHall.FUNC_DECO_CURTAINS).getLease()) + "</font>Adena /" + String.valueOf(Config.CH_CURTAIN_FEE_RATIO / 1000 / 60 / 60 / 24) + " Day)");
-							html.replace("%curtain_period%", "Withdraw the fee for the next time at " + format.format(getClanHall().getFunction(ClanHall.FUNC_DECO_CURTAINS).getEndTime()));
-							html.replace("%change_curtain%", "[<a action=\"bypass -h npc_%objectId%_manage deco curtains_cancel\">Deactivate</a>]" + curtains);
+							html.replace(CommonStrings.CURTAIN, "Stage " + String.valueOf(getClanHall().getFunction(ClanHall.FUNC_DECO_CURTAINS).getLvl()) + "</font> (<font color=\"FFAABB\">" + String.valueOf(getClanHall().getFunction(ClanHall.FUNC_DECO_CURTAINS).getLease()) + "</font>Adena /" + String.valueOf(Config.CH_CURTAIN_FEE_RATIO / 1000 / 60 / 60 / 24) + " Day)");
+							html.replace(CommonStrings.CURTAIN_PERIOD, "Withdraw the fee for the next time at " + format.format(getClanHall().getFunction(ClanHall.FUNC_DECO_CURTAINS).getEndTime()));
+							html.replace(CommonStrings.CHANGE_CURTAIN, "[<a action=\"" + CommonStrings.MANAGE_BYPASS + " deco curtains_cancel\">Deactivate</a>]" + curtains);
 						}
 						else
 						{
-							html.replace("%curtain%", "none");
-							html.replace("%curtain_period%", "none");
-							html.replace("%change_curtain%", curtains);
+							html.replace(CommonStrings.CURTAIN, "none");
+							html.replace(CommonStrings.CURTAIN_PERIOD, "none");
+							html.replace(CommonStrings.CHANGE_CURTAIN, curtains);
 						}
 						if (getClanHall().getFunction(ClanHall.FUNC_DECO_FRONTPLATEFORM) != null)
 						{
-							html.replace("%fixture%", "Stage " + String.valueOf(getClanHall().getFunction(ClanHall.FUNC_DECO_FRONTPLATEFORM).getLvl()) + "</font> (<font color=\"FFAABB\">" + String.valueOf(getClanHall().getFunction(ClanHall.FUNC_DECO_FRONTPLATEFORM).getLease()) + "</font>Adena /" + String.valueOf(Config.CH_FRONT_FEE_RATIO / 1000 / 60 / 60 / 24) + " Day)");
-							html.replace("%fixture_period%", "Withdraw the fee for the next time at " + format.format(getClanHall().getFunction(ClanHall.FUNC_DECO_FRONTPLATEFORM).getEndTime()));
-							html.replace("%change_fixture%", "[<a action=\"bypass -h npc_%objectId%_manage deco fixtures_cancel\">Deactivate</a>]" + fixtures);
+							html.replace(CommonStrings.FIXTURE, "Stage " + String.valueOf(getClanHall().getFunction(ClanHall.FUNC_DECO_FRONTPLATEFORM).getLvl()) + "</font> (<font color=\"FFAABB\">" + String.valueOf(getClanHall().getFunction(ClanHall.FUNC_DECO_FRONTPLATEFORM).getLease()) + "</font>Adena /" + String.valueOf(Config.CH_FRONT_FEE_RATIO / 1000 / 60 / 60 / 24) + " Day)");
+							html.replace(CommonStrings.FIXTURE_PERIOD, "Withdraw the fee for the next time at " + format.format(getClanHall().getFunction(ClanHall.FUNC_DECO_FRONTPLATEFORM).getEndTime()));
+							html.replace(CommonStrings.CHANGE_FIXTURE, "[<a action=\"" + CommonStrings.MANAGE_BYPASS + " deco fixtures_cancel\">Deactivate</a>]" + fixtures);
 						}
 						else
 						{
-							html.replace("%fixture%", "none");
-							html.replace("%fixture_period%", "none");
-							html.replace("%change_fixture%", fixtures);
+							html.replace(CommonStrings.FIXTURE, "none");
+							html.replace(CommonStrings.FIXTURE_PERIOD, "none");
+							html.replace(CommonStrings.CHANGE_FIXTURE, fixtures);
 						}
 						sendHtmlMessage(player, html);
 					}
@@ -1417,12 +1418,12 @@ public class L2ClanHallManagerInstance extends L2MerchantInstance
 					}
 					catch (Exception e)
 					{
-						player.sendMessage("Invalid skill level, contact your admin!");
+						player.sendMessage(INVALID_SKILL_LEVEL_CONTACT_YOUR_ADMIN);
 					}
 				}
 				catch (Exception e)
 				{
-					player.sendMessage("Invalid skill level, contact your admin!");
+					player.sendMessage(INVALID_SKILL_LEVEL_CONTACT_YOUR_ADMIN);
 				}
 				return;
 			}

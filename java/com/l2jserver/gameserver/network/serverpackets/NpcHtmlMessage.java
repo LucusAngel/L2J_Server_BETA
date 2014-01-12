@@ -109,11 +109,25 @@ public final class NpcHtmlMessage extends AbstractHtmlPacket
 		public static final String HERONAME = "%heroname%";
 		public static final String BUTTNEXT = "%buttnext%";
 		public static final String BUTTPREV = "%buttprev%";
+		public static final String STANDARD_BYPASS = "bypass -h npc_" + OBJECT_ID + "_";
+		public static final String MANAGE_BYPASS = STANDARD_BYPASS + "manage";
+		public static final String SUBCLASS_BYPASS = STANDARD_BYPASS + "Subclass";
+		public static final String QUEST_BYPASS = STANDARD_BYPASS + "Quest";
 		
 		public static String SUB(int i)
 		{
 			return "%sub" + i + "%";
 		}
+
+		public static final String CHANGE_FIXTURE = "%change_fixture%";
+		public static final String FIXTURE_PERIOD = "%fixture_period%";
+		public static final String FIXTURE = "%fixture%";
+		public static final String CHANGE_CURTAIN = "%change_curtain%";
+		public static final String CURTAIN_PERIOD = "%curtain_period%";
+		public static final String CURTAIN = "%curtain%";
+		public static final String CHANGE_ITEM = "%change_item%";
+		public static final String ITEM_PERIOD = "%item_period%";
+		public static final String ITEM = "%item%";
 		
 		private CommonStrings()
 		{
