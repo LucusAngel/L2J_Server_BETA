@@ -45,6 +45,9 @@ import com.l2jserver.util.Rnd;
  */
 public class L2CastleMagicianInstance extends L2NpcInstance implements L2SquadTrainer
 {
+	
+	private static final String ON_TVT_EVENT = "You're on TvT Event, teleporting disabled.";
+	private static final String COULDNT_TELEPORT_TO_CLAN_LEADER_THE_REQUIREMENTS_WAS_NOT_MEET = "Couldn't teleport to clan leader. The requirements was not meet.";
 	protected static final int COND_ALL_FALSE = 0;
 	protected static final int COND_BUSY_BECAUSE_OF_SIEGE = 1;
 	protected static final int COND_OWNER = 2;
@@ -425,49 +428,49 @@ public class L2CastleMagicianInstance extends L2NpcInstance implements L2SquadTr
 		if (clanLeader.isAlikeDead())
 		{
 			// TODO: Need retail message if there's one.
-			player.sendMessage("Couldn't teleport to clan leader. The requirements was not meet.");
+			player.sendMessage(COULDNT_TELEPORT_TO_CLAN_LEADER_THE_REQUIREMENTS_WAS_NOT_MEET);
 			return false;
 		}
 		
 		if (clanLeader.isInStoreMode())
 		{
 			// TODO: Need retail message if there's one.
-			player.sendMessage("Couldn't teleport to clan leader. The requirements was not meet.");
+			player.sendMessage(COULDNT_TELEPORT_TO_CLAN_LEADER_THE_REQUIREMENTS_WAS_NOT_MEET);
 			return false;
 		}
 		
 		if (clanLeader.isRooted() || clanLeader.isInCombat())
 		{
 			// TODO: Need retail message if there's one.
-			player.sendMessage("Couldn't teleport to clan leader. The requirements was not meet.");
+			player.sendMessage(COULDNT_TELEPORT_TO_CLAN_LEADER_THE_REQUIREMENTS_WAS_NOT_MEET);
 			return false;
 		}
 		
 		if (clanLeader.isInOlympiadMode())
 		{
 			// TODO: Need retail message if there's one.
-			player.sendMessage("Couldn't teleport to clan leader. The requirements was not meet.");
+			player.sendMessage(COULDNT_TELEPORT_TO_CLAN_LEADER_THE_REQUIREMENTS_WAS_NOT_MEET);
 			return false;
 		}
 		
 		if (clanLeader.isFestivalParticipant())
 		{
 			// TODO: Need retail message if there's one.
-			player.sendMessage("Couldn't teleport to clan leader. The requirements was not meet.");
+			player.sendMessage(COULDNT_TELEPORT_TO_CLAN_LEADER_THE_REQUIREMENTS_WAS_NOT_MEET);
 			return false;
 		}
 		
 		if (clanLeader.inObserverMode())
 		{
 			// TODO: Need retail message if there's one.
-			player.sendMessage("Couldn't teleport to clan leader. The requirements was not meet.");
+			player.sendMessage(COULDNT_TELEPORT_TO_CLAN_LEADER_THE_REQUIREMENTS_WAS_NOT_MEET);
 			return false;
 		}
 		
 		if (clanLeader.isInsideZone(ZoneId.NO_SUMMON_FRIEND))
 		{
 			// TODO: Need retail message if there's one.
-			player.sendMessage("Couldn't teleport to clan leader. The requirements was not meet.");
+			player.sendMessage(COULDNT_TELEPORT_TO_CLAN_LEADER_THE_REQUIREMENTS_WAS_NOT_MEET);
 			return false;
 		}
 		
@@ -476,7 +479,7 @@ public class L2CastleMagicianInstance extends L2NpcInstance implements L2SquadTr
 			if (!Config.ALLOW_SUMMON_TO_INSTANCE || InstanceManager.getInstance().getInstance(player.getInstanceId()).isSummonAllowed())
 			{
 				// TODO: Need retail message if there's one.
-				player.sendMessage("Couldn't teleport to clan leader. The requirements was not meet.");
+				player.sendMessage(COULDNT_TELEPORT_TO_CLAN_LEADER_THE_REQUIREMENTS_WAS_NOT_MEET);
 				return false;
 			}
 		}
@@ -489,7 +492,7 @@ public class L2CastleMagicianInstance extends L2NpcInstance implements L2SquadTr
 				if (targetCabal != SevenSigns.getInstance().getCabalHighestScore())
 				{
 					// TODO: Need retail message if there's one.
-					player.sendMessage("Couldn't teleport to clan leader. The requirements was not meet.");
+					player.sendMessage(COULDNT_TELEPORT_TO_CLAN_LEADER_THE_REQUIREMENTS_WAS_NOT_MEET);
 					return false;
 				}
 			}
@@ -498,7 +501,7 @@ public class L2CastleMagicianInstance extends L2NpcInstance implements L2SquadTr
 				if (targetCabal == SevenSigns.CABAL_NULL)
 				{
 					// TODO: Need retail message if there's one.
-					player.sendMessage("Couldn't teleport to clan leader. The requirements was not meet.");
+					player.sendMessage(COULDNT_TELEPORT_TO_CLAN_LEADER_THE_REQUIREMENTS_WAS_NOT_MEET);
 					return false;
 				}
 			}
@@ -506,14 +509,14 @@ public class L2CastleMagicianInstance extends L2NpcInstance implements L2SquadTr
 		
 		if (!TvTEvent.onEscapeUse(player.getObjectId()))
 		{
-			player.sendMessage("You on TvT Event, teleporting disabled.");
+			player.sendMessage(ON_TVT_EVENT);
 			return false;
 		}
 		
 		if (!TvTEvent.onEscapeUse(clanLeader.getObjectId()))
 		{
 			// TODO: Need retail message if there's one.
-			player.sendMessage("Couldn't teleport to clan leader. The requirements was not meet.");
+			player.sendMessage(COULDNT_TELEPORT_TO_CLAN_LEADER_THE_REQUIREMENTS_WAS_NOT_MEET);
 			return false;
 		}
 		return true;
