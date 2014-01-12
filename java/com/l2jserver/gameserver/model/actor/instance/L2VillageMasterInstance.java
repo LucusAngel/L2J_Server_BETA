@@ -68,6 +68,8 @@ import com.l2jserver.util.StringUtil;
 public class L2VillageMasterInstance extends L2NpcInstance
 {
 	
+	private static final String THERE_ARE_NO_SUB_CLASSES_AVAILABLE_AT_THIS_TIME = "There are no sub classes available at this time.";
+	
 	private static Logger _log = Logger.getLogger(L2VillageMasterInstance.class.getName());
 	
 	// FIXME: merge the HTMLs?
@@ -385,7 +387,7 @@ public class L2VillageMasterInstance extends L2NpcInstance
 						final StringBuilder content1 = StringUtil.startAppend(200);
 						for (PlayerClass subClass : subsAvailable)
 						{
-							StringUtil.append(content1, "<a action=\"bypass -h npc_%objectId%_Subclass 4 ", String.valueOf(subClass.ordinal()), "\" msg=\"1268;", ClassListData.getInstance().getClass(subClass.ordinal()).getClassName(), "\">", ClassListData.getInstance().getClass(subClass.ordinal()).getClientCode(), "</a><br>");
+							StringUtil.append(content1, "<a action=\"" + CommonStrings.SUBCLASS_BYPASS + " 4 ", String.valueOf(subClass.ordinal()), "\" msg=\"1268;", ClassListData.getInstance().getClass(subClass.ordinal()).getClassName(), "\">", ClassListData.getInstance().getClass(subClass.ordinal()).getClientCode(), "</a><br>");
 						}
 						html.replace(CommonStrings.LIST, content1.toString());
 					}
@@ -404,7 +406,7 @@ public class L2VillageMasterInstance extends L2NpcInstance
 						else
 						{
 							// TODO: Retail message
-							player.sendMessage("There are no sub classes available at this time.");
+							player.sendMessage(THERE_ARE_NO_SUB_CLASSES_AVAILABLE_AT_THIS_TIME);
 						}
 						return;
 					}
@@ -419,7 +421,7 @@ public class L2VillageMasterInstance extends L2NpcInstance
 						final StringBuilder content2 = StringUtil.startAppend(200);
 						if (checkVillageMaster(player.getBaseClass()))
 						{
-							StringUtil.append(content2, "<a action=\"bypass -h npc_%objectId%_Subclass 5 0\">", ClassListData.getInstance().getClass(player.getBaseClass()).getClientCode(), "</a><br>");
+							StringUtil.append(content2, "<a action=\"" + CommonStrings.SUBCLASS_BYPASS + " 5 0\">", ClassListData.getInstance().getClass(player.getBaseClass()).getClientCode(), "</a><br>");
 						}
 						
 						for (Iterator<SubClass> subList = iterSubClasses(player); subList.hasNext();)
@@ -427,7 +429,7 @@ public class L2VillageMasterInstance extends L2NpcInstance
 							SubClass subClass = subList.next();
 							if (checkVillageMaster(subClass.getClassDefinition()))
 							{
-								StringUtil.append(content2, "<a action=\"bypass -h npc_%objectId%_Subclass 5 ", String.valueOf(subClass.getClassIndex()), "\">", ClassListData.getInstance().getClass(subClass.getClassId()).getClientCode(), "</a><br>");
+								StringUtil.append(content2, "<a action=\"" + CommonStrings.SUBCLASS_BYPASS + " 5 ", String.valueOf(subClass.getClassIndex()), "\">", ClassListData.getInstance().getClass(subClass.getClassId()).getClientCode(), "</a><br>");
 							}
 						}
 						
@@ -460,7 +462,7 @@ public class L2VillageMasterInstance extends L2NpcInstance
 						{
 							SubClass subClass = subList.next();
 							
-							StringUtil.append(content3, "Sub-class ", String.valueOf(classIndex++), "<br>", "<a action=\"bypass -h npc_%objectId%_Subclass 6 ", String.valueOf(subClass.getClassIndex()), "\">", ClassListData.getInstance().getClass(subClass.getClassId()).getClientCode(), "</a><br>");
+							StringUtil.append(content3, "Sub-class ", String.valueOf(classIndex++), "<br>", "<a action=\"" + CommonStrings.SUBCLASS_BYPASS + " 6 ", String.valueOf(subClass.getClassIndex()), "\">", ClassListData.getInstance().getClass(subClass.getClassId()).getClientCode(), "</a><br>");
 						}
 						html.replace(CommonStrings.LIST, content3.toString());
 					}
@@ -593,14 +595,14 @@ public class L2VillageMasterInstance extends L2NpcInstance
 					if ((subsAvailable == null) || subsAvailable.isEmpty())
 					{
 						// TODO: Retail message
-						player.sendMessage("There are no sub classes available at this time.");
+						player.sendMessage(THERE_ARE_NO_SUB_CLASSES_AVAILABLE_AT_THIS_TIME);
 						return;
 					}
 					
 					final StringBuilder content6 = StringUtil.startAppend(200);
 					for (PlayerClass subClass : subsAvailable)
 					{
-						StringUtil.append(content6, "<a action=\"bypass -h npc_%objectId%_Subclass 7 ", String.valueOf(paramOne), " ", String.valueOf(subClass.ordinal()), "\" msg=\"1445;", "\">", ClassListData.getInstance().getClass(subClass.ordinal()).getClientCode(), "</a><br>");
+						StringUtil.append(content6, "<a action=\"" + CommonStrings.SUBCLASS_BYPASS + " 7 ", String.valueOf(paramOne), " ", String.valueOf(subClass.ordinal()), "\" msg=\"1445;", "\">", ClassListData.getInstance().getClass(subClass.ordinal()).getClientCode(), "</a><br>");
 					}
 					
 					switch (paramOne)
@@ -681,7 +683,7 @@ public class L2VillageMasterInstance extends L2NpcInstance
 		}
 		else
 		{
-			html.replace("<a action=\"bypass -h npc_%objectId%_Subclass 6 " + subIndex + "\">" + CommonStrings.SUB(subIndex) + "</a><br>", "");
+			html.replace("<a action=\"" + CommonStrings.SUBCLASS_BYPASS + " 6 " + subIndex + "\">" + CommonStrings.SUB(subIndex) + "</a><br>", "");
 		}
 	}
 	
