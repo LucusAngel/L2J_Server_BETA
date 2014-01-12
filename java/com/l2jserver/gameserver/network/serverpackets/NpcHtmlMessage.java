@@ -101,6 +101,7 @@ public final class NpcHtmlMessage extends AbstractHtmlPacket
 		public static final String EVENT_INFO = "%eventInfo%";
 		public static final String EVENT_CREATOR = "%eventCreator%";
 		public static final String EVENT_NAME = "%eventName%";
+		public static final String MAX = "%max%";
 		
 		private CommonStrings()
 		{

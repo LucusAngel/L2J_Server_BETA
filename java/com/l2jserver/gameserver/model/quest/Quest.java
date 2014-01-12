@@ -82,6 +82,7 @@ import com.l2jserver.gameserver.network.serverpackets.ActionFailed;
 import com.l2jserver.gameserver.network.serverpackets.ExShowScreenMessage;
 import com.l2jserver.gameserver.network.serverpackets.InventoryUpdate;
 import com.l2jserver.gameserver.network.serverpackets.NpcHtmlMessage;
+import com.l2jserver.gameserver.network.serverpackets.NpcHtmlMessage.CommonStrings;
 import com.l2jserver.gameserver.network.serverpackets.NpcQuestHtmlMessage;
 import com.l2jserver.gameserver.network.serverpackets.SpecialCamera;
 import com.l2jserver.gameserver.network.serverpackets.StatusUpdate;
@@ -2568,20 +2569,20 @@ public class Quest extends ManagedScript implements IIdentifiable
 		{
 			if (npc != null)
 			{
-				content = content.replaceAll("%objectId%", Integer.toString(npc.getObjectId()));
+				content = content.replaceAll(CommonStrings.OBJECT_ID, Integer.toString(npc.getObjectId()));
 			}
 			
 			if (questwindow && (questId > 0) && (questId < 20000) && (questId != 999))
 			{
 				NpcQuestHtmlMessage npcReply = new NpcQuestHtmlMessage(npc != null ? npc.getObjectId() : 0, questId);
 				npcReply.setHtml(content);
-				npcReply.replace("%playername%", player.getName());
+				npcReply.replace(CommonStrings.PLAYERNAME, player.getName());
 				player.sendPacket(npcReply);
 			}
 			else
 			{
 				final NpcHtmlMessage npcReply = new NpcHtmlMessage(npc != null ? npc.getObjectId() : 0, content);
-				npcReply.replace("%playername%", player.getName());
+				npcReply.replace(CommonStrings.PLAYERNAME, player.getName());
 				player.sendPacket(npcReply);
 			}
 			player.sendPacket(ActionFailed.STATIC_PACKET);

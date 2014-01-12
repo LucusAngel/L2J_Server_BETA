@@ -34,6 +34,7 @@ import com.l2jserver.gameserver.model.StatsSet;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.network.SystemMessageId;
 import com.l2jserver.gameserver.network.serverpackets.NpcHtmlMessage;
+import com.l2jserver.gameserver.network.serverpackets.NpcHtmlMessage.CommonStrings;
 import com.l2jserver.gameserver.network.serverpackets.SystemMessage;
 
 /**
@@ -41,6 +42,7 @@ import com.l2jserver.gameserver.network.serverpackets.SystemMessage;
  */
 public class OlympiadManager
 {
+	
 	private final List<Integer> _nonClassBasedRegisters;
 	private final Map<Integer, List<Integer>> _classBasedRegisters;
 	private final List<List<Integer>> _teamsBasedRegisters;
@@ -530,7 +532,7 @@ public class OlympiadManager
 		{
 			final NpcHtmlMessage message = new NpcHtmlMessage(player.getLastHtmlActionOriginId());
 			message.setFile(player.getHtmlPrefix(), "data/html/olympiad/noble_nopoints1.htm");
-			message.replace("%objectId%", String.valueOf(noble.getLastHtmlActionOriginId()));
+			message.replace(CommonStrings.OBJECT_ID, String.valueOf(noble.getLastHtmlActionOriginId()));
 			player.sendPacket(message);
 			return false;
 		}
@@ -539,7 +541,7 @@ public class OlympiadManager
 		{
 			final NpcHtmlMessage message = new NpcHtmlMessage(player.getLastHtmlActionOriginId());
 			message.setFile(player.getHtmlPrefix(), "data/html/mods/OlympiadIPRestriction.htm");
-			message.replace("%max%", String.valueOf(AntiFeedManager.getInstance().getLimit(player, Config.L2JMOD_DUALBOX_CHECK_MAX_OLYMPIAD_PARTICIPANTS_PER_IP)));
+			message.replace(CommonStrings.MAX, String.valueOf(AntiFeedManager.getInstance().getLimit(player, Config.L2JMOD_DUALBOX_CHECK_MAX_OLYMPIAD_PARTICIPANTS_PER_IP)));
 			player.sendPacket(message);
 			return false;
 		}
