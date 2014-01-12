@@ -463,34 +463,11 @@ public class L2VillageMasterInstance extends L2NpcInstance
 					else
 					{
 						// retail html contain only 3 subclasses
-						// FIXME: refactor me
+						// FIXME: refactor me -> merge with above?
 						html.setFile(player.getHtmlPrefix(), "data/html/villagemaster/SubClass_Modify.htm");
-						if (player.getSubClasses().containsKey(1))
-						{
-							html.replace(CommonStrings.SUB1, ClassListData.getInstance().getClass(player.getSubClasses().get(1).getClassId()).getClientCode());
-						}
-						else
-						{
-							html.replace("<a action=\"bypass -h npc_%objectId%_Subclass 6 1\">" + CommonStrings.SUB1 + "</a><br>", "");
-						}
-						
-						if (player.getSubClasses().containsKey(2))
-						{
-							html.replace(CommonStrings.SUB2, ClassListData.getInstance().getClass(player.getSubClasses().get(2).getClassId()).getClientCode());
-						}
-						else
-						{
-							html.replace("<a action=\"bypass -h npc_%objectId%_Subclass 6 2\">" + CommonStrings.SUB2 + "</a><br>", "");
-						}
-						
-						if (player.getSubClasses().containsKey(3))
-						{
-							html.replace(CommonStrings.SUB3, ClassListData.getInstance().getClass(player.getSubClasses().get(3).getClassId()).getClientCode());
-						}
-						else
-						{
-							html.replace("<a action=\"bypass -h npc_%objectId%_Subclass 6 3\">" + CommonStrings.SUB3 + "</a><br>", "");
-						}
+						getSubclassHtmlEntry(player, html, 1);
+						getSubclassHtmlEntry(player, html, 2);
+						getSubclassHtmlEntry(player, html, 3);
 					}
 					break;
 				case 4: // Add Subclass - Action (Subclass 4 x[x])
@@ -684,6 +661,23 @@ public class L2VillageMasterInstance extends L2NpcInstance
 		else
 		{
 			super.onBypassFeedback(player, command);
+		}
+	}
+	
+	/**
+	 * @param player
+	 * @param html
+	 * @param subIndex
+	 */
+	private void getSubclassHtmlEntry(L2PcInstance player, final NpcHtmlMessage html, int subIndex)
+	{
+		if (player.getSubClasses().containsKey(subIndex))
+		{
+			html.replace(CommonStrings.SUB(subIndex), ClassListData.getInstance().getClass(player.getSubClasses().get(subIndex).getClassId()).getClientCode());
+		}
+		else
+		{
+			html.replace("<a action=\"bypass -h npc_%objectId%_Subclass 6 " + subIndex + "\">" + CommonStrings.SUB(subIndex) + "</a><br>", "");
 		}
 	}
 	
