@@ -41,6 +41,7 @@ public class L2WeddingManagerInstance extends L2Npc
 	
 	private static final String CONGRATULATIONS_YOU_ARE_MARRIED = "Congratulations you are married!";
 	private static final String STR_WEDDING = "Wedding";
+	private static final String HTML_PREFIX = "data/html/mods/Wedding_";
 	
 	public L2WeddingManagerInstance(int objectId, L2NpcTemplate template)
 	{
@@ -51,7 +52,7 @@ public class L2WeddingManagerInstance extends L2Npc
 	@Override
 	public void showChatWindow(L2PcInstance player)
 	{
-		String filename = "data/html/mods/Wedding_start.htm";
+		String filename = HTML_PREFIX + "start.htm";
 		String replace = String.valueOf(Config.L2JMOD_WEDDING_PRICE);
 		
 		final NpcHtmlMessage html = new NpcHtmlMessage(getObjectId());
@@ -66,13 +67,13 @@ public class L2WeddingManagerInstance extends L2Npc
 	public void onBypassFeedback(L2PcInstance player, String command)
 	{
 		// Standard message
-		String filename = "data/html/mods/Wedding_start.htm";
+		String filename = HTML_PREFIX + "start.htm";
 		String replace = "";
 		
 		// If player has no partner
 		if (player.getPartnerId() == 0)
 		{
-			filename = "data/html/mods/Wedding_nopartner.htm";
+			filename = HTML_PREFIX + "nopartner.htm";
 			sendHtmlMessage(player, filename, replace);
 			return;
 		}
@@ -81,7 +82,7 @@ public class L2WeddingManagerInstance extends L2Npc
 		// Is partner online?
 		if ((ptarget == null) || !ptarget.isOnline())
 		{
-			filename = "data/html/mods/Wedding_notfound.htm";
+			filename = HTML_PREFIX + "notfound.htm";
 			sendHtmlMessage(player, filename, replace);
 			return;
 		}
@@ -89,13 +90,13 @@ public class L2WeddingManagerInstance extends L2Npc
 		// Is already married?
 		if (player.isMarried())
 		{
-			filename = "data/html/mods/Wedding_already.htm";
+			filename = HTML_PREFIX + "already.htm";
 			sendHtmlMessage(player, filename, replace);
 			return;
 		}
 		else if (player.isMarryAccepted())
 		{
-			filename = "data/html/mods/Wedding_waitforpartner.htm";
+			filename = HTML_PREFIX + "waitforpartner.htm";
 			sendHtmlMessage(player, filename, replace);
 			return;
 		}
@@ -104,7 +105,7 @@ public class L2WeddingManagerInstance extends L2Npc
 			// Check for Formal Wear
 			if (!wearsFormalWear(player, ptarget))
 			{
-				filename = "data/html/mods/Wedding_noformal.htm";
+				filename = HTML_PREFIX + "noformal.htm";
 				sendHtmlMessage(ptarget, filename, replace);
 				sendHtmlMessage(player, filename, replace);
 				return;
@@ -113,7 +114,7 @@ public class L2WeddingManagerInstance extends L2Npc
 			// Check and reduce wedding price
 			if ((player.getAdena() < Config.L2JMOD_WEDDING_PRICE) || (ptarget.getAdena() < Config.L2JMOD_WEDDING_PRICE))
 			{
-				filename = "data/html/mods/Wedding_adena.htm";
+				filename = HTML_PREFIX + "adena.htm";
 				replace = String.valueOf(Config.L2JMOD_WEDDING_PRICE);
 				sendHtmlMessage(ptarget, filename, replace);
 				sendHtmlMessage(player, filename, replace);
@@ -159,7 +160,7 @@ public class L2WeddingManagerInstance extends L2Npc
 			
 			Announcements.getInstance().announceToAll("Congratulations to " + player.getName() + " and " + ptarget.getName() + "! They have been married.");
 			
-			filename = "data/html/mods/Wedding_accepted.htm";
+			filename = HTML_PREFIX + "accepted.htm";
 			sendHtmlMessage(ptarget, filename, replace);
 			sendHtmlMessage(player, filename, replace);
 			
@@ -175,7 +176,7 @@ public class L2WeddingManagerInstance extends L2Npc
 			player.sendMessage("You declined your partner's marriage request.");
 			ptarget.sendMessage("Your partner declined your marriage request.");
 			
-			filename = "data/html/mods/Wedding_declined.htm";
+			filename = HTML_PREFIX + "declined.htm";
 			sendHtmlMessage(ptarget, filename, replace);
 			sendHtmlMessage(player, filename, replace);
 			
@@ -186,12 +187,12 @@ public class L2WeddingManagerInstance extends L2Npc
 			// Check for Formal Wear
 			if (!wearsFormalWear(player, ptarget))
 			{
-				filename = "data/html/mods/Wedding_noformal.htm";
+				filename = HTML_PREFIX + "noformal.htm";
 				sendHtmlMessage(ptarget, filename, replace);
 				sendHtmlMessage(player, filename, replace);
 				return;
 			}
-			filename = "data/html/mods/Wedding_ask.htm";
+			filename = HTML_PREFIX + "ask.htm";
 			player.setMarryRequest(false);
 			ptarget.setMarryRequest(false);
 			replace = ptarget.getName();
@@ -203,7 +204,7 @@ public class L2WeddingManagerInstance extends L2Npc
 			// Check for Formal Wear
 			if (!wearsFormalWear(player, ptarget))
 			{
-				filename = "data/html/mods/Wedding_noformal.htm";
+				filename = HTML_PREFIX + "noformal.htm";
 				sendHtmlMessage(ptarget, filename, replace);
 				sendHtmlMessage(player, filename, replace);
 				return;
@@ -212,11 +213,11 @@ public class L2WeddingManagerInstance extends L2Npc
 			player.setMarryAccepted(true);
 			ptarget.setMarryRequest(true);
 			
-			filename = "data/html/mods/Wedding_ask.htm";
+			filename = HTML_PREFIX + "ask.htm";
 			replace = player.getName();
 			sendHtmlMessage(ptarget, filename, replace);
 			
-			filename = "data/html/mods/Wedding_requested.htm";
+			filename = HTML_PREFIX + "requested.htm";
 			replace = ptarget.getName();
 			sendHtmlMessage(player, filename, replace);
 			
