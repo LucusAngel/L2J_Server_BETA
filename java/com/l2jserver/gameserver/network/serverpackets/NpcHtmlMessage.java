@@ -44,9 +44,13 @@ public final class NpcHtmlMessage extends AbstractHtmlPacket
 		public static final String COST = "%cost%";
 		public static final String CYCLE_MINS = "%cycleMins%";
 		public static final String DATE = "%date%";
+		public static final String EVENT_CREATOR = "%eventCreator%";
+		public static final String EVENT_INFO = "%eventInfo%";
+		public static final String EVENT_NAME = "%eventName%";
 		public static final String EXP_PERIOD = "%exp_period%";
 		public static final String EXP_RECOVERY = "%exp_recovery%";
 		public static final String FEE = "%fee%";
+		public static final String FESTIVAL_MINS = "%festivalMins%";
 		public static final String FESTIVAL_TYPE = "%festivalType%";
 		public static final String GREEN_STONE_NEEDED = "%greenStoneNeeded%";
 		public static final String HALLNAME = "%hallname%";
@@ -61,6 +65,7 @@ public final class NpcHtmlMessage extends AbstractHtmlPacket
 		public static final String CHANGE_SUPPORT = "%change_support%";
 		public static final String CHANGE_TELE = "%change_tele%";
 		public static final String LEADERNAME = "%leadername%";
+		public static final String MAX = "%max%";
 		public static final String MIN = "%min%";
 		public static final String MIN_FESTIVAL_PARTY_MEMBERS = "%minFestivalPartyMembers%";
 		public static final String MIN2 = "%min2%";
@@ -76,6 +81,7 @@ public final class NpcHtmlMessage extends AbstractHtmlPacket
 		public static final String PLAYERNAME = "%playername%";
 		public static final String RED_STONE_NEEDED = "%redStoneNeeded%";
 		public static final String RENT = "%rent%";
+		public static final String REPLACE = "%replace%";
 		public static final String REQ_ITEMS = "%req_items%";
 		public static final String STATS_TABLE = "%statsTable%";
 		public static final String STONE_COLOR = "%stoneColor%";
@@ -85,6 +91,7 @@ public final class NpcHtmlMessage extends AbstractHtmlPacket
 		public static final String SUPPLYLVL = "%supplylvl%";
 		public static final String SUPPORT = "%support%";
 		public static final String SUPPORT_PERIOD = "%support_period%";
+		public static final String TEAM1NAME = "%team1name%";
 		public static final String TEAM1PLAYERCOUNT = "%team1playercount%";
 		public static final String TEAM1POINTS = "%team1points%";
 		public static final String TEAM2NAME = "%team2name%";
@@ -95,13 +102,6 @@ public final class NpcHtmlMessage extends AbstractHtmlPacket
 		public static final String USE = "%use%";
 		public static final String VAL = "%val%";
 		public static final String XP_REGEN = "%xp_regen%";
-		public static final String TEAM1NAME = "%team1name%";
-		public static final String REPLACE = "%replace%";
-		public static final String FESTIVAL_MINS = "%festivalMins%";
-		public static final String EVENT_INFO = "%eventInfo%";
-		public static final String EVENT_CREATOR = "%eventCreator%";
-		public static final String EVENT_NAME = "%eventName%";
-		public static final String MAX = "%max%";
 		
 		private CommonStrings()
 		{
