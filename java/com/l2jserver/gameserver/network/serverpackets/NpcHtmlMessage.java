@@ -85,7 +85,6 @@ public final class NpcHtmlMessage extends AbstractHtmlPacket
 		public static final String SUPPLYLVL = "%supplylvl%";
 		public static final String SUPPORT = "%support%";
 		public static final String SUPPORT_PERIOD = "%support_period%";
-		public static final String SUPPORT2 = "%support%";
 		public static final String TEAM1PLAYERCOUNT = "%team1playercount%";
 		public static final String TEAM1POINTS = "%team1points%";
 		public static final String TEAM2NAME = "%team2name%";
@@ -98,6 +97,10 @@ public final class NpcHtmlMessage extends AbstractHtmlPacket
 		public static final String XP_REGEN = "%xp_regen%";
 		public static final String TEAM1NAME = "%team1name%";
 		public static final String REPLACE = "%replace%";
+		public static final String FESTIVAL_MINS = "%festivalMins%";
+		public static final String EVENT_INFO = "%eventInfo%";
+		public static final String EVENT_CREATOR = "%eventCreator%";
+		public static final String EVENT_NAME = "%eventName%";
 		
 		private CommonStrings()
 		{

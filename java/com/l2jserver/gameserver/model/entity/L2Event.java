@@ -51,6 +51,7 @@ import com.l2jserver.gameserver.network.serverpackets.CharInfo;
 import com.l2jserver.gameserver.network.serverpackets.ExBrExtraUserInfo;
 import com.l2jserver.gameserver.network.serverpackets.MagicSkillUse;
 import com.l2jserver.gameserver.network.serverpackets.NpcHtmlMessage;
+import com.l2jserver.gameserver.network.serverpackets.NpcHtmlMessage.CommonStrings;
 import com.l2jserver.gameserver.network.serverpackets.UserInfo;
 
 /**
@@ -58,6 +59,7 @@ import com.l2jserver.gameserver.network.serverpackets.UserInfo;
  */
 public class L2Event
 {
+	
 	protected static final Logger _log = Logger.getLogger(L2Event.class.getName());
 	public static EventState eventState = EventState.OFF;
 	public static String _eventName = "";
@@ -151,10 +153,10 @@ public class L2Event
 					html.setHtml(htmContent);
 				}
 				
-				html.replace("%objectId%", objectid); // Yeah, we need this.
-				html.replace("%eventName%", _eventName);
-				html.replace("%eventCreator%", _eventCreator);
-				html.replace("%eventInfo%", _eventInfo);
+				html.replace(CommonStrings.OBJECT_ID, objectid); // Yeah, we need this.
+				html.replace(CommonStrings.EVENT_NAME, _eventName);
+				html.replace(CommonStrings.EVENT_CREATOR, _eventCreator);
+				html.replace(CommonStrings.EVENT_INFO, _eventInfo);
 				player.sendPacket(html);
 			}
 			catch (Exception e)

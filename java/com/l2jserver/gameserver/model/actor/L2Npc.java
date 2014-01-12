@@ -88,6 +88,7 @@ import com.l2jserver.gameserver.network.serverpackets.ActionFailed;
 import com.l2jserver.gameserver.network.serverpackets.ExChangeNpcState;
 import com.l2jserver.gameserver.network.serverpackets.MagicSkillUse;
 import com.l2jserver.gameserver.network.serverpackets.NpcHtmlMessage;
+import com.l2jserver.gameserver.network.serverpackets.NpcHtmlMessage.CommonStrings;
 import com.l2jserver.gameserver.network.serverpackets.ServerObjectInfo;
 import com.l2jserver.gameserver.network.serverpackets.SocialAction;
 import com.l2jserver.gameserver.taskmanager.DecayTaskManager;
@@ -101,6 +102,7 @@ import com.l2jserver.util.Rnd;
  */
 public class L2Npc extends L2Character
 {
+	
 	/** The interaction distance of the L2NpcInstance(is used as offset in MovetoLocation method) */
 	public static final int INTERACTION_DISTANCE = 150;
 	/** Maximum distance where the drop may appear given this NPC position. */
@@ -1051,7 +1053,7 @@ public class L2Npc extends L2Character
 	public void insertObjectIdAndShowChatWindow(L2PcInstance player, String content)
 	{
 		// Send a Server->Client packet NpcHtmlMessage to the L2PcInstance in order to display the message of the L2NpcInstance
-		content = content.replaceAll("%objectId%", String.valueOf(getObjectId()));
+		content = content.replaceAll(CommonStrings.OBJECT_ID, String.valueOf(getObjectId()));
 		final NpcHtmlMessage npcReply = new NpcHtmlMessage(getObjectId());
 		npcReply.setHtml(content);
 		player.sendPacket(npcReply);
@@ -1364,8 +1366,8 @@ public class L2Npc extends L2Character
 			}
 		}
 		
-		html.replace("%objectId%", String.valueOf(getObjectId()));
-		html.replace("%festivalMins%", SevenSignsFestival.getInstance().getTimeToNextFestivalStr());
+		html.replace(CommonStrings.OBJECT_ID, String.valueOf(getObjectId()));
+		html.replace(CommonStrings.FESTIVAL_MINS, SevenSignsFestival.getInstance().getTimeToNextFestivalStr());
 		player.sendPacket(html);
 		
 		// Send a Server->Client ActionFailed to the L2PcInstance in order to avoid that the client wait another packet
@@ -1382,7 +1384,7 @@ public class L2Npc extends L2Character
 		// Send a Server->Client NpcHtmlMessage containing the text of the L2NpcInstance to the L2PcInstance
 		final NpcHtmlMessage html = new NpcHtmlMessage(getObjectId());
 		html.setFile(player.getHtmlPrefix(), filename);
-		html.replace("%objectId%", String.valueOf(getObjectId()));
+		html.replace(CommonStrings.OBJECT_ID, String.valueOf(getObjectId()));
 		player.sendPacket(html);
 		
 		// Send a Server->Client ActionFailed to the L2PcInstance in order to avoid that the client wait another packet
@@ -1695,7 +1697,7 @@ public class L2Npc extends L2Character
 		else
 		{
 			noTeachMsg.setHtml(html);
-			noTeachMsg.replace("%objectId%", String.valueOf(getObjectId()));
+			noTeachMsg.replace(CommonStrings.OBJECT_ID, String.valueOf(getObjectId()));
 		}
 		player.sendPacket(noTeachMsg);
 	}
