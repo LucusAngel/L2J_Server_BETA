@@ -25,6 +25,23 @@ import com.l2jserver.gameserver.enums.HtmlActionScope;
  */
 public final class NpcHtmlMessage extends AbstractHtmlPacket
 {
+	/**
+	 * @author Battlecruiser
+	 */
+	public static class CommonStrings
+	{
+		
+		public static final String CLANNAME = "%clanname%";
+		public static final String LEADERNAME = "%leadername%";
+		public static final String HALLNAME = "%hallname%";
+		public static final String OBJECT_ID = "%objectId%";
+		
+		private CommonStrings()
+		{
+			
+		}
+	}
+	
 	private final int _itemId;
 	
 	public NpcHtmlMessage()

@@ -29,6 +29,7 @@ import com.l2jserver.gameserver.model.actor.templates.L2NpcTemplate;
 import com.l2jserver.gameserver.model.entity.ClanHall;
 import com.l2jserver.gameserver.network.serverpackets.ActionFailed;
 import com.l2jserver.gameserver.network.serverpackets.NpcHtmlMessage;
+import com.l2jserver.gameserver.network.serverpackets.NpcHtmlMessage.CommonStrings;
 import com.l2jserver.gameserver.util.Evolve;
 
 public class L2ClanHallDoormenInstance extends L2DoormenInstance
@@ -127,12 +128,12 @@ public class L2ClanHallDoormenInstance extends L2DoormenInstance
 				if (_hasEvolve)
 				{
 					html.setFile(player.getHtmlPrefix(), CLANHALL_HTML_PREFIX + "/doormen2.htm");
-					html.replace("%clanname%", owner.getName());
+					html.replace(CommonStrings.CLANNAME, owner.getName());
 				}
 				else
 				{
 					html.setFile(player.getHtmlPrefix(), CLANHALL_HTML_PREFIX + "/doormen1.htm");
-					html.replace("%clanname%", owner.getName());
+					html.replace(CommonStrings.CLANNAME, owner.getName());
 				}
 			}
 			else
@@ -140,13 +141,13 @@ public class L2ClanHallDoormenInstance extends L2DoormenInstance
 				if ((owner != null) && (owner.getLeader() != null))
 				{
 					html.setFile(player.getHtmlPrefix(), CLANHALL_HTML_PREFIX + "/doormen-no.htm");
-					html.replace("%leadername%", owner.getLeaderName());
-					html.replace("%clanname%", owner.getName());
+					html.replace(CommonStrings.LEADERNAME, owner.getLeaderName());
+					html.replace(CommonStrings.CLANNAME, owner.getName());
 				}
 				else
 				{
 					html.setFile(player.getHtmlPrefix(), CLANHALL_HTML_PREFIX + "/emptyowner.htm");
-					html.replace("%hallname%", getClanHall().getName());
+					html.replace(CommonStrings.HALLNAME, getClanHall().getName());
 				}
 			}
 		}
@@ -155,7 +156,7 @@ public class L2ClanHallDoormenInstance extends L2DoormenInstance
 			return;
 		}
 		
-		html.replace("%objectId%", String.valueOf(getObjectId()));
+		html.replace(CommonStrings.OBJECT_ID, String.valueOf(getObjectId()));
 		player.sendPacket(html);
 	}
 	
@@ -165,7 +166,7 @@ public class L2ClanHallDoormenInstance extends L2DoormenInstance
 		getClanHall().openCloseDoors(true);
 		final NpcHtmlMessage html = new NpcHtmlMessage(getObjectId());
 		html.setFile(player.getHtmlPrefix(), CLANHALL_HTML_PREFIX + "/doormen-opened.htm");
-		html.replace("%objectId%", String.valueOf(getObjectId()));
+		html.replace(CommonStrings.OBJECT_ID, String.valueOf(getObjectId()));
 		player.sendPacket(html);
 	}
 	
@@ -175,7 +176,7 @@ public class L2ClanHallDoormenInstance extends L2DoormenInstance
 		getClanHall().openCloseDoors(false);
 		final NpcHtmlMessage html = new NpcHtmlMessage(getObjectId());
 		html.setFile(player.getHtmlPrefix(), CLANHALL_HTML_PREFIX + "/doormen-closed.htm");
-		html.replace("%objectId%", String.valueOf(getObjectId()));
+		html.replace(CommonStrings.OBJECT_ID, String.valueOf(getObjectId()));
 		player.sendPacket(html);
 	}
 	
