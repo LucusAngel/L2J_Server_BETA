@@ -26,10 +26,12 @@ import com.l2jserver.gameserver.model.actor.templates.L2NpcTemplate;
 import com.l2jserver.gameserver.model.entity.TvTEvent;
 import com.l2jserver.gameserver.network.serverpackets.ActionFailed;
 import com.l2jserver.gameserver.network.serverpackets.NpcHtmlMessage;
+import com.l2jserver.gameserver.network.serverpackets.NpcHtmlMessage.CommonStrings;
 
 public class L2TvTEventNpcInstance extends L2Npc
 {
-	private static final String htmlPath = "data/html/mods/TvTEvent/";
+	
+	private static final String HTML_PATH = "data/html/mods/TvTEvent/";
 	
 	public L2TvTEventNpcInstance(int objectId, L2NpcTemplate template)
 	{
@@ -58,11 +60,11 @@ public class L2TvTEventNpcInstance extends L2Npc
 			
 			if (!isParticipant)
 			{
-				htmContent = HtmCache.getInstance().getHtm(playerInstance.getHtmlPrefix(), htmlPath + "Participation.htm");
+				htmContent = HtmCache.getInstance().getHtm(playerInstance.getHtmlPrefix(), HTML_PATH + "Participation.htm");
 			}
 			else
 			{
-				htmContent = HtmCache.getInstance().getHtm(playerInstance.getHtmlPrefix(), htmlPath + "RemoveParticipation.htm");
+				htmContent = HtmCache.getInstance().getHtm(playerInstance.getHtmlPrefix(), HTML_PATH + "RemoveParticipation.htm");
 			}
 			
 			if (htmContent != null)
@@ -71,15 +73,15 @@ public class L2TvTEventNpcInstance extends L2Npc
 				final NpcHtmlMessage npcHtmlMessage = new NpcHtmlMessage(getObjectId());
 				
 				npcHtmlMessage.setHtml(htmContent);
-				npcHtmlMessage.replace("%objectId%", String.valueOf(getObjectId()));
-				npcHtmlMessage.replace("%team1name%", Config.TVT_EVENT_TEAM_1_NAME);
-				npcHtmlMessage.replace("%team1playercount%", String.valueOf(teamsPlayerCounts[0]));
-				npcHtmlMessage.replace("%team2name%", Config.TVT_EVENT_TEAM_2_NAME);
-				npcHtmlMessage.replace("%team2playercount%", String.valueOf(teamsPlayerCounts[1]));
-				npcHtmlMessage.replace("%playercount%", String.valueOf(teamsPlayerCounts[0] + teamsPlayerCounts[1]));
+				npcHtmlMessage.replace(CommonStrings.OBJECT_ID, String.valueOf(getObjectId()));
+				npcHtmlMessage.replace(CommonStrings.TEAM1NAME, Config.TVT_EVENT_TEAM_1_NAME);
+				npcHtmlMessage.replace(CommonStrings.TEAM1PLAYERCOUNT, String.valueOf(teamsPlayerCounts[0]));
+				npcHtmlMessage.replace(CommonStrings.TEAM2NAME, Config.TVT_EVENT_TEAM_2_NAME);
+				npcHtmlMessage.replace(CommonStrings.TEAM2PLAYERCOUNT, String.valueOf(teamsPlayerCounts[1]));
+				npcHtmlMessage.replace(CommonStrings.PLAYERCOUNT, String.valueOf(teamsPlayerCounts[0] + teamsPlayerCounts[1]));
 				if (!isParticipant)
 				{
-					npcHtmlMessage.replace("%fee%", TvTEvent.getParticipationFee());
+					npcHtmlMessage.replace(CommonStrings.FEE, TvTEvent.getParticipationFee());
 				}
 				
 				playerInstance.sendPacket(npcHtmlMessage);
@@ -87,7 +89,7 @@ public class L2TvTEventNpcInstance extends L2Npc
 		}
 		else if (TvTEvent.isStarting() || TvTEvent.isStarted())
 		{
-			final String htmContent = HtmCache.getInstance().getHtm(playerInstance.getHtmlPrefix(), htmlPath + "Status.htm");
+			final String htmContent = HtmCache.getInstance().getHtm(playerInstance.getHtmlPrefix(), HTML_PATH + "Status.htm");
 			
 			if (htmContent != null)
 			{
@@ -96,13 +98,13 @@ public class L2TvTEventNpcInstance extends L2Npc
 				final NpcHtmlMessage npcHtmlMessage = new NpcHtmlMessage(getObjectId());
 				
 				npcHtmlMessage.setHtml(htmContent);
-				// npcHtmlMessage.replace("%objectId%", String.valueOf(getObjectId()));
-				npcHtmlMessage.replace("%team1name%", Config.TVT_EVENT_TEAM_1_NAME);
-				npcHtmlMessage.replace("%team1playercount%", String.valueOf(teamsPlayerCounts[0]));
-				npcHtmlMessage.replace("%team1points%", String.valueOf(teamsPointsCounts[0]));
-				npcHtmlMessage.replace("%team2name%", Config.TVT_EVENT_TEAM_2_NAME);
-				npcHtmlMessage.replace("%team2playercount%", String.valueOf(teamsPlayerCounts[1]));
-				npcHtmlMessage.replace("%team2points%", String.valueOf(teamsPointsCounts[1])); // <---- array index from 0 to 1 thx DaRkRaGe
+				// npcHtmlMessage.replace(CommonStrings.OBJECT_ID, String.valueOf(getObjectId()));
+				npcHtmlMessage.replace(CommonStrings.TEAM1NAME, Config.TVT_EVENT_TEAM_1_NAME);
+				npcHtmlMessage.replace(CommonStrings.TEAM1PLAYERCOUNT, String.valueOf(teamsPlayerCounts[0]));
+				npcHtmlMessage.replace(CommonStrings.TEAM1POINTS, String.valueOf(teamsPointsCounts[0]));
+				npcHtmlMessage.replace(CommonStrings.TEAM2NAME, Config.TVT_EVENT_TEAM_2_NAME);
+				npcHtmlMessage.replace(CommonStrings.TEAM2PLAYERCOUNT, String.valueOf(teamsPlayerCounts[1]));
+				npcHtmlMessage.replace(CommonStrings.TEAM2POINTS, String.valueOf(teamsPointsCounts[1])); // <---- array index from 0 to 1 thx DaRkRaGe
 				playerInstance.sendPacket(npcHtmlMessage);
 			}
 		}

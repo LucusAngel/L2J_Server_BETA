@@ -39,6 +39,7 @@ import com.l2jserver.gameserver.network.clientpackets.Say2;
 import com.l2jserver.gameserver.network.serverpackets.ActionFailed;
 import com.l2jserver.gameserver.network.serverpackets.CreatureSay;
 import com.l2jserver.gameserver.network.serverpackets.NpcHtmlMessage;
+import com.l2jserver.gameserver.network.serverpackets.NpcHtmlMessage.CommonStrings;
 import com.l2jserver.gameserver.network.serverpackets.SocialAction;
 import com.l2jserver.gameserver.util.Util;
 import com.l2jserver.util.Rnd;
@@ -48,6 +49,7 @@ import com.l2jserver.util.Rnd;
  */
 public class L2SepulcherNpcInstance extends L2Npc
 {
+	
 	protected Future<?> _closeTask = null;
 	protected Future<?> _spawnNextMysteriousBoxTask = null;
 	protected Future<?> _spawnMonsterTask = null;
@@ -280,7 +282,7 @@ public class L2SepulcherNpcInstance extends L2Npc
 		String filename = getHtmlPath(getId(), val);
 		final NpcHtmlMessage html = new NpcHtmlMessage(getObjectId());
 		html.setFile(player.getHtmlPrefix(), filename);
-		html.replace("%objectId%", String.valueOf(getObjectId()));
+		html.replace(CommonStrings.OBJECT_ID, String.valueOf(getObjectId()));
 		player.sendPacket(html);
 		player.sendPacket(ActionFailed.STATIC_PACKET);
 	}
@@ -292,9 +294,9 @@ public class L2SepulcherNpcInstance extends L2Npc
 		{
 			final NpcHtmlMessage html = new NpcHtmlMessage(getObjectId());
 			html.setFile(player.getHtmlPrefix(), "data/html/npcbusy.htm");
-			html.replace("%busymessage%", getBusyMessage());
-			html.replace("%npcname%", getName());
-			html.replace("%playername%", player.getName());
+			html.replace(CommonStrings.BUSYMESSAGE, getBusyMessage());
+			html.replace(CommonStrings.NPCNAME, getName());
+			html.replace(CommonStrings.PLAYERNAME, player.getName());
 			player.sendPacket(html);
 		}
 		else if (command.startsWith("Chat"))
@@ -469,7 +471,7 @@ public class L2SepulcherNpcInstance extends L2Npc
 	{
 		final NpcHtmlMessage html = new NpcHtmlMessage(getObjectId());
 		html.setFile(player.getHtmlPrefix(), "data/html/SepulcherNpc/" + file);
-		html.replace("%npcname%", getName());
+		html.replace(CommonStrings.NPCNAME, getName());
 		player.sendPacket(html);
 	}
 }

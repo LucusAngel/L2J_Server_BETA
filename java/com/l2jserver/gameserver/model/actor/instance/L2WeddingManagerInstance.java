@@ -31,12 +31,17 @@ import com.l2jserver.gameserver.model.items.instance.L2ItemInstance;
 import com.l2jserver.gameserver.model.skills.L2Skill;
 import com.l2jserver.gameserver.network.serverpackets.MagicSkillUse;
 import com.l2jserver.gameserver.network.serverpackets.NpcHtmlMessage;
+import com.l2jserver.gameserver.network.serverpackets.NpcHtmlMessage.CommonStrings;
 
 /**
  * @author evill33t & squeezed
  */
 public class L2WeddingManagerInstance extends L2Npc
 {
+	
+	private static final String CONGRATULATIONS_YOU_ARE_MARRIED = "Congratulations you are married!";
+	private static final String STR_WEDDING = "Wedding";
+	
 	public L2WeddingManagerInstance(int objectId, L2NpcTemplate template)
 	{
 		super(objectId, template);
@@ -51,9 +56,9 @@ public class L2WeddingManagerInstance extends L2Npc
 		
 		final NpcHtmlMessage html = new NpcHtmlMessage(getObjectId());
 		html.setFile(player.getHtmlPrefix(), filename);
-		html.replace("%objectId%", String.valueOf(getObjectId()));
-		html.replace("%replace%", replace);
-		html.replace("%npcname%", getName());
+		html.replace(CommonStrings.OBJECT_ID, String.valueOf(getObjectId()));
+		html.replace(CommonStrings.REPLACE, replace);
+		html.replace(CommonStrings.NPCNAME, getName());
 		player.sendPacket(html);
 	}
 	
@@ -114,8 +119,8 @@ public class L2WeddingManagerInstance extends L2Npc
 				sendHtmlMessage(player, filename, replace);
 				return;
 			}
-			player.reduceAdena("Wedding", Config.L2JMOD_WEDDING_PRICE, player.getLastFolkNPC(), true);
-			ptarget.reduceAdena("Wedding", Config.L2JMOD_WEDDING_PRICE, player.getLastFolkNPC(), true);
+			player.reduceAdena(STR_WEDDING, Config.L2JMOD_WEDDING_PRICE, player.getLastFolkNPC(), true);
+			ptarget.reduceAdena(STR_WEDDING, Config.L2JMOD_WEDDING_PRICE, player.getLastFolkNPC(), true);
 			
 			// Accept the wedding request
 			player.setMarryAccepted(true);
@@ -123,10 +128,10 @@ public class L2WeddingManagerInstance extends L2Npc
 			couple.marry();
 			
 			// Messages to the couple
-			player.sendMessage("Congratulations you are married!");
+			player.sendMessage(CONGRATULATIONS_YOU_ARE_MARRIED);
 			player.setMarried(true);
 			player.setMarryRequest(false);
-			ptarget.sendMessage("Congratulations you are married!");
+			ptarget.sendMessage(CONGRATULATIONS_YOU_ARE_MARRIED);
 			ptarget.setMarried(true);
 			ptarget.setMarryRequest(false);
 			
@@ -245,9 +250,9 @@ public class L2WeddingManagerInstance extends L2Npc
 	{
 		final NpcHtmlMessage html = new NpcHtmlMessage(getObjectId());
 		html.setFile(player.getHtmlPrefix(), filename);
-		html.replace("%objectId%", String.valueOf(getObjectId()));
-		html.replace("%replace%", replace);
-		html.replace("%npcname%", getName());
+		html.replace(CommonStrings.OBJECT_ID, String.valueOf(getObjectId()));
+		html.replace(CommonStrings.REPLACE, replace);
+		html.replace(CommonStrings.NPCNAME, getName());
 		player.sendPacket(html);
 	}
 }

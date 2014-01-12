@@ -38,6 +38,7 @@ import com.l2jserver.gameserver.network.serverpackets.InventoryUpdate;
 import com.l2jserver.gameserver.network.serverpackets.L2GameServerPacket;
 import com.l2jserver.gameserver.network.serverpackets.MonRaceInfo;
 import com.l2jserver.gameserver.network.serverpackets.NpcHtmlMessage;
+import com.l2jserver.gameserver.network.serverpackets.NpcHtmlMessage.CommonStrings;
 import com.l2jserver.gameserver.network.serverpackets.PlaySound;
 import com.l2jserver.gameserver.network.serverpackets.SystemMessage;
 import com.l2jserver.gameserver.util.Broadcast;
@@ -326,7 +327,7 @@ public class L2RaceManagerInstance extends L2Npc
 			html.replace(search, MonsterRace.getInstance().getMonsters()[i].getTemplate().getName());
 		}
 		html.replace("1race", String.valueOf(_raceNumber));
-		html.replace("%objectId%", String.valueOf(getObjectId()));
+		html.replace(CommonStrings.OBJECT_ID, String.valueOf(getObjectId()));
 		player.sendPacket(html);
 		player.sendPacket(ActionFailed.STATIC_PACKET);
 	}
@@ -344,7 +345,7 @@ public class L2RaceManagerInstance extends L2Npc
 			search = "Mob" + n;
 			html.replace(search, MonsterRace.getInstance().getMonsters()[i].getTemplate().getName());
 		}
-		html.replace("%objectId%", String.valueOf(getObjectId()));
+		html.replace(CommonStrings.OBJECT_ID, String.valueOf(getObjectId()));
 		player.sendPacket(html);
 		player.sendPacket(ActionFailed.STATIC_PACKET);
 	}
@@ -457,7 +458,7 @@ public class L2RaceManagerInstance extends L2Npc
 			return;
 		}
 		html.replace("1race", String.valueOf(_raceNumber));
-		html.replace("%objectId%", String.valueOf(getObjectId()));
+		html.replace(CommonStrings.OBJECT_ID, String.valueOf(getObjectId()));
 		player.sendPacket(html);
 		player.sendPacket(ActionFailed.STATIC_PACKET);
 	}

@@ -22,6 +22,7 @@ import com.l2jserver.gameserver.enums.InstanceType;
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.templates.L2NpcTemplate;
 import com.l2jserver.gameserver.network.serverpackets.NpcHtmlMessage;
+import com.l2jserver.gameserver.network.serverpackets.NpcHtmlMessage.CommonStrings;
 
 /**
  * @author NightMarez
@@ -29,6 +30,11 @@ import com.l2jserver.gameserver.network.serverpackets.NpcHtmlMessage;
  */
 public final class L2ObservationInstance extends L2Npc
 {
+	/**
+	 * 
+	 */
+	private static final String HTML_PREFIX = "data/html/observation/";
+
 	public L2ObservationInstance(int objectId, L2NpcTemplate template)
 	{
 		super(objectId, template);
@@ -44,28 +50,28 @@ public final class L2ObservationInstance extends L2Npc
 		{
 			if (val == 0)
 			{
-				filename = "data/html/observation/" + getId() + "-Oracle.htm";
+				filename = HTML_PREFIX + getId() + "-Oracle.htm";
 			}
 			else
 			{
-				filename = "data/html/observation/" + getId() + "-Oracle-" + val + ".htm";
+				filename = HTML_PREFIX + getId() + "-Oracle-" + val + ".htm";
 			}
 		}
 		else
 		{
 			if (val == 0)
 			{
-				filename = "data/html/observation/" + getId() + ".htm";
+				filename = HTML_PREFIX + getId() + ".htm";
 			}
 			else
 			{
-				filename = "data/html/observation/" + getId() + "-" + val + ".htm";
+				filename = HTML_PREFIX + getId() + "-" + val + ".htm";
 			}
 		}
 		
 		final NpcHtmlMessage html = new NpcHtmlMessage(getObjectId());
 		html.setFile(player.getHtmlPrefix(), filename);
-		html.replace("%objectId%", String.valueOf(getObjectId()));
+		html.replace(CommonStrings.OBJECT_ID, String.valueOf(getObjectId()));
 		player.sendPacket(html);
 	}
 }

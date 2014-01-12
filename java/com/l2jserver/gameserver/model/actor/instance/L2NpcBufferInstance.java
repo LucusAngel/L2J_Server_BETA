@@ -35,6 +35,7 @@ import com.l2jserver.gameserver.model.skills.L2Skill;
 import com.l2jserver.gameserver.network.SystemMessageId;
 import com.l2jserver.gameserver.network.serverpackets.ActionFailed;
 import com.l2jserver.gameserver.network.serverpackets.NpcHtmlMessage;
+import com.l2jserver.gameserver.network.serverpackets.NpcHtmlMessage.CommonStrings;
 import com.l2jserver.gameserver.network.serverpackets.SystemMessage;
 import com.l2jserver.gameserver.taskmanager.AttackStanceTaskManager;
 
@@ -44,6 +45,11 @@ import com.l2jserver.gameserver.taskmanager.AttackStanceTaskManager;
  */
 public class L2NpcBufferInstance extends L2Npc
 {
+	/**
+	 * 
+	 */
+	private static final String STR_NPC_BUFFER = "Npc Buffer";
+
 	private static final Logger _log = Logger.getLogger(L2NpcBufferInstance.class.getName());
 	
 	private static final Map<Integer, Integer> pageVal = new HashMap<>();
@@ -77,7 +83,7 @@ public class L2NpcBufferInstance extends L2Npc
 		{
 			final NpcHtmlMessage npcHtmlMessage = new NpcHtmlMessage(getObjectId());
 			npcHtmlMessage.setHtml(htmContent);
-			npcHtmlMessage.replace("%objectId%", String.valueOf(getObjectId()));
+			npcHtmlMessage.replace(CommonStrings.OBJECT_ID, String.valueOf(getObjectId()));
 			player.sendPacket(npcHtmlMessage);
 		}
 		player.sendPacket(ActionFailed.STATIC_PACKET);
@@ -146,7 +152,7 @@ public class L2NpcBufferInstance extends L2Npc
 					
 					if (itemInstance.isStackable())
 					{
-						if (!player.destroyItemByItemId("Npc Buffer", npcBuffGroupInfo.getFee().getId(), npcBuffGroupInfo.getFee().getCount(), player.getTarget(), true))
+						if (!player.destroyItemByItemId(STR_NPC_BUFFER, npcBuffGroupInfo.getFee().getId(), npcBuffGroupInfo.getFee().getCount(), player.getTarget(), true))
 						{
 							SystemMessage sm = SystemMessage.getSystemMessage(SystemMessageId.THERE_ARE_NOT_ENOUGH_NECESSARY_ITEMS_TO_USE_THE_SKILL);
 							player.sendPacket(sm);
@@ -157,7 +163,7 @@ public class L2NpcBufferInstance extends L2Npc
 					{
 						for (int i = 0; i < npcBuffGroupInfo.getFee().getCount(); ++i)
 						{
-							player.destroyItemByItemId("Npc Buffer", npcBuffGroupInfo.getFee().getId(), 1, player.getTarget(), true);
+							player.destroyItemByItemId(STR_NPC_BUFFER, npcBuffGroupInfo.getFee().getId(), 1, player.getTarget(), true);
 						}
 					}
 				}

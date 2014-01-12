@@ -32,6 +32,7 @@ import com.l2jserver.gameserver.model.actor.templates.L2NpcTemplate;
 import com.l2jserver.gameserver.model.items.instance.L2ItemInstance;
 import com.l2jserver.gameserver.network.SystemMessageId;
 import com.l2jserver.gameserver.network.serverpackets.NpcHtmlMessage;
+import com.l2jserver.gameserver.network.serverpackets.NpcHtmlMessage.CommonStrings;
 import com.l2jserver.gameserver.network.serverpackets.SystemMessage;
 
 /**
@@ -40,6 +41,7 @@ import com.l2jserver.gameserver.network.serverpackets.SystemMessage;
  */
 public class L2SignsPriestInstance extends L2Npc
 {
+	
 	public L2SignsPriestInstance(int objectId, L2NpcTemplate template)
 	{
 		super(objectId, template);
@@ -565,11 +567,11 @@ public class L2SignsPriestInstance extends L2Npc
 						
 						if (contentContr != null)
 						{
-							contentContr = contentContr.replaceAll("%contribStoneColor%", contribStoneColor);
-							contentContr = contentContr.replaceAll("%stoneColor%", stoneColorContr);
-							contentContr = contentContr.replaceAll("%stoneCount%", String.valueOf(stoneCountContr));
-							contentContr = contentContr.replaceAll("%stoneItemId%", String.valueOf(stoneIdContr));
-							contentContr = contentContr.replaceAll("%objectId%", String.valueOf(getObjectId()));
+							contentContr = contentContr.replaceAll(CommonStrings.CONTRIB_STONE_COLOR, contribStoneColor);
+							contentContr = contentContr.replaceAll(CommonStrings.STONE_COLOR, stoneColorContr);
+							contentContr = contentContr.replaceAll(CommonStrings.STONE_COUNT, String.valueOf(stoneCountContr));
+							contentContr = contentContr.replaceAll(CommonStrings.STONE_ITEM_ID, String.valueOf(stoneIdContr));
+							contentContr = contentContr.replaceAll(CommonStrings.OBJECT_ID, String.valueOf(getObjectId()));
 							
 							final NpcHtmlMessage html = new NpcHtmlMessage(getObjectId());
 							html.setHtml(contentContr);
@@ -782,11 +784,11 @@ public class L2SignsPriestInstance extends L2Npc
 					
 					if (content != null)
 					{
-						content = content.replaceAll("%stoneColor%", stoneColor);
-						content = content.replaceAll("%stoneValue%", String.valueOf(stoneValue));
-						content = content.replaceAll("%stoneCount%", String.valueOf(stoneCount));
-						content = content.replaceAll("%stoneItemId%", String.valueOf(stoneId));
-						content = content.replaceAll("%objectId%", String.valueOf(getObjectId()));
+						content = content.replaceAll(CommonStrings.STONE_COLOR, stoneColor);
+						content = content.replaceAll(CommonStrings.STONE_VALUE, String.valueOf(stoneValue));
+						content = content.replaceAll(CommonStrings.STONE_COUNT, String.valueOf(stoneCount));
+						content = content.replaceAll(CommonStrings.STONE_ITEM_ID, String.valueOf(stoneId));
+						content = content.replaceAll(CommonStrings.OBJECT_ID, String.valueOf(getObjectId()));
 						
 						final NpcHtmlMessage html = new NpcHtmlMessage(getObjectId());
 						html.setHtml(content);

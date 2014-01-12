@@ -31,6 +31,7 @@ import com.l2jserver.gameserver.model.base.AcquireSkillType;
 import com.l2jserver.gameserver.network.SystemMessageId;
 import com.l2jserver.gameserver.network.serverpackets.AcquireSkillList;
 import com.l2jserver.gameserver.network.serverpackets.NpcHtmlMessage;
+import com.l2jserver.gameserver.network.serverpackets.NpcHtmlMessage.CommonStrings;
 import com.l2jserver.util.Rnd;
 
 /**
@@ -190,7 +191,7 @@ public class L2FortSupportCaptainInstance extends L2MerchantInstance implements 
 		{
 			final NpcHtmlMessage html = new NpcHtmlMessage(getObjectId());
 			html.setFile(player.getHtmlPrefix(), "data/html/fortress/supportunit-noclan.htm");
-			html.replace("%objectId%", String.valueOf(getObjectId()));
+			html.replace(CommonStrings.OBJECT_ID, String.valueOf(getObjectId()));
 			player.sendPacket(html);
 			return;
 		}
@@ -212,15 +213,15 @@ public class L2FortSupportCaptainInstance extends L2MerchantInstance implements 
 		
 		final NpcHtmlMessage html = new NpcHtmlMessage(getObjectId());
 		html.setFile(player.getHtmlPrefix(), filename);
-		html.replace("%objectId%", String.valueOf(getObjectId()));
-		html.replace("%npcId%", String.valueOf(getId()));
+		html.replace(CommonStrings.OBJECT_ID, String.valueOf(getObjectId()));
+		html.replace(CommonStrings.NPC_ID, String.valueOf(getId()));
 		if (getFort().getOwnerClan() != null)
 		{
-			html.replace("%clanname%", getFort().getOwnerClan().getName());
+			html.replace(CommonStrings.CLANNAME, getFort().getOwnerClan().getName());
 		}
 		else
 		{
-			html.replace("%clanname%", "NPC");
+			html.replace(CommonStrings.CLANNAME, "NPC");
 		}
 		player.sendPacket(html);
 	}

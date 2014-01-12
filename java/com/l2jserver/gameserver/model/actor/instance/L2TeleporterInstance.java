@@ -35,12 +35,14 @@ import com.l2jserver.gameserver.model.zone.ZoneId;
 import com.l2jserver.gameserver.network.SystemMessageId;
 import com.l2jserver.gameserver.network.serverpackets.ActionFailed;
 import com.l2jserver.gameserver.network.serverpackets.NpcHtmlMessage;
+import com.l2jserver.gameserver.network.serverpackets.NpcHtmlMessage.CommonStrings;
 
 /**
  * @author NightMarez
  */
 public final class L2TeleporterInstance extends L2Npc
 {
+	
 	private static final int COND_ALL_FALSE = 0;
 	private static final int COND_BUSY_BECAUSE_OF_SIEGE = 1;
 	private static final int COND_OWNER = 2;
@@ -73,8 +75,8 @@ public final class L2TeleporterInstance extends L2Npc
 			String filename = "data/html/teleporter/epictransformed.htm";
 			
 			html.setFile(player.getHtmlPrefix(), filename);
-			html.replace("%objectId%", String.valueOf(getObjectId()));
-			html.replace("%npcname%", getName());
+			html.replace(CommonStrings.OBJECT_ID, String.valueOf(getObjectId()));
+			html.replace(CommonStrings.NPCNAME, getName());
 			player.sendPacket(html);
 			return;
 		}
@@ -189,8 +191,8 @@ public final class L2TeleporterInstance extends L2Npc
 		}
 		
 		html.setFile(player.getHtmlPrefix(), filename);
-		html.replace("%objectId%", String.valueOf(getObjectId()));
-		html.replace("%npcname%", getName());
+		html.replace(CommonStrings.OBJECT_ID, String.valueOf(getObjectId()));
+		html.replace(CommonStrings.NPCNAME, getName());
 		player.sendPacket(html);
 	}
 	
@@ -210,8 +212,8 @@ public final class L2TeleporterInstance extends L2Npc
 		}
 		
 		html.setFile(player.getHtmlPrefix(), filename);
-		html.replace("%objectId%", String.valueOf(getObjectId()));
-		html.replace("%npcname%", getName());
+		html.replace(CommonStrings.OBJECT_ID, String.valueOf(getObjectId()));
+		html.replace(CommonStrings.NPCNAME, getName());
 		player.sendPacket(html);
 	}
 	
@@ -240,8 +242,8 @@ public final class L2TeleporterInstance extends L2Npc
 		
 		final NpcHtmlMessage html = new NpcHtmlMessage(getObjectId());
 		html.setFile(player.getHtmlPrefix(), filename);
-		html.replace("%objectId%", String.valueOf(getObjectId()));
-		html.replace("%npcname%", getName());
+		html.replace(CommonStrings.OBJECT_ID, String.valueOf(getObjectId()));
+		html.replace(CommonStrings.NPCNAME, getName());
 		player.sendPacket(html);
 	}
 	
@@ -276,8 +278,8 @@ public final class L2TeleporterInstance extends L2Npc
 				String filename = "data/html/teleporter/nobleteleporter-no.htm";
 				final NpcHtmlMessage html = new NpcHtmlMessage(getObjectId());
 				html.setFile(player.getHtmlPrefix(), filename);
-				html.replace("%objectId%", String.valueOf(getObjectId()));
-				html.replace("%npcname%", getName());
+				html.replace(CommonStrings.OBJECT_ID, String.valueOf(getObjectId()));
+				html.replace(CommonStrings.NPCNAME, getName());
 				player.sendPacket(html);
 				return;
 			}

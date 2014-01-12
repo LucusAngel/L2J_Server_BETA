@@ -23,6 +23,7 @@ import com.l2jserver.gameserver.model.actor.templates.L2NpcTemplate;
 import com.l2jserver.gameserver.model.entity.clanhall.SiegableHall;
 import com.l2jserver.gameserver.network.serverpackets.ActionFailed;
 import com.l2jserver.gameserver.network.serverpackets.NpcHtmlMessage;
+import com.l2jserver.gameserver.network.serverpackets.NpcHtmlMessage.CommonStrings;
 
 /**
  * This class ...
@@ -65,8 +66,8 @@ public class L2SiegeNpcInstance extends L2NpcInstance
 		{
 			final NpcHtmlMessage html = new NpcHtmlMessage(getObjectId());
 			html.setFile(player.getHtmlPrefix(), "data/html/siege/" + getId() + "-busy.htm");
-			html.replace("%castlename%", getConquerableHall() != null ? getConquerableHall().getName() : getCastle().getName());
-			html.replace("%objectId%", String.valueOf(getObjectId()));
+			html.replace(CommonStrings.CASTLENAME, getConquerableHall() != null ? getConquerableHall().getName() : getCastle().getName());
+			html.replace(CommonStrings.OBJECT_ID, String.valueOf(getObjectId()));
 			player.sendPacket(html);
 			player.sendPacket(ActionFailed.STATIC_PACKET);
 		}

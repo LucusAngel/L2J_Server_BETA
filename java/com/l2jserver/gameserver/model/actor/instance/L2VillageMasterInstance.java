@@ -55,6 +55,7 @@ import com.l2jserver.gameserver.network.serverpackets.ExBrExtraUserInfo;
 import com.l2jserver.gameserver.network.serverpackets.MagicSkillLaunched;
 import com.l2jserver.gameserver.network.serverpackets.MagicSkillUse;
 import com.l2jserver.gameserver.network.serverpackets.NpcHtmlMessage;
+import com.l2jserver.gameserver.network.serverpackets.NpcHtmlMessage.CommonStrings;
 import com.l2jserver.gameserver.network.serverpackets.SystemMessage;
 import com.l2jserver.gameserver.network.serverpackets.UserInfo;
 import com.l2jserver.gameserver.util.Util;
@@ -675,7 +676,7 @@ public class L2VillageMasterInstance extends L2NpcInstance
 					}
 					break;
 			}
-			html.replace("%objectId%", String.valueOf(getObjectId()));
+			html.replace(CommonStrings.OBJECT_ID, String.valueOf(getObjectId()));
 			player.sendPacket(html);
 		}
 		else
