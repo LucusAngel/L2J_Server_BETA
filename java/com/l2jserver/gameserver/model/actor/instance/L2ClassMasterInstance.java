@@ -29,6 +29,7 @@ import com.l2jserver.gameserver.model.holders.ItemHolder;
 import com.l2jserver.gameserver.network.SystemMessageId;
 import com.l2jserver.gameserver.network.serverpackets.ExBrExtraUserInfo;
 import com.l2jserver.gameserver.network.serverpackets.NpcHtmlMessage;
+import com.l2jserver.gameserver.network.serverpackets.NpcHtmlMessage.CommonStrings;
 import com.l2jserver.gameserver.network.serverpackets.TutorialCloseHtml;
 import com.l2jserver.gameserver.network.serverpackets.TutorialShowHtml;
 import com.l2jserver.gameserver.network.serverpackets.TutorialShowQuestionMark;
@@ -306,8 +307,8 @@ public final class L2ClassMasterInstance extends L2MerchantInstance
 			}
 		}
 		
-		html.replace("%objectId%", String.valueOf(objectId));
-		html.replace("%req_items%", getRequiredItems(level));
+		html.replace(CommonStrings.OBJECT_ID, String.valueOf(objectId));
+		html.replace(CommonStrings.REQ_ITEMS, getRequiredItems(level));
 		player.sendPacket(html);
 	}
 	
@@ -336,7 +337,7 @@ public final class L2ClassMasterInstance extends L2MerchantInstance
 		}
 		
 		msg = msg.replaceAll("%menu%", menu.toString());
-		msg = msg.replace("%req_items%", getRequiredItems(currentClassId.level() + 1));
+		msg = msg.replace(CommonStrings.REQ_ITEMS, getRequiredItems(currentClassId.level() + 1));
 		player.sendPacket(new TutorialShowHtml(msg));
 	}
 	

@@ -25,10 +25,12 @@ import com.l2jserver.gameserver.model.entity.Castle;
 import com.l2jserver.gameserver.model.entity.Fort;
 import com.l2jserver.gameserver.network.serverpackets.ActionFailed;
 import com.l2jserver.gameserver.network.serverpackets.NpcHtmlMessage;
+import com.l2jserver.gameserver.network.serverpackets.NpcHtmlMessage.CommonStrings;
 import com.l2jserver.gameserver.util.Util;
 
 public class L2FortEnvoyInstance extends L2Npc
 {
+	
 	public L2FortEnvoyInstance(int objectID, L2NpcTemplate template)
 	{
 		super(objectID, template);
@@ -66,8 +68,8 @@ public class L2FortEnvoyInstance extends L2Npc
 		player.sendPacket(ActionFailed.STATIC_PACKET);
 		final NpcHtmlMessage html = new NpcHtmlMessage(getObjectId());
 		html.setFile(player.getHtmlPrefix(), filePath);
-		html.replace("%objectId%", String.valueOf(getObjectId()));
-		html.replace("%castleName%", String.valueOf(fortress.getCastleByAmbassador(getId()).getName()));
+		html.replace(CommonStrings.OBJECT_ID, String.valueOf(getObjectId()));
+		html.replace(CommonStrings.CASTLE_NAME, String.valueOf(fortress.getCastleByAmbassador(getId()).getName()));
 		player.sendPacket(html);
 	}
 	
@@ -94,7 +96,7 @@ public class L2FortEnvoyInstance extends L2Npc
 			
 			final NpcHtmlMessage html = new NpcHtmlMessage(getObjectId());
 			html.setFile(player.getHtmlPrefix(), filePath);
-			html.replace("%castleName%", castle.getName());
+			html.replace(CommonStrings.CASTLE_NAME, castle.getName());
 			player.sendPacket(html);
 		}
 		else

@@ -62,6 +62,25 @@ public final class NpcHtmlMessage extends AbstractHtmlPacket
 		public static final String NPC_ID = "%npcId%";
 		public static final String MP = "%mp%";
 		public static final String NPCNAME = "%npcname%";
+		public static final String REQ_ITEMS = "%req_items%";
+		public static final String RED_STONE_NEEDED = "%redStoneNeeded%";
+		public static final String GREEN_STONE_NEEDED = "%greenStoneNeeded%";
+		public static final String BLUE_STONE_NEEDED = "%blueStoneNeeded%";
+		public static final String BONUS_TABLE = "%bonusTable%";
+		public static final String STATS_TABLE = "%statsTable%";
+		public static final String MIN_FESTIVAL_PARTY_MEMBERS = "%minFestivalPartyMembers%";
+		public static final String CYCLE_MINS = "%cycleMins%";
+		public static final String FESTIVAL_TYPE = "%festivalType%";
+		public static final String CASTLE_NAME = "%castleName%";
+		public static final String SUPPLYLVL = "%supplylvl%";
+		public static final String BLOODOATH = "%bloodoath%";
+		public static final String SUPPORT2 = "%support%";
+		public static final String VAL = "%val%";
+		public static final String MIN2 = "%min2%";
+		public static final String HR2 = "%hr2%";
+		public static final String CASTLE = "%castle%";
+		public static final String MIN = "%min%";
+		public static final String HR = "%hr%";
 		
 		private CommonStrings()
 		{

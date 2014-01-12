@@ -26,6 +26,7 @@ import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.templates.L2NpcTemplate;
 import com.l2jserver.gameserver.network.serverpackets.ActionFailed;
 import com.l2jserver.gameserver.network.serverpackets.NpcHtmlMessage;
+import com.l2jserver.gameserver.network.serverpackets.NpcHtmlMessage.CommonStrings;
 import com.l2jserver.util.StringUtil;
 
 /**
@@ -34,6 +35,7 @@ import com.l2jserver.util.StringUtil;
  */
 public final class L2FestivalGuideInstance extends L2Npc
 {
+	
 	private final int _festivalType;
 	private final int _festivalOracle;
 	private final int _blueStonesNeeded;
@@ -175,30 +177,30 @@ public final class L2FestivalGuideInstance extends L2Npc
 		// Send a Server->Client NpcHtmlMessage containing the text of the L2NpcInstance to the L2PcInstance
 		final NpcHtmlMessage html = new NpcHtmlMessage(getObjectId());
 		html.setFile(player.getHtmlPrefix(), filename);
-		html.replace("%objectId%", String.valueOf(getObjectId()));
-		html.replace("%festivalType%", SevenSignsFestival.getFestivalName(_festivalType));
-		html.replace("%cycleMins%", String.valueOf(SevenSignsFestival.getInstance().getMinsToNextCycle()));
+		html.replace(CommonStrings.OBJECT_ID, String.valueOf(getObjectId()));
+		html.replace(CommonStrings.FESTIVAL_TYPE, SevenSignsFestival.getFestivalName(_festivalType));
+		html.replace(CommonStrings.CYCLE_MINS, String.valueOf(SevenSignsFestival.getInstance().getMinsToNextCycle()));
 		if (!isDescription && "2b".equals(val + suffix))
 		{
-			html.replace("%minFestivalPartyMembers%", String.valueOf(Config.ALT_FESTIVAL_MIN_PLAYER));
+			html.replace(CommonStrings.MIN_FESTIVAL_PARTY_MEMBERS, String.valueOf(Config.ALT_FESTIVAL_MIN_PLAYER));
 		}
 		
 		// If the stats or bonus table is required, construct them.
 		if (val == 5)
 		{
-			html.replace("%statsTable%", getStatsTable());
+			html.replace(CommonStrings.STATS_TABLE, getStatsTable());
 		}
 		if (val == 6)
 		{
-			html.replace("%bonusTable%", getBonusTable());
+			html.replace(CommonStrings.BONUS_TABLE, getBonusTable());
 		}
 		
 		// festival's fee
 		if (val == 1)
 		{
-			html.replace("%blueStoneNeeded%", String.valueOf(_blueStonesNeeded));
-			html.replace("%greenStoneNeeded%", String.valueOf(_greenStonesNeeded));
-			html.replace("%redStoneNeeded%", String.valueOf(_redStonesNeeded));
+			html.replace(CommonStrings.BLUE_STONE_NEEDED, String.valueOf(_blueStonesNeeded));
+			html.replace(CommonStrings.GREEN_STONE_NEEDED, String.valueOf(_greenStonesNeeded));
+			html.replace(CommonStrings.RED_STONE_NEEDED, String.valueOf(_redStonesNeeded));
 		}
 		
 		player.sendPacket(html);

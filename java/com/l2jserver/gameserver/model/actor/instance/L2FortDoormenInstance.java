@@ -24,6 +24,7 @@ import com.l2jserver.gameserver.enums.InstanceType;
 import com.l2jserver.gameserver.model.actor.templates.L2NpcTemplate;
 import com.l2jserver.gameserver.network.serverpackets.ActionFailed;
 import com.l2jserver.gameserver.network.serverpackets.NpcHtmlMessage;
+import com.l2jserver.gameserver.network.serverpackets.NpcHtmlMessage.CommonStrings;
 
 public class L2FortDoormenInstance extends L2DoormenInstance
 {
@@ -53,7 +54,7 @@ public class L2FortDoormenInstance extends L2DoormenInstance
 			getDefaultHtml(html, player);
 		}
 		
-		html.replace("%objectId%", String.valueOf(getObjectId()));
+		html.replace(CommonStrings.OBJECT_ID, String.valueOf(getObjectId()));
 		player.sendPacket(html);
 	}
 	

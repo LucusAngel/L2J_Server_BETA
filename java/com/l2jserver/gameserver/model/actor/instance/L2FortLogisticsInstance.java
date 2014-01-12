@@ -26,6 +26,7 @@ import com.l2jserver.gameserver.idfactory.IdFactory;
 import com.l2jserver.gameserver.model.actor.templates.L2NpcTemplate;
 import com.l2jserver.gameserver.network.serverpackets.ActionFailed;
 import com.l2jserver.gameserver.network.serverpackets.NpcHtmlMessage;
+import com.l2jserver.gameserver.network.serverpackets.NpcHtmlMessage.CommonStrings;
 
 /**
  * @author Vice, Zoey76
@@ -80,13 +81,13 @@ public class L2FortLogisticsInstance extends L2MerchantInstance
 			if (isMyLord(player))
 			{
 				html.setFile(player.getHtmlPrefix(), "data/html/fortress/logistics-rewards.htm");
-				html.replace("%bloodoath%", String.valueOf(player.getClan().getBloodOathCount()));
+				html.replace(CommonStrings.BLOODOATH, String.valueOf(player.getClan().getBloodOathCount()));
 			}
 			else
 			{
 				html.setFile(player.getHtmlPrefix(), "data/html/fortress/logistics-noprivs.htm");
 			}
-			html.replace("%objectId%", String.valueOf(getObjectId()));
+			html.replace(CommonStrings.OBJECT_ID, String.valueOf(getObjectId()));
 			player.sendPacket(html);
 		}
 		else if (actualCommand.equalsIgnoreCase("blood"))
@@ -109,7 +110,7 @@ public class L2FortLogisticsInstance extends L2MerchantInstance
 			{
 				html.setFile(player.getHtmlPrefix(), "data/html/fortress/logistics-noprivs.htm");
 			}
-			html.replace("%objectId%", String.valueOf(getObjectId()));
+			html.replace(CommonStrings.OBJECT_ID, String.valueOf(getObjectId()));
 			player.sendPacket(html);
 		}
 		else if (actualCommand.equalsIgnoreCase("supplylvl"))
@@ -119,7 +120,7 @@ public class L2FortLogisticsInstance extends L2MerchantInstance
 				if (player.isClanLeader())
 				{
 					html.setFile(player.getHtmlPrefix(), "data/html/fortress/logistics-supplylvl.htm");
-					html.replace("%supplylvl%", String.valueOf(getFort().getSupplyLvL()));
+					html.replace(CommonStrings.SUPPLYLVL, String.valueOf(getFort().getSupplyLvL()));
 				}
 				else
 				{
@@ -130,7 +131,7 @@ public class L2FortLogisticsInstance extends L2MerchantInstance
 			{
 				html.setFile(player.getHtmlPrefix(), "data/html/fortress/logistics-1.htm"); // TODO: Missing HTML?
 			}
-			html.replace("%objectId%", String.valueOf(getObjectId()));
+			html.replace(CommonStrings.OBJECT_ID, String.valueOf(getObjectId()));
 			player.sendPacket(html);
 		}
 		else if (actualCommand.equalsIgnoreCase("supply"))
@@ -169,7 +170,7 @@ public class L2FortLogisticsInstance extends L2MerchantInstance
 			{
 				html.setFile(player.getHtmlPrefix(), "data/html/fortress/logistics-noprivs.htm");
 			}
-			html.replace("%objectId%", String.valueOf(getObjectId()));
+			html.replace(CommonStrings.OBJECT_ID, String.valueOf(getObjectId()));
 			player.sendPacket(html);
 		}
 		else
@@ -201,15 +202,15 @@ public class L2FortLogisticsInstance extends L2MerchantInstance
 		
 		final NpcHtmlMessage html = new NpcHtmlMessage(getObjectId());
 		html.setFile(player.getHtmlPrefix(), filename);
-		html.replace("%objectId%", String.valueOf(getObjectId()));
-		html.replace("%npcId%", String.valueOf(getId()));
+		html.replace(CommonStrings.OBJECT_ID, String.valueOf(getObjectId()));
+		html.replace(CommonStrings.NPC_ID, String.valueOf(getId()));
 		if (getFort().getOwnerClan() != null)
 		{
-			html.replace("%clanname%", getFort().getOwnerClan().getName());
+			html.replace(CommonStrings.CLANNAME, getFort().getOwnerClan().getName());
 		}
 		else
 		{
-			html.replace("%clanname%", "NPC");
+			html.replace(CommonStrings.CLANNAME, "NPC");
 		}
 		player.sendPacket(html);
 	}
