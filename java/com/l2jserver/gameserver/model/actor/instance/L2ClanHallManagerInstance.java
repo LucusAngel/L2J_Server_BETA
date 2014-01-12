@@ -431,7 +431,7 @@ public class L2ClanHallManagerInstance extends L2MerchantInstance
 										if (getClanHall().getFunction(ClanHall.FUNC_RESTORE_HP).getLvl() == Integer.parseInt(val))
 										{
 											html.setFile(player.getHtmlPrefix(), "data/html/clanHallManager/functions-used.htm");
-											html.replace("%val%", String.valueOf(val) + "%");
+											html.replace(CommonStrings.VAL, String.valueOf(val) + "%");
 											sendHtmlMessage(player, html);
 											return;
 										}
@@ -513,7 +513,7 @@ public class L2ClanHallManagerInstance extends L2MerchantInstance
 										if (getClanHall().getFunction(ClanHall.FUNC_RESTORE_MP).getLvl() == Integer.parseInt(val))
 										{
 											html.setFile(player.getHtmlPrefix(), "data/html/clanHallManager/functions-used.htm");
-											html.replace("%val%", String.valueOf(val) + "%");
+											html.replace(CommonStrings.VAL, String.valueOf(val) + "%");
 											sendHtmlMessage(player, html);
 											return;
 										}
@@ -571,7 +571,7 @@ public class L2ClanHallManagerInstance extends L2MerchantInstance
 										if (getClanHall().getFunction(ClanHall.FUNC_RESTORE_EXP).getLvl() == Integer.parseInt(val))
 										{
 											html.setFile(player.getHtmlPrefix(), "data/html/clanHallManager/functions-used.htm");
-											html.replace("%val%", String.valueOf(val) + "%");
+											html.replace(CommonStrings.VAL, String.valueOf(val) + "%");
 											sendHtmlMessage(player, html);
 											return;
 										}
@@ -906,7 +906,7 @@ public class L2ClanHallManagerInstance extends L2MerchantInstance
 										if (getClanHall().getFunction(ClanHall.FUNC_ITEM_CREATE).getLvl() == Integer.parseInt(val))
 										{
 											html.setFile(player.getHtmlPrefix(), "data/html/clanHallManager/functions-used.htm");
-											html.replace("%val%", "Stage " + String.valueOf(val));
+											html.replace(CommonStrings.VAL, "Stage " + String.valueOf(val));
 											sendHtmlMessage(player, html);
 											return;
 										}
@@ -959,7 +959,7 @@ public class L2ClanHallManagerInstance extends L2MerchantInstance
 										if (getClanHall().getFunction(ClanHall.FUNC_TELEPORT).getLvl() == Integer.parseInt(val))
 										{
 											html.setFile(player.getHtmlPrefix(), "data/html/clanHallManager/functions-used.htm");
-											html.replace("%val%", "Stage " + String.valueOf(val));
+											html.replace(CommonStrings.VAL, "Stage " + String.valueOf(val));
 											sendHtmlMessage(player, html);
 											return;
 										}
@@ -1008,7 +1008,7 @@ public class L2ClanHallManagerInstance extends L2MerchantInstance
 										if (getClanHall().getFunction(ClanHall.FUNC_SUPPORT).getLvl() == Integer.parseInt(val))
 										{
 											html.setFile(player.getHtmlPrefix(), "data/html/clanHallManager/functions-used.htm");
-											html.replace("%val%", "Stage " + String.valueOf(val));
+											html.replace(CommonStrings.VAL, "Stage " + String.valueOf(val));
 											sendHtmlMessage(player, html);
 											return;
 										}
@@ -1224,7 +1224,7 @@ public class L2ClanHallManagerInstance extends L2MerchantInstance
 										if (getClanHall().getFunction(ClanHall.FUNC_DECO_CURTAINS).getLvl() == Integer.parseInt(val))
 										{
 											html.setFile(player.getHtmlPrefix(), "data/html/clanHallManager/functions-used.htm");
-											html.replace("%val%", "Stage " + String.valueOf(val));
+											html.replace(CommonStrings.VAL, "Stage " + String.valueOf(val));
 											sendHtmlMessage(player, html);
 											return;
 										}
@@ -1273,7 +1273,7 @@ public class L2ClanHallManagerInstance extends L2MerchantInstance
 										if (getClanHall().getFunction(ClanHall.FUNC_DECO_FRONTPLATEFORM).getLvl() == Integer.parseInt(val))
 										{
 											html.setFile(player.getHtmlPrefix(), "data/html/clanHallManager/functions-used.htm");
-											html.replace("%val%", "Stage " + String.valueOf(val));
+											html.replace(CommonStrings.VAL, "Stage " + String.valueOf(val));
 											sendHtmlMessage(player, html);
 											return;
 										}

@@ -67,6 +67,7 @@ import com.l2jserver.util.StringUtil;
  */
 public class L2VillageMasterInstance extends L2NpcInstance
 {
+	
 	private static Logger _log = Logger.getLogger(L2VillageMasterInstance.class.getName());
 	
 	/**
@@ -382,7 +383,7 @@ public class L2VillageMasterInstance extends L2NpcInstance
 						{
 							StringUtil.append(content1, "<a action=\"bypass -h npc_%objectId%_Subclass 4 ", String.valueOf(subClass.ordinal()), "\" msg=\"1268;", ClassListData.getInstance().getClass(subClass.ordinal()).getClassName(), "\">", ClassListData.getInstance().getClass(subClass.ordinal()).getClientCode(), "</a><br>");
 						}
-						html.replace("%list%", content1.toString());
+						html.replace(CommonStrings.LIST, content1.toString());
 					}
 					else
 					{
@@ -429,7 +430,7 @@ public class L2VillageMasterInstance extends L2NpcInstance
 						if (content2.length() > 0)
 						{
 							html.setFile(player.getHtmlPrefix(), "data/html/villagemaster/SubClass_Change.htm");
-							html.replace("%list%", content2.toString());
+							html.replace(CommonStrings.LIST, content2.toString());
 						}
 						else
 						{
@@ -457,37 +458,38 @@ public class L2VillageMasterInstance extends L2NpcInstance
 							
 							StringUtil.append(content3, "Sub-class ", String.valueOf(classIndex++), "<br>", "<a action=\"bypass -h npc_%objectId%_Subclass 6 ", String.valueOf(subClass.getClassIndex()), "\">", ClassListData.getInstance().getClass(subClass.getClassId()).getClientCode(), "</a><br>");
 						}
-						html.replace("%list%", content3.toString());
+						html.replace(CommonStrings.LIST, content3.toString());
 					}
 					else
 					{
 						// retail html contain only 3 subclasses
+						// FIXME: refactor me
 						html.setFile(player.getHtmlPrefix(), "data/html/villagemaster/SubClass_Modify.htm");
 						if (player.getSubClasses().containsKey(1))
 						{
-							html.replace("%sub1%", ClassListData.getInstance().getClass(player.getSubClasses().get(1).getClassId()).getClientCode());
+							html.replace(CommonStrings.SUB1, ClassListData.getInstance().getClass(player.getSubClasses().get(1).getClassId()).getClientCode());
 						}
 						else
 						{
-							html.replace("<a action=\"bypass -h npc_%objectId%_Subclass 6 1\">%sub1%</a><br>", "");
+							html.replace("<a action=\"bypass -h npc_%objectId%_Subclass 6 1\">" + CommonStrings.SUB1 + "</a><br>", "");
 						}
 						
 						if (player.getSubClasses().containsKey(2))
 						{
-							html.replace("%sub2%", ClassListData.getInstance().getClass(player.getSubClasses().get(2).getClassId()).getClientCode());
+							html.replace(CommonStrings.SUB2, ClassListData.getInstance().getClass(player.getSubClasses().get(2).getClassId()).getClientCode());
 						}
 						else
 						{
-							html.replace("<a action=\"bypass -h npc_%objectId%_Subclass 6 2\">%sub2%</a><br>", "");
+							html.replace("<a action=\"bypass -h npc_%objectId%_Subclass 6 2\">" + CommonStrings.SUB2 + "</a><br>", "");
 						}
 						
 						if (player.getSubClasses().containsKey(3))
 						{
-							html.replace("%sub3%", ClassListData.getInstance().getClass(player.getSubClasses().get(3).getClassId()).getClientCode());
+							html.replace(CommonStrings.SUB3, ClassListData.getInstance().getClass(player.getSubClasses().get(3).getClassId()).getClientCode());
 						}
 						else
 						{
-							html.replace("<a action=\"bypass -h npc_%objectId%_Subclass 6 3\">%sub3%</a><br>", "");
+							html.replace("<a action=\"bypass -h npc_%objectId%_Subclass 6 3\">" + CommonStrings.SUB3 + "</a><br>", "");
 						}
 					}
 					break;
@@ -634,7 +636,7 @@ public class L2VillageMasterInstance extends L2NpcInstance
 						default:
 							html.setFile(player.getHtmlPrefix(), "data/html/villagemaster/SubClass_ModifyChoice.htm");
 					}
-					html.replace("%list%", content6.toString());
+					html.replace(CommonStrings.LIST, content6.toString());
 					break;
 				case 7: // Change Subclass - Action
 					/**
@@ -660,7 +662,7 @@ public class L2VillageMasterInstance extends L2NpcInstance
 						player.setActiveClass(paramOne);
 						
 						html.setFile(player.getHtmlPrefix(), "data/html/villagemaster/SubClass_ModifyOk.htm");
-						html.replace("%name%", ClassListData.getInstance().getClass(paramTwo).getClientCode());
+						html.replace(CommonStrings.NAME, ClassListData.getInstance().getClass(paramTwo).getClientCode());
 						
 						player.sendPacket(SystemMessageId.ADD_NEW_SUBCLASS); // Subclass added.
 					}

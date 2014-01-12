@@ -958,9 +958,9 @@ public class L2Npc extends L2Character
 				
 				final NpcHtmlMessage html = new NpcHtmlMessage(getObjectId());
 				html.setFile(player.getHtmlPrefix(), "data/html/npcbusy.htm");
-				html.replace("%busymessage%", getBusyMessage());
-				html.replace("%npcname%", getName());
-				html.replace("%playername%", player.getName());
+				html.replace(CommonStrings.BUSYMESSAGE, getBusyMessage());
+				html.replace(CommonStrings.NPCNAME, getName());
+				html.replace(CommonStrings.PLAYERNAME, player.getName());
 				player.sendPacket(html);
 			}
 			else

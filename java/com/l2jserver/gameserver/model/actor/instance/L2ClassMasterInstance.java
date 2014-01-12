@@ -42,6 +42,7 @@ import com.l2jserver.util.StringUtil;
  */
 public final class L2ClassMasterInstance extends L2MerchantInstance
 {
+	
 	/**
 	 * @param objectId
 	 * @param template
@@ -92,7 +93,7 @@ public final class L2ClassMasterInstance extends L2MerchantInstance
 			{
 				final NpcHtmlMessage html = new NpcHtmlMessage(getObjectId());
 				html.setFile(player.getHtmlPrefix(), "data/html/classmaster/ok.htm");
-				html.replace("%name%", ClassListData.getInstance().getClass(val).getClientCode());
+				html.replace(CommonStrings.NAME, ClassListData.getInstance().getClass(val).getClientCode());
 				player.sendPacket(html);
 			}
 		}
@@ -283,13 +284,13 @@ public final class L2ClassMasterInstance extends L2MerchantInstance
 					if (menu.length() > 0)
 					{
 						html.setFile(player.getHtmlPrefix(), "data/html/classmaster/template.htm");
-						html.replace("%name%", ClassListData.getInstance().getClass(currentClassId).getClientCode());
-						html.replace("%menu%", menu.toString());
+						html.replace(CommonStrings.NAME, ClassListData.getInstance().getClass(currentClassId).getClientCode());
+						html.replace(CommonStrings.MENU, menu.toString());
 					}
 					else
 					{
 						html.setFile(player.getHtmlPrefix(), "data/html/classmaster/comebacklater.htm");
-						html.replace("%level%", String.valueOf(getMinLevel(level - 1)));
+						html.replace(CommonStrings.LEVEL, String.valueOf(getMinLevel(level - 1)));
 					}
 				}
 				else
@@ -297,7 +298,7 @@ public final class L2ClassMasterInstance extends L2MerchantInstance
 					if (minLevel < Integer.MAX_VALUE)
 					{
 						html.setFile(player.getHtmlPrefix(), "data/html/classmaster/comebacklater.htm");
-						html.replace("%level%", String.valueOf(minLevel));
+						html.replace(CommonStrings.LEVEL, String.valueOf(minLevel));
 					}
 					else
 					{
@@ -321,7 +322,7 @@ public final class L2ClassMasterInstance extends L2MerchantInstance
 		}
 		
 		String msg = HtmCache.getInstance().getHtm(player.getHtmlPrefix(), "data/html/classmaster/tutorialtemplate.htm");
-		msg = msg.replaceAll("%name%", ClassListData.getInstance().getClass(currentClassId).getEscapedClientCode());
+		msg = msg.replaceAll(CommonStrings.NAME, ClassListData.getInstance().getClass(currentClassId).getEscapedClientCode());
 		
 		final StringBuilder menu = new StringBuilder(100);
 		for (ClassId cid : ClassId.values())
@@ -336,7 +337,7 @@ public final class L2ClassMasterInstance extends L2MerchantInstance
 			}
 		}
 		
-		msg = msg.replaceAll("%menu%", menu.toString());
+		msg = msg.replaceAll(CommonStrings.MENU, menu.toString());
 		msg = msg.replace(CommonStrings.REQ_ITEMS, getRequiredItems(currentClassId.level() + 1));
 		player.sendPacket(new TutorialShowHtml(msg));
 	}

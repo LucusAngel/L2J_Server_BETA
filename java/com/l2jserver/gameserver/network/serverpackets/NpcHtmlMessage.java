@@ -102,6 +102,16 @@ public final class NpcHtmlMessage extends AbstractHtmlPacket
 		public static final String USE = "%use%";
 		public static final String VAL = "%val%";
 		public static final String XP_REGEN = "%xp_regen%";
+		public static final String LEVEL = "%level%";
+		public static final String MENU = "%menu%";
+		public static final String SUB3 = "%sub3%";
+		public static final String SUB2 = "%sub2%";
+		public static final String SUB1 = "%sub1%";
+		public static final String LIST = "%list%";
+		public static final String MESSAGE = "%message%";
+		public static final String HERONAME = "%heroname%";
+		public static final String BUTTNEXT = "%buttnext%";
+		public static final String BUTTPREV = "%buttprev%";
 		
 		private CommonStrings()
 		{

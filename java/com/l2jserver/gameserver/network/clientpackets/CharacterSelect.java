@@ -40,6 +40,7 @@ import com.l2jserver.gameserver.network.serverpackets.CharSelected;
 import com.l2jserver.gameserver.network.serverpackets.NpcHtmlMessage;
 import com.l2jserver.gameserver.network.serverpackets.SSQInfo;
 import com.l2jserver.gameserver.network.serverpackets.ServerClose;
+import com.l2jserver.gameserver.network.serverpackets.NpcHtmlMessage.CommonStrings;
 import com.l2jserver.gameserver.scripting.scriptengine.events.PlayerEvent;
 import com.l2jserver.gameserver.scripting.scriptengine.listeners.player.PlayerListener;
 
@@ -124,7 +125,7 @@ public class CharacterSelect extends L2GameClientPacket
 					{
 						final NpcHtmlMessage msg = new NpcHtmlMessage();
 						msg.setFile(info.getHtmlPrefix(), "data/html/mods/IPRestriction.htm");
-						msg.replace("%max%", String.valueOf(AntiFeedManager.getInstance().getLimit(client, Config.L2JMOD_DUALBOX_CHECK_MAX_PLAYERS_PER_IP)));
+						msg.replace(CommonStrings.MAX, String.valueOf(AntiFeedManager.getInstance().getLimit(client, Config.L2JMOD_DUALBOX_CHECK_MAX_PLAYERS_PER_IP)));
 						client.sendPacket(msg);
 						return;
 					}

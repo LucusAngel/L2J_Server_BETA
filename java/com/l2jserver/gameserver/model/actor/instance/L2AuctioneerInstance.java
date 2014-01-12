@@ -672,8 +672,8 @@ public final class L2AuctioneerInstance extends L2Npc
 		final NpcHtmlMessage html = new NpcHtmlMessage(getObjectId());
 		html.setFile(player.getHtmlPrefix(), filename);
 		html.replace(CommonStrings.OBJECT_ID, String.valueOf(getObjectId()));
-		html.replace("%npcId%", String.valueOf(getId()));
-		html.replace("%npcname%", getName());
+		html.replace(CommonStrings.NPC_ID, String.valueOf(getId()));
+		html.replace(CommonStrings.NPCNAME, getName());
 		player.sendPacket(html);
 	}
 	

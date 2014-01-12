@@ -1416,7 +1416,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 		else if (res.startsWith("<html>"))
 		{
 			final NpcHtmlMessage npcReply = new NpcHtmlMessage(npc != null ? npc.getObjectId() : 0, res);
-			npcReply.replace("%playername%", player.getName());
+			npcReply.replace(CommonStrings.PLAYERNAME, player.getName());
 			player.sendPacket(npcReply);
 			player.sendPacket(ActionFailed.STATIC_PACKET);
 		}

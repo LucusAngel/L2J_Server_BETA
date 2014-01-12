@@ -55,6 +55,7 @@ import com.l2jserver.gameserver.network.clientpackets.Say2;
 import com.l2jserver.gameserver.network.serverpackets.CreatureSay;
 import com.l2jserver.gameserver.network.serverpackets.MagicSkillUse;
 import com.l2jserver.gameserver.network.serverpackets.NpcHtmlMessage;
+import com.l2jserver.gameserver.network.serverpackets.NpcHtmlMessage.CommonStrings;
 import com.l2jserver.gameserver.network.serverpackets.StatusUpdate;
 import com.l2jserver.gameserver.network.serverpackets.SystemMessage;
 import com.l2jserver.gameserver.scripting.scriptengine.events.TvtKillEvent;
@@ -68,7 +69,7 @@ import com.l2jserver.util.StringUtil;
  */
 public class TvTEvent
 {
-	enum EventState
+	private enum EventState
 	{
 		INACTIVE,
 		INACTIVATING,
@@ -80,7 +81,7 @@ public class TvTEvent
 	
 	protected static final Logger _log = Logger.getLogger(TvTEvent.class.getName());
 	/** html path **/
-	private static final String htmlPath = "data/html/mods/TvTEvent/";
+	private static final String HTML_PATH = "data/html/mods/TvTEvent/";
 	/** The teams of the TvTEvent<br> */
 	private static TvTEventTeam[] _teams = new TvTEventTeam[2];
 	/** The state of the TvTEvent<br> */
@@ -419,7 +420,7 @@ public class TvTEvent
 			final NpcHtmlMessage npcHtmlMessage = new NpcHtmlMessage();
 			
 			statusUpdate.addAttribute(StatusUpdate.CUR_LOAD, playerInstance.getCurrentLoad());
-			npcHtmlMessage.setHtml(HtmCache.getInstance().getHtm(playerInstance.getHtmlPrefix(), htmlPath + "Reward.htm"));
+			npcHtmlMessage.setHtml(HtmCache.getInstance().getHtm(playerInstance.getHtmlPrefix(), HTML_PATH + "Reward.htm"));
 			playerInstance.sendPacket(statusUpdate);
 			playerInstance.sendPacket(npcHtmlMessage);
 		}
@@ -711,7 +712,7 @@ public class TvTEvent
 			
 			if (playerInstance.isCursedWeaponEquipped())
 			{
-				htmContent = HtmCache.getInstance().getHtm(playerInstance.getHtmlPrefix(), htmlPath + "CursedWeaponEquipped.htm");
+				htmContent = HtmCache.getInstance().getHtm(playerInstance.getHtmlPrefix(), HTML_PATH + "CursedWeaponEquipped.htm");
 				if (htmContent != null)
 				{
 					npcHtmlMessage.setHtml(htmContent);
@@ -719,7 +720,7 @@ public class TvTEvent
 			}
 			else if (OlympiadManager.getInstance().isRegistered(playerInstance))
 			{
-				htmContent = HtmCache.getInstance().getHtm(playerInstance.getHtmlPrefix(), htmlPath + "Olympiad.htm");
+				htmContent = HtmCache.getInstance().getHtm(playerInstance.getHtmlPrefix(), HTML_PATH + "Olympiad.htm");
 				if (htmContent != null)
 				{
 					npcHtmlMessage.setHtml(htmContent);
@@ -727,7 +728,7 @@ public class TvTEvent
 			}
 			else if (playerInstance.getKarma() > 0)
 			{
-				htmContent = HtmCache.getInstance().getHtm(playerInstance.getHtmlPrefix(), htmlPath + "Karma.htm");
+				htmContent = HtmCache.getInstance().getHtm(playerInstance.getHtmlPrefix(), HTML_PATH + "Karma.htm");
 				if (htmContent != null)
 				{
 					npcHtmlMessage.setHtml(htmContent);
@@ -735,44 +736,44 @@ public class TvTEvent
 			}
 			else if ((playerLevel < Config.TVT_EVENT_MIN_LVL) || (playerLevel > Config.TVT_EVENT_MAX_LVL))
 			{
-				htmContent = HtmCache.getInstance().getHtm(playerInstance.getHtmlPrefix(), htmlPath + "Level.htm");
+				htmContent = HtmCache.getInstance().getHtm(playerInstance.getHtmlPrefix(), HTML_PATH + "Level.htm");
 				if (htmContent != null)
 				{
 					npcHtmlMessage.setHtml(htmContent);
-					npcHtmlMessage.replace("%min%", String.valueOf(Config.TVT_EVENT_MIN_LVL));
-					npcHtmlMessage.replace("%max%", String.valueOf(Config.TVT_EVENT_MAX_LVL));
+					npcHtmlMessage.replace(CommonStrings.MIN, String.valueOf(Config.TVT_EVENT_MIN_LVL));
+					npcHtmlMessage.replace(CommonStrings.MAX, String.valueOf(Config.TVT_EVENT_MAX_LVL));
 				}
 			}
 			else if ((_teams[0].getParticipatedPlayerCount() == Config.TVT_EVENT_MAX_PLAYERS_IN_TEAMS) && (_teams[1].getParticipatedPlayerCount() == Config.TVT_EVENT_MAX_PLAYERS_IN_TEAMS))
 			{
-				htmContent = HtmCache.getInstance().getHtm(playerInstance.getHtmlPrefix(), htmlPath + "TeamsFull.htm");
+				htmContent = HtmCache.getInstance().getHtm(playerInstance.getHtmlPrefix(), HTML_PATH + "TeamsFull.htm");
 				if (htmContent != null)
 				{
 					npcHtmlMessage.setHtml(htmContent);
-					npcHtmlMessage.replace("%max%", String.valueOf(Config.TVT_EVENT_MAX_PLAYERS_IN_TEAMS));
+					npcHtmlMessage.replace(CommonStrings.MAX, String.valueOf(Config.TVT_EVENT_MAX_PLAYERS_IN_TEAMS));
 				}
 			}
 			else if ((Config.TVT_EVENT_MAX_PARTICIPANTS_PER_IP > 0) && !AntiFeedManager.getInstance().tryAddPlayer(AntiFeedManager.TVT_ID, playerInstance, Config.TVT_EVENT_MAX_PARTICIPANTS_PER_IP))
 			{
-				htmContent = HtmCache.getInstance().getHtm(playerInstance.getHtmlPrefix(), htmlPath + "IPRestriction.htm");
+				htmContent = HtmCache.getInstance().getHtm(playerInstance.getHtmlPrefix(), HTML_PATH + "IPRestriction.htm");
 				if (htmContent != null)
 				{
 					npcHtmlMessage.setHtml(htmContent);
-					npcHtmlMessage.replace("%max%", String.valueOf(AntiFeedManager.getInstance().getLimit(playerInstance, Config.TVT_EVENT_MAX_PARTICIPANTS_PER_IP)));
+					npcHtmlMessage.replace(CommonStrings.MAX, String.valueOf(AntiFeedManager.getInstance().getLimit(playerInstance, Config.TVT_EVENT_MAX_PARTICIPANTS_PER_IP)));
 				}
 			}
 			else if (needParticipationFee() && !hasParticipationFee(playerInstance))
 			{
-				htmContent = HtmCache.getInstance().getHtm(playerInstance.getHtmlPrefix(), htmlPath + "ParticipationFee.htm");
+				htmContent = HtmCache.getInstance().getHtm(playerInstance.getHtmlPrefix(), HTML_PATH + "ParticipationFee.htm");
 				if (htmContent != null)
 				{
 					npcHtmlMessage.setHtml(htmContent);
-					npcHtmlMessage.replace("%fee%", getParticipationFee());
+					npcHtmlMessage.replace(CommonStrings.FEE, getParticipationFee());
 				}
 			}
 			else if (addParticipant(playerInstance))
 			{
-				npcHtmlMessage.setHtml(HtmCache.getInstance().getHtm(playerInstance.getHtmlPrefix(), htmlPath + "Registered.htm"));
+				npcHtmlMessage.setHtml(HtmCache.getInstance().getHtm(playerInstance.getHtmlPrefix(), HTML_PATH + "Registered.htm"));
 			}
 			else
 			{
@@ -791,7 +792,7 @@ public class TvTEvent
 			
 			final NpcHtmlMessage npcHtmlMessage = new NpcHtmlMessage();
 			
-			npcHtmlMessage.setHtml(HtmCache.getInstance().getHtm(playerInstance.getHtmlPrefix(), htmlPath + "Unregistered.htm"));
+			npcHtmlMessage.setHtml(HtmCache.getInstance().getHtm(playerInstance.getHtmlPrefix(), HTML_PATH + "Unregistered.htm"));
 			playerInstance.sendPacket(npcHtmlMessage);
 		}
 	}

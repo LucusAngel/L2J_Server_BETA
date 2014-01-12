@@ -56,6 +56,7 @@ import com.l2jserver.gameserver.network.SystemMessageId;
 import com.l2jserver.gameserver.network.serverpackets.ExBrExtraUserInfo;
 import com.l2jserver.gameserver.network.serverpackets.InventoryUpdate;
 import com.l2jserver.gameserver.network.serverpackets.NpcHtmlMessage;
+import com.l2jserver.gameserver.network.serverpackets.NpcHtmlMessage.CommonStrings;
 import com.l2jserver.gameserver.network.serverpackets.SystemMessage;
 import com.l2jserver.gameserver.network.serverpackets.UserInfo;
 import com.l2jserver.util.StringUtil;
@@ -65,6 +66,7 @@ import com.l2jserver.util.StringUtil;
  */
 public class Hero
 {
+	
 	private static final Logger _log = Logger.getLogger(Hero.class.getName());
 	
 	private static final String GET_HEROES = "SELECT heroes.charId, characters.char_name, heroes.class_id, heroes.count, heroes.played FROM heroes, characters WHERE characters.charId = heroes.charId AND heroes.played = 1";
@@ -455,8 +457,8 @@ public class Hero
 			if ((htmContent != null) && _heroMessage.containsKey(charid))
 			{
 				DiaryReply.setHtml(htmContent);
-				DiaryReply.replace("%heroname%", CharNameTable.getInstance().getNameById(charid));
-				DiaryReply.replace("%message%", _heroMessage.get(charid));
+				DiaryReply.replace(CommonStrings.HERONAME, CharNameTable.getInstance().getNameById(charid));
+				DiaryReply.replace(CommonStrings.MESSAGE, _heroMessage.get(charid));
 				DiaryReply.disableValidation();
 				
 				if (!_mainlist.isEmpty())
@@ -496,31 +498,31 @@ public class Hero
 					
 					if (breakat < (_list.size() - 1))
 					{
-						DiaryReply.replace("%buttprev%", "<button value=\"Prev\" action=\"bypass _diary?class=" + heroclass + "&page=" + (page + 1) + "\" width=60 height=25 back=\"L2UI_ct1.button_df\" fore=\"L2UI_ct1.button_df\">");
+						DiaryReply.replace(CommonStrings.BUTTPREV, "<button value=\"Prev\" action=\"bypass _diary?class=" + heroclass + "&page=" + (page + 1) + "\" width=60 height=25 back=\"L2UI_ct1.button_df\" fore=\"L2UI_ct1.button_df\">");
 					}
 					else
 					{
-						DiaryReply.replace("%buttprev%", "");
+						DiaryReply.replace(CommonStrings.BUTTPREV, "");
 					}
 					
 					if (page > 1)
 					{
-						DiaryReply.replace("%buttnext%", "<button value=\"Next\" action=\"bypass _diary?class=" + heroclass + "&page=" + (page - 1) + "\" width=60 height=25 back=\"L2UI_ct1.button_df\" fore=\"L2UI_ct1.button_df\">");
+						DiaryReply.replace(CommonStrings.BUTTNEXT, "<button value=\"Next\" action=\"bypass _diary?class=" + heroclass + "&page=" + (page - 1) + "\" width=60 height=25 back=\"L2UI_ct1.button_df\" fore=\"L2UI_ct1.button_df\">");
 					}
 					else
 					{
-						DiaryReply.replace("%buttnext%", "");
+						DiaryReply.replace(CommonStrings.BUTTNEXT, "");
 					}
 					
-					DiaryReply.replace("%list%", fList.toString());
+					DiaryReply.replace(CommonStrings.LIST, fList.toString());
 					
 					FastList.recycle(_list);
 				}
 				else
 				{
-					DiaryReply.replace("%list%", "");
-					DiaryReply.replace("%buttprev%", "");
-					DiaryReply.replace("%buttnext%", "");
+					DiaryReply.replace(CommonStrings.LIST, "");
+					DiaryReply.replace(CommonStrings.BUTTPREV, "");
+					DiaryReply.replace(CommonStrings.BUTTNEXT, "");
 				}
 				
 				activeChar.sendPacket(DiaryReply);
@@ -544,7 +546,7 @@ public class Hero
 			if (htmContent != null)
 			{
 				FightReply.setHtml(htmContent);
-				FightReply.replace("%heroname%", CharNameTable.getInstance().getNameById(charid));
+				FightReply.replace(CommonStrings.HERONAME, CharNameTable.getInstance().getNameById(charid));
 				
 				if (!_list.isEmpty())
 				{
@@ -587,29 +589,29 @@ public class Hero
 					
 					if (breakat < (_list.size() - 1))
 					{
-						FightReply.replace("%buttprev%", "<button value=\"Prev\" action=\"bypass _match?class=" + heroclass + "&page=" + (page + 1) + "\" width=60 height=25 back=\"L2UI_ct1.button_df\" fore=\"L2UI_ct1.button_df\">");
+						FightReply.replace(CommonStrings.BUTTPREV, "<button value=\"Prev\" action=\"bypass _match?class=" + heroclass + "&page=" + (page + 1) + "\" width=60 height=25 back=\"L2UI_ct1.button_df\" fore=\"L2UI_ct1.button_df\">");
 					}
 					else
 					{
-						FightReply.replace("%buttprev%", "");
+						FightReply.replace(CommonStrings.BUTTPREV, "");
 					}
 					
 					if (page > 1)
 					{
-						FightReply.replace("%buttnext%", "<button value=\"Next\" action=\"bypass _match?class=" + heroclass + "&page=" + (page - 1) + "\" width=60 height=25 back=\"L2UI_ct1.button_df\" fore=\"L2UI_ct1.button_df\">");
+						FightReply.replace(CommonStrings.BUTTNEXT, "<button value=\"Next\" action=\"bypass _match?class=" + heroclass + "&page=" + (page - 1) + "\" width=60 height=25 back=\"L2UI_ct1.button_df\" fore=\"L2UI_ct1.button_df\">");
 					}
 					else
 					{
-						FightReply.replace("%buttnext%", "");
+						FightReply.replace(CommonStrings.BUTTNEXT, "");
 					}
 					
-					FightReply.replace("%list%", fList.toString());
+					FightReply.replace(CommonStrings.LIST, fList.toString());
 				}
 				else
 				{
-					FightReply.replace("%list%", "");
-					FightReply.replace("%buttprev%", "");
-					FightReply.replace("%buttnext%", "");
+					FightReply.replace(CommonStrings.LIST, "");
+					FightReply.replace(CommonStrings.BUTTPREV, "");
+					FightReply.replace(CommonStrings.BUTTNEXT, "");
 				}
 				
 				FightReply.replace("%win%", String.valueOf(_win));
