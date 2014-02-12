@@ -20,6 +20,7 @@ package com.l2jserver.gameserver.model.drops;
 
 import com.l2jserver.Config;
 import com.l2jserver.gameserver.model.actor.L2Character;
+import com.l2jserver.gameserver.model.actor.instance.L2RaidBossInstance;
 
 /**
  * @author Nos
@@ -41,6 +42,6 @@ public class GroupedDeathDropItem extends GroupedGeneralDropItem
 	@Override
 	public double getChance(L2Character victim, L2Character killer)
 	{
-		return super.getChance(victim, killer) * Config.RATE_DEATH_DROP_CHANCE_MULTIPLIER;
+		return super.getChance(victim, killer) * (victim instanceof L2RaidBossInstance ? Config.RATE_RAID_DROP_CHANCE_MULTIPLIER : Config.RATE_DEATH_DROP_CHANCE_MULTIPLIER);
 	}
 }
