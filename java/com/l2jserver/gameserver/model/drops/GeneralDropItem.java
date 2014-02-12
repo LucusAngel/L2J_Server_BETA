@@ -153,48 +153,51 @@ public class GeneralDropItem implements IDropItem
 	@Override
 	public List<ItemHolder> calculateDrops(L2Character victim, L2Character killer)
 	{
-		int levelDifference = victim.getLevel() - killer.getLevel();
-		double levelGapChanceToDrop;
-		if (getItemId() == Inventory.ADENA_ID)
+		if ((!victim.isRaid() && Config.DEEPBLUE_DROP_RULES) || (victim.isRaid() && Config.DEEPBLUE_DROP_RULES_RAID))
 		{
+			int levelDifference = victim.getLevel() - killer.getLevel();
+			double levelGapChanceToDrop;
+			if (getItemId() == Inventory.ADENA_ID)
+			{
+				
+				if (levelDifference >= -8)
+				{
+					levelGapChanceToDrop = 100;
+				}
+				else if (levelDifference >= -15)
+				{
+					levelGapChanceToDrop = levelDifference;
+					levelGapChanceToDrop *= 12.857;
+					levelGapChanceToDrop += 202.857;
+				}
+				else
+				{
+					levelGapChanceToDrop = 10;
+				}
+			}
+			else
+			{
+				if (levelDifference >= -5)
+				{
+					levelGapChanceToDrop = 100;
+				}
+				else if (levelDifference >= -10)
+				{
+					levelGapChanceToDrop = levelDifference;
+					levelGapChanceToDrop *= 18;
+					levelGapChanceToDrop += 190;
+				}
+				else
+				{
+					levelGapChanceToDrop = 10;
+				}
+			}
 			
-			if (levelDifference >= -8)
+			// There is a chance of level gap that it wont drop this item
+			if (levelGapChanceToDrop < (Rnd.nextDouble() * 100))
 			{
-				levelGapChanceToDrop = 100;
+				return null;
 			}
-			else if (levelDifference >= -15)
-			{
-				levelGapChanceToDrop = levelDifference;
-				levelGapChanceToDrop *= 12.857;
-				levelGapChanceToDrop += 202.857;
-			}
-			else
-			{
-				levelGapChanceToDrop = 10;
-			}
-		}
-		else
-		{
-			if (levelDifference >= -5)
-			{
-				levelGapChanceToDrop = 100;
-			}
-			else if (levelDifference >= -10)
-			{
-				levelGapChanceToDrop = levelDifference;
-				levelGapChanceToDrop *= 18;
-				levelGapChanceToDrop += 190;
-			}
-			else
-			{
-				levelGapChanceToDrop = 10;
-			}
-		}
-		
-		// There is a chance of level gap that it wont drop this item
-		if (levelGapChanceToDrop < (Rnd.nextDouble() * 100))
-		{
-			return null;
 		}
 		
 		if (getChance(victim, killer) > (Rnd.nextDouble() * 100))
