@@ -97,7 +97,6 @@ public class GroupedGeneralDropItem implements IDropItem
 		}
 		else
 		{
-			chanceModifier = 1;
 			
 			double levelGapChanceToDrop;
 			if (levelDifference >= -5)
@@ -135,7 +134,7 @@ public class GroupedGeneralDropItem implements IDropItem
 					int amountMultiply = 1;
 					if (Config.PRECISE_DROP_CALCULATION)
 					{
-						double totalItemChance = getChance(victim, killer) * chanceModifier * item.getChance();
+						double totalItemChance = (getChance(victim, killer) * chanceModifier * item.getChance()) / 100;
 						amountMultiply = (int) (totalItemChance) / 100;
 						if ((totalItemChance % 100) > (Rnd.nextDouble() * 100))
 						{
