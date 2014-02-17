@@ -19,7 +19,9 @@
 package com.l2jserver.gameserver.model.drops;
 
 import com.l2jserver.Config;
+import com.l2jserver.gameserver.datatables.ItemTable;
 import com.l2jserver.gameserver.model.actor.L2Character;
+import com.l2jserver.gameserver.model.actor.instance.L2RaidBossInstance;
 
 /**
  * @author Nos
@@ -44,7 +46,7 @@ public class CorpseDropItem extends GeneralDropItem
 	@Override
 	public long getMin(L2Character victim, L2Character killer)
 	{
-		return (long) (super.getMin(victim, killer) * Config.RATE_CORPSE_DROP_AMOUNT_MULTIPLIER);
+		return (long) (super.getMin(victim, killer) * (ItemTable.getInstance().getTemplate(getItemId()).hasExImmediateEffect() ? Config.RATE_HERB_DROP_AMOUNT_MULTIPLIER : (victim instanceof L2RaidBossInstance ? Config.RATE_RAID_DROP_AMOUNT_MULTIPLIER : Config.RATE_CORPSE_DROP_AMOUNT_MULTIPLIER)));
 	}
 	
 	/*
@@ -54,7 +56,7 @@ public class CorpseDropItem extends GeneralDropItem
 	@Override
 	public long getMax(L2Character victim, L2Character killer)
 	{
-		return (long) (super.getMax(victim, killer) * Config.RATE_CORPSE_DROP_AMOUNT_MULTIPLIER);
+		return (long) (super.getMax(victim, killer) * (ItemTable.getInstance().getTemplate(getItemId()).hasExImmediateEffect() ? Config.RATE_HERB_DROP_AMOUNT_MULTIPLIER : (victim instanceof L2RaidBossInstance ? Config.RATE_RAID_DROP_AMOUNT_MULTIPLIER : Config.RATE_CORPSE_DROP_AMOUNT_MULTIPLIER)));
 	}
 	
 	/*
@@ -64,6 +66,6 @@ public class CorpseDropItem extends GeneralDropItem
 	@Override
 	public double getChance(L2Character victim, L2Character killer)
 	{
-		return super.getChance(victim, killer) * Config.RATE_CORPSE_DROP_CHANCE_MULTIPLIER;
+		return super.getChance(victim, killer) * (ItemTable.getInstance().getTemplate(getItemId()).hasExImmediateEffect() ? Config.RATE_HERB_DROP_AMOUNT_MULTIPLIER : (victim instanceof L2RaidBossInstance ? Config.RATE_RAID_DROP_CHANCE_MULTIPLIER : Config.RATE_CORPSE_DROP_CHANCE_MULTIPLIER));
 	}
 }

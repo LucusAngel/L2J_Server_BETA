@@ -41,6 +41,6 @@ public class GroupedCorpseDropItem extends GroupedGeneralDropItem
 	@Override
 	public double getChance(L2Character victim, L2Character killer)
 	{
-		return super.getChance(victim, killer) * Config.RATE_CORPSE_DROP_CHANCE_MULTIPLIER;
+		return super.getChance(victim, killer) * (isHerbOnly() ? Config.RATE_HERB_DROP_AMOUNT_MULTIPLIER : Config.RATE_CORPSE_DROP_CHANCE_MULTIPLIER);
 	}
 }

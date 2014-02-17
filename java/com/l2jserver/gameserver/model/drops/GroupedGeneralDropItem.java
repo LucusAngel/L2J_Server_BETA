@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import com.l2jserver.gameserver.datatables.ItemTable;
 import com.l2jserver.gameserver.model.actor.L2Character;
 import com.l2jserver.gameserver.model.actor.instance.L2RaidBossInstance;
 import com.l2jserver.gameserver.model.holders.ItemHolder;
@@ -79,6 +80,21 @@ public class GroupedGeneralDropItem implements IDropItem
 	public void setItems(List<GeneralDropItem> items)
 	{
 		_items = Collections.unmodifiableList(items);
+	}
+	
+	/**
+	 * @return <code>true</code> if this group contains only herbs
+	 */
+	public boolean isHerbOnly()
+	{
+		for (GeneralDropItem item : getItems())
+		{
+			if (!ItemTable.getInstance().getTemplate(item.getItemId()).hasExImmediateEffect())
+			{
+				return false;
+			}
+		}
+		return true;
 	}
 	
 	/*
