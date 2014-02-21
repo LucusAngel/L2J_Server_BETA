@@ -716,7 +716,7 @@ public class L2VillageMasterInstance extends L2NpcInstance
 			return false;
 		}
 		
-		qs = player.getQuestState("235_MimirsElixir"); // FIXME: unhardcode this? needs update?
+		qs = player.getQuestState("Q00235_MimirsElixir");// FIXME: unhardcode this?
 		if ((qs == null) || !qs.isCompleted())
 		{
 			return false;
