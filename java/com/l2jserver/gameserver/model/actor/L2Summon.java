@@ -54,7 +54,7 @@ import com.l2jserver.gameserver.model.items.instance.L2ItemInstance;
 import com.l2jserver.gameserver.model.items.type.L2ActionType;
 import com.l2jserver.gameserver.model.olympiad.OlympiadGameManager;
 import com.l2jserver.gameserver.model.quest.Quest;
-import com.l2jserver.gameserver.model.skills.L2Skill;
+import com.l2jserver.gameserver.model.skills.Skill;
 import com.l2jserver.gameserver.model.skills.targets.L2TargetType;
 import com.l2jserver.gameserver.model.zone.ZoneId;
 import com.l2jserver.gameserver.network.SystemMessageId;
@@ -444,26 +444,32 @@ public abstract class L2Summon extends L2Playable
 		if (isVisible() && !isDead())
 		{
 			getAI().stopFollow();
-			owner.sendPacket(new PetDelete(getSummonType(), getObjectId()));
-			final L2Party party = owner.getParty();
-			if (party != null)
+			if (owner != null)
 			{
-				party.broadcastToPartyMembers(owner, new ExPartyPetWindowDelete(this));
-			}
-			
-			if ((getInventory() != null) && (getInventory().getSize() > 0))
-			{
-				getOwner().setPetInvItems(true);
-				sendPacket(SystemMessageId.ITEMS_IN_PET_INVENTORY);
-			}
-			else
-			{
-				getOwner().setPetInvItems(false);
+				owner.sendPacket(new PetDelete(getSummonType(), getObjectId()));
+				final L2Party party = owner.getParty();
+				if (party != null)
+				{
+					party.broadcastToPartyMembers(owner, new ExPartyPetWindowDelete(this));
+				}
+				
+				if ((getInventory() != null) && (getInventory().getSize() > 0))
+				{
+					getOwner().setPetInvItems(true);
+					sendPacket(SystemMessageId.ITEMS_IN_PET_INVENTORY);
+				}
+				else
+				{
+					getOwner().setPetInvItems(false);
+				}
 			}
 			
 			storeMe();
 			storeEffect(true);
-			owner.setPet(null);
+			if (owner != null)
+			{
+				owner.setPet(null);
+			}
 			setOwner(null);
 			
 			// Stop AI tasks
@@ -481,12 +487,15 @@ public abstract class L2Summon extends L2Playable
 			}
 			getKnownList().removeAllKnownObjects();
 			setTarget(null);
-			for (int itemId : owner.getAutoSoulShot())
+			if (owner != null)
 			{
-				String handler = ((L2EtcItem) ItemTable.getInstance().getTemplate(itemId)).getHandlerName();
-				if ((handler != null) && handler.contains("Beast"))
+				for (int itemId : owner.getAutoSoulShot())
 				{
-					owner.disableAutoShot(itemId);
+					String handler = ((L2EtcItem) ItemTable.getInstance().getTemplate(itemId)).getHandlerName();
+					if ((handler != null) && handler.contains("Beast"))
+					{
+						owner.disableAutoShot(itemId);
+					}
 				}
 			}
 		}
@@ -523,7 +532,7 @@ public abstract class L2Summon extends L2Playable
 	@Override
 	public boolean isAutoAttackable(L2Character attacker)
 	{
-		return _owner.isAutoAttackable(attacker);
+		return (_owner != null) && _owner.isAutoAttackable(attacker);
 	}
 	
 	public int getControlObjectId()
@@ -622,7 +631,7 @@ public abstract class L2Summon extends L2Playable
 	 * @param dontMove used to prevent movement, if not in range
 	 */
 	@Override
-	public boolean useMagic(L2Skill skill, boolean forceUse, boolean dontMove)
+	public boolean useMagic(Skill skill, boolean forceUse, boolean dontMove)
 	{
 		// Null skill, dead summon or null owner are reasons to prevent casting.
 		if ((skill == null) || isDead() || (getOwner() == null))
@@ -838,7 +847,7 @@ public abstract class L2Summon extends L2Playable
 	}
 	
 	@Override
-	public void reduceCurrentHp(double damage, L2Character attacker, L2Skill skill)
+	public void reduceCurrentHp(double damage, L2Character attacker, Skill skill)
 	{
 		super.reduceCurrentHp(damage, attacker, skill);
 		if ((getOwner() != null) && (attacker != null))
@@ -852,7 +861,7 @@ public abstract class L2Summon extends L2Playable
 	}
 	
 	@Override
-	public void doCast(L2Skill skill)
+	public void doCast(Skill skill)
 	{
 		final L2PcInstance actingPlayer = getActingPlayer();
 		if (!actingPlayer.checkPvpSkill(getTarget(), skill, true) && !actingPlayer.getAccessLevel().allowPeaceAttack())

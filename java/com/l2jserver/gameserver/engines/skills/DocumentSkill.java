@@ -33,15 +33,14 @@ import com.l2jserver.gameserver.engines.DocumentBase;
 import com.l2jserver.gameserver.model.StatsSet;
 import com.l2jserver.gameserver.model.conditions.Condition;
 import com.l2jserver.gameserver.model.skills.EffectScope;
-import com.l2jserver.gameserver.model.skills.L2Skill;
-import com.l2jserver.gameserver.model.skills.L2SkillType;
+import com.l2jserver.gameserver.model.skills.Skill;
 
 /**
  * @author mkizub
  */
 public class DocumentSkill extends DocumentBase
 {
-	public static class Skill
+	public static class SkillInfo
 	{
 		public int id;
 		public String name;
@@ -55,19 +54,19 @@ public class DocumentSkill extends DocumentBase
 		public StatsSet[] enchsets7;
 		public StatsSet[] enchsets8;
 		public int currentLevel;
-		public List<L2Skill> skills = new FastList<>();
-		public List<L2Skill> currentSkills = new FastList<>();
+		public List<Skill> skills = new FastList<>();
+		public List<Skill> currentSkills = new FastList<>();
 	}
 	
-	private Skill _currentSkill;
-	private final List<L2Skill> _skillsInFile = new FastList<>();
+	private SkillInfo _currentSkill;
+	private final List<Skill> _skillsInFile = new FastList<>();
 	
 	public DocumentSkill(File file)
 	{
 		super(file);
 	}
 	
-	private void setCurrentSkill(Skill skill)
+	private void setCurrentSkill(SkillInfo skill)
 	{
 		_currentSkill = skill;
 	}
@@ -78,7 +77,7 @@ public class DocumentSkill extends DocumentBase
 		return _currentSkill.sets[_currentSkill.currentLevel];
 	}
 	
-	public List<L2Skill> getSkills()
+	public List<Skill> getSkills()
 	{
 		return _skillsInFile;
 	}
@@ -122,7 +121,7 @@ public class DocumentSkill extends DocumentBase
 				{
 					if ("skill".equalsIgnoreCase(d.getNodeName()))
 					{
-						setCurrentSkill(new Skill());
+						setCurrentSkill(new SkillInfo());
 						parseSkill(d);
 						_skillsInFile.addAll(_currentSkill.skills);
 						resetTable();
@@ -131,7 +130,7 @@ public class DocumentSkill extends DocumentBase
 			}
 			else if ("skill".equalsIgnoreCase(n.getNodeName()))
 			{
-				setCurrentSkill(new Skill());
+				setCurrentSkill(new SkillInfo());
 				parseSkill(n);
 				_skillsInFile.addAll(_currentSkill.skills);
 			}
@@ -1493,121 +1492,130 @@ public class DocumentSkill extends DocumentBase
 	{
 		int count = 0;
 		_currentSkill.currentSkills = new FastList<>(_currentSkill.sets.length + _currentSkill.enchsets1.length + _currentSkill.enchsets2.length + _currentSkill.enchsets3.length + _currentSkill.enchsets4.length + _currentSkill.enchsets5.length + _currentSkill.enchsets6.length + _currentSkill.enchsets7.length + _currentSkill.enchsets8.length);
-		
+		StatsSet set;
 		for (int i = 0; i < _currentSkill.sets.length; i++)
 		{
+			set = _currentSkill.sets[i];
 			try
 			{
-				_currentSkill.currentSkills.add(i, _currentSkill.sets[i].getEnum("skillType", L2SkillType.class, L2SkillType.DUMMY).makeSkill(_currentSkill.sets[i]));
+				_currentSkill.currentSkills.add(i, new Skill(set));
 				count++;
 			}
 			catch (Exception e)
 			{
-				_log.log(Level.SEVERE, "Skill id=" + _currentSkill.sets[i].getEnum("skillType", L2SkillType.class, L2SkillType.DUMMY).makeSkill(_currentSkill.sets[i]).getDisplayId() + "level" + _currentSkill.sets[i].getEnum("skillType", L2SkillType.class, L2SkillType.DUMMY).makeSkill(_currentSkill.sets[i]).getLevel(), e);
+				_log.log(Level.SEVERE, "Skill id=" + set.getInt("skill_id") + "level" + set.getInt("level"), e);
 			}
 		}
 		int _count = count;
 		for (int i = 0; i < _currentSkill.enchsets1.length; i++)
 		{
+			set = _currentSkill.enchsets1[i];
 			try
 			{
-				_currentSkill.currentSkills.add(_count + i, _currentSkill.enchsets1[i].getEnum("skillType", L2SkillType.class, L2SkillType.DUMMY).makeSkill(_currentSkill.enchsets1[i]));
+				_currentSkill.currentSkills.add(_count + i, new Skill(set));
 				count++;
 			}
 			catch (Exception e)
 			{
-				_log.log(Level.SEVERE, "Skill id=" + _currentSkill.enchsets1[i].getEnum("skillType", L2SkillType.class, L2SkillType.DUMMY).makeSkill(_currentSkill.enchsets1[i]).getDisplayId() + " level=" + _currentSkill.enchsets1[i].getEnum("skillType", L2SkillType.class, L2SkillType.DUMMY).makeSkill(_currentSkill.enchsets1[i]).getLevel(), e);
+				_log.log(Level.SEVERE, "Skill id=" + set.getInt("skill_id") + "level" + set.getInt("level"), e);
 			}
 		}
 		_count = count;
 		for (int i = 0; i < _currentSkill.enchsets2.length; i++)
 		{
+			set = _currentSkill.enchsets2[i];
 			try
 			{
-				_currentSkill.currentSkills.add(_count + i, _currentSkill.enchsets2[i].getEnum("skillType", L2SkillType.class, L2SkillType.DUMMY).makeSkill(_currentSkill.enchsets2[i]));
+				_currentSkill.currentSkills.add(_count + i, new Skill(set));
 				count++;
 			}
 			catch (Exception e)
 			{
-				_log.log(Level.SEVERE, "Skill id=" + _currentSkill.enchsets2[i].getEnum("skillType", L2SkillType.class, L2SkillType.DUMMY).makeSkill(_currentSkill.enchsets2[i]).getDisplayId() + " level=" + _currentSkill.enchsets2[i].getEnum("skillType", L2SkillType.class, L2SkillType.DUMMY).makeSkill(_currentSkill.enchsets2[i]).getLevel(), e);
+				_log.log(Level.SEVERE, "Skill id=" + set.getInt("skill_id") + "level" + set.getInt("level"), e);
 			}
 		}
 		_count = count;
 		for (int i = 0; i < _currentSkill.enchsets3.length; i++)
 		{
+			set = _currentSkill.enchsets3[i];
 			try
 			{
-				_currentSkill.currentSkills.add(_count + i, _currentSkill.enchsets3[i].getEnum("skillType", L2SkillType.class, L2SkillType.DUMMY).makeSkill(_currentSkill.enchsets3[i]));
+				_currentSkill.currentSkills.add(_count + i, new Skill(set));
 				count++;
 			}
 			catch (Exception e)
 			{
-				_log.log(Level.SEVERE, "Skill id=" + _currentSkill.enchsets3[i].getEnum("skillType", L2SkillType.class, L2SkillType.DUMMY).makeSkill(_currentSkill.enchsets3[i]).getDisplayId() + " level=" + _currentSkill.enchsets3[i].getEnum("skillType", L2SkillType.class, L2SkillType.DUMMY).makeSkill(_currentSkill.enchsets3[i]).getLevel(), e);
+				_log.log(Level.SEVERE, "Skill id=" + set.getInt("skill_id") + "level" + set.getInt("level"), e);
 			}
 		}
 		_count = count;
 		for (int i = 0; i < _currentSkill.enchsets4.length; i++)
 		{
+			set = _currentSkill.enchsets4[i];
 			try
 			{
-				_currentSkill.currentSkills.add(_count + i, _currentSkill.enchsets4[i].getEnum("skillType", L2SkillType.class, L2SkillType.DUMMY).makeSkill(_currentSkill.enchsets4[i]));
+				_currentSkill.currentSkills.add(_count + i, new Skill(set));
 				count++;
 			}
 			catch (Exception e)
 			{
-				_log.log(Level.SEVERE, "Skill id=" + _currentSkill.enchsets4[i].getEnum("skillType", L2SkillType.class, L2SkillType.DUMMY).makeSkill(_currentSkill.enchsets4[i]).getDisplayId() + " level=" + _currentSkill.enchsets4[i].getEnum("skillType", L2SkillType.class, L2SkillType.DUMMY).makeSkill(_currentSkill.enchsets4[i]).getLevel(), e);
+				_log.log(Level.SEVERE, "Skill id=" + set.getInt("skill_id") + "level" + set.getInt("level"), e);
 			}
 		}
 		_count = count;
 		for (int i = 0; i < _currentSkill.enchsets5.length; i++)
 		{
+			set = _currentSkill.enchsets5[i];
 			try
 			{
-				_currentSkill.currentSkills.add(_count + i, _currentSkill.enchsets5[i].getEnum("skillType", L2SkillType.class, L2SkillType.DUMMY).makeSkill(_currentSkill.enchsets5[i]));
+				_currentSkill.currentSkills.add(_count + i, new Skill(set));
 				count++;
 			}
 			catch (Exception e)
 			{
-				_log.log(Level.SEVERE, "Skill id=" + _currentSkill.enchsets5[i].getEnum("skillType", L2SkillType.class, L2SkillType.DUMMY).makeSkill(_currentSkill.enchsets5[i]).getDisplayId() + " level=" + _currentSkill.enchsets5[i].getEnum("skillType", L2SkillType.class, L2SkillType.DUMMY).makeSkill(_currentSkill.enchsets5[i]).getLevel(), e);
+				_log.log(Level.SEVERE, "Skill id=" + set.getInt("skill_id") + "level" + set.getInt("level"), e);
 			}
 		}
 		_count = count;
 		for (int i = 0; i < _currentSkill.enchsets6.length; i++)
 		{
+			set = _currentSkill.enchsets6[i];
 			try
 			{
-				_currentSkill.currentSkills.add(_count + i, _currentSkill.enchsets6[i].getEnum("skillType", L2SkillType.class, L2SkillType.DUMMY).makeSkill(_currentSkill.enchsets6[i]));
+				_currentSkill.currentSkills.add(_count + i, new Skill(set));
 				count++;
 			}
 			catch (Exception e)
 			{
-				_log.log(Level.SEVERE, "Skill id=" + _currentSkill.enchsets6[i].getEnum("skillType", L2SkillType.class, L2SkillType.DUMMY).makeSkill(_currentSkill.enchsets6[i]).getDisplayId() + " level=" + _currentSkill.enchsets6[i].getEnum("skillType", L2SkillType.class, L2SkillType.DUMMY).makeSkill(_currentSkill.enchsets6[i]).getLevel(), e);
+				_log.log(Level.SEVERE, "Skill id=" + set.getInt("skill_id") + "level" + set.getInt("level"), e);
 			}
 		}
 		_count = count;
 		for (int i = 0; i < _currentSkill.enchsets7.length; i++)
 		{
+			set = _currentSkill.enchsets7[i];
 			try
 			{
-				_currentSkill.currentSkills.add(_count + i, _currentSkill.enchsets7[i].getEnum("skillType", L2SkillType.class, L2SkillType.DUMMY).makeSkill(_currentSkill.enchsets7[i]));
+				_currentSkill.currentSkills.add(_count + i, new Skill(set));
 				count++;
 			}
 			catch (Exception e)
 			{
-				_log.log(Level.SEVERE, "Skill id=" + _currentSkill.enchsets7[i].getEnum("skillType", L2SkillType.class, L2SkillType.DUMMY).makeSkill(_currentSkill.enchsets7[i]).getDisplayId() + " level=" + _currentSkill.enchsets7[i].getEnum("skillType", L2SkillType.class, L2SkillType.DUMMY).makeSkill(_currentSkill.enchsets7[i]).getLevel(), e);
+				_log.log(Level.SEVERE, "Skill id=" + set.getInt("skill_id") + "level" + set.getInt("level"), e);
 			}
 		}
 		_count = count;
 		for (int i = 0; i < _currentSkill.enchsets8.length; i++)
 		{
+			set = _currentSkill.enchsets8[i];
 			try
 			{
-				_currentSkill.currentSkills.add(_count + i, _currentSkill.enchsets8[i].getEnum("skillType", L2SkillType.class, L2SkillType.DUMMY).makeSkill(_currentSkill.enchsets8[i]));
+				_currentSkill.currentSkills.add(_count + i, new Skill(set));
 				count++;
 			}
 			catch (Exception e)
 			{
-				_log.log(Level.SEVERE, "Skill id=" + _currentSkill.enchsets8[i].getEnum("skillType", L2SkillType.class, L2SkillType.DUMMY).makeSkill(_currentSkill.enchsets8[i]).getDisplayId() + " level=" + _currentSkill.enchsets8[i].getEnum("skillType", L2SkillType.class, L2SkillType.DUMMY).makeSkill(_currentSkill.enchsets8[i]).getLevel(), e);
+				_log.log(Level.SEVERE, "Skill id=" + set.getInt("skill_id") + "level" + set.getInt("level"), e);
 			}
 		}
 	}
