@@ -18,7 +18,10 @@
  */
 package com.l2jserver.gameserver.datatables;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -28,19 +31,16 @@ import com.l2jserver.gameserver.engines.DocumentEngine;
 import com.l2jserver.gameserver.model.holders.SkillHolder;
 import com.l2jserver.gameserver.model.skills.Skill;
 
-import gnu.trove.list.array.TIntArrayList;
-import gnu.trove.map.hash.TIntIntHashMap;
-
 /**
- * Skill table.
+ * Skill data.
  */
 public final class SkillData
 {
 	private static Logger _log = Logger.getLogger(SkillData.class.getName());
 	
 	private final Map<Integer, Skill> _skills = new HashMap<>();
-	private final TIntIntHashMap _skillMaxLevel = new TIntIntHashMap();
-	private final TIntArrayList _enchantable = new TIntArrayList();
+	private final Map<Integer, Integer> _skillMaxLevel = new HashMap<>();
+	private final List<Integer> _enchantable = new ArrayList<>();
 	
 	protected SkillData()
 	{
@@ -74,15 +74,15 @@ public final class SkillData
 			}
 			
 			// only non-enchanted skills
-			final int maxLvl = _skillMaxLevel.get(skillId);
-			if (skillLvl > maxLvl)
+			final int maxLvl = getMaxLevel(skillId);
+			if ((maxLvl > 0) || (skillLvl > maxLvl))
 			{
 				_skillMaxLevel.put(skillId, skillLvl);
 			}
 		}
 		
-		// Sorting for binarySearch
-		_enchantable.sort();
+		// Sorting for binary-search.
+		Collections.sort(_enchantable);
 	}
 	
 	/**
@@ -115,7 +115,7 @@ public final class SkillData
 		}
 		
 		// skill/level not found, fix for transformation scripts
-		final int maxLvl = _skillMaxLevel.get(skillId);
+		final int maxLvl = getMaxLevel(skillId);
 		// requested level too high
 		if ((maxLvl > 0) && (level > maxLvl))
 		{
@@ -132,12 +132,18 @@ public final class SkillData
 	
 	public int getMaxLevel(int skillId)
 	{
-		return _skillMaxLevel.get(skillId);
+		final Integer maxLevel = _skillMaxLevel.get(skillId);
+		return maxLevel != null ? maxLevel : 0;
 	}
 	
+	/**
+	 * Verifies if the given skill ID correspond to an enchantable skill.
+	 * @param skillId the skill ID
+	 * @return {@code true} if the skill is enchantable, {@code false} otherwise
+	 */
 	public boolean isEnchantable(int skillId)
 	{
-		return _enchantable.binarySearch(skillId) >= 0;
+		return Collections.binarySearch(_enchantable, skillId) >= 0;
 	}
 	
 	/**
