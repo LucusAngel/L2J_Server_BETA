@@ -301,15 +301,6 @@ public final class RequestAcquireSkill extends L2GameClientPacket
 					return;
 				}
 				
-				// Certification Skills - Exploit fix
-				if ((prevSkillLevel == -1) && (_level > 1))
-				{
-					// The previous level skill has not been learned.
-					activeChar.sendPacket(SystemMessageId.PREVIOUS_LEVEL_SKILL_NOT_LEARNED);
-					Util.handleIllegalPlayerAction(activeChar, "Player " + activeChar.getName() + " is requesting skill Id: " + _id + " level " + _level + " without knowing it's previous level!", IllegalActionPunishmentType.NONE);
-					return;
-				}
-				
 				QuestState st = activeChar.getQuestState("SubClassSkills");
 				if (st == null)
 				{
@@ -383,31 +374,6 @@ public final class RequestAcquireSkill extends L2GameClientPacket
 				_log.warning("Recived Wrong Packet Data in Aquired Skill, unknown skill type:" + _skillType);
 				break;
 			}
-		}
-	}
-	
-	public static void showSUbUnitSkillList(L2PcInstance activeChar)
-	{
-		final List<L2SkillLearn> skills = SkillTreesData.getInstance().getAvailableSubPledgeSkills(activeChar.getClan());
-		final AcquireSkillList asl = new AcquireSkillList(AcquireSkillType.SUBPLEDGE);
-		int count = 0;
-		
-		for (L2SkillLearn s : skills)
-		{
-			if (SkillTable.getInstance().getInfo(s.getSkillId(), s.getSkillLevel()) != null)
-			{
-				asl.addSkill(s.getSkillId(), s.getSkillLevel(), s.getSkillLevel(), s.getLevelUpSp(), 0);
-				++count;
-			}
-		}
-		
-		if (count == 0)
-		{
-			activeChar.sendPacket(SystemMessageId.NO_MORE_SKILLS_TO_LEARN);
-		}
-		else
-		{
-			activeChar.sendPacket(asl);
 		}
 	}
 	
