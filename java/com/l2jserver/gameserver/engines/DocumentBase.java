@@ -1137,8 +1137,9 @@ public abstract class DocumentBase
 					cond = joinAnd(cond, new ConditionTargetInvSize(size));
 					break;
 				}
+				}
 			}
-		}
+		
 		
 		if (cond == null)
 		{
