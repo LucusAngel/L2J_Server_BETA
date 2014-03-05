@@ -46,7 +46,8 @@ import com.l2jserver.gameserver.model.holders.ItemHolder;
 import com.l2jserver.gameserver.model.holders.PlayerSkillHolder;
 import com.l2jserver.gameserver.model.holders.SkillHolder;
 import com.l2jserver.gameserver.model.interfaces.ISkillsHolder;
-import com.l2jserver.gameserver.model.skills.L2Skill;
+import com.l2jserver.gameserver.model.skills.CommonSkill;
+import com.l2jserver.gameserver.model.skills.Skill;
 
 import gnu.trove.map.hash.TIntObjectHashMap;
 
@@ -221,7 +222,7 @@ public final class SkillTreesData extends DocumentParser
 									}
 								}
 								
-								final int skillHashCode = SkillTable.getSkillHashCode(skillLearn.getSkillId(), skillLearn.getSkillLevel());
+								final int skillHashCode = SkillData.getSkillHashCode(skillLearn.getSkillId(), skillLearn.getSkillLevel());
 								switch (type)
 								{
 									case "classSkillTree":
@@ -422,13 +423,13 @@ public final class SkillTreesData extends DocumentParser
 	 * Gets the noble skill tree.
 	 * @return the complete Noble Skill Tree
 	 */
-	public Map<Integer, L2Skill> getNobleSkillTree()
+	public Map<Integer, Skill> getNobleSkillTree()
 	{
-		final Map<Integer, L2Skill> tree = new HashMap<>();
-		final SkillTable st = SkillTable.getInstance();
+		final Map<Integer, Skill> tree = new HashMap<>();
+		final SkillData st = SkillData.getInstance();
 		for (Entry<Integer, L2SkillLearn> e : _nobleSkillTree.entrySet())
 		{
-			tree.put(e.getKey(), st.getInfo(e.getValue().getSkillId(), e.getValue().getSkillLevel()));
+			tree.put(e.getKey(), st.getSkill(e.getValue().getSkillId(), e.getValue().getSkillLevel()));
 		}
 		return tree;
 	}
@@ -437,13 +438,13 @@ public final class SkillTreesData extends DocumentParser
 	 * Gets the hero skill tree.
 	 * @return the complete Hero Skill Tree
 	 */
-	public Map<Integer, L2Skill> getHeroSkillTree()
+	public Map<Integer, Skill> getHeroSkillTree()
 	{
-		final Map<Integer, L2Skill> tree = new HashMap<>();
-		final SkillTable st = SkillTable.getInstance();
+		final Map<Integer, Skill> tree = new HashMap<>();
+		final SkillData st = SkillData.getInstance();
 		for (Entry<Integer, L2SkillLearn> e : _heroSkillTree.entrySet())
 		{
-			tree.put(e.getKey(), st.getInfo(e.getValue().getSkillId(), e.getValue().getSkillLevel()));
+			tree.put(e.getKey(), st.getSkill(e.getValue().getSkillId(), e.getValue().getSkillLevel()));
 		}
 		return tree;
 	}
@@ -452,13 +453,13 @@ public final class SkillTreesData extends DocumentParser
 	 * Gets the Game Master skill tree.
 	 * @return the complete Game Master Skill Tree
 	 */
-	public Map<Integer, L2Skill> getGMSkillTree()
+	public Map<Integer, Skill> getGMSkillTree()
 	{
-		final Map<Integer, L2Skill> tree = new HashMap<>();
-		final SkillTable st = SkillTable.getInstance();
+		final Map<Integer, Skill> tree = new HashMap<>();
+		final SkillData st = SkillData.getInstance();
 		for (Entry<Integer, L2SkillLearn> e : _gameMasterSkillTree.entrySet())
 		{
-			tree.put(e.getKey(), st.getInfo(e.getValue().getSkillId(), e.getValue().getSkillLevel()));
+			tree.put(e.getKey(), st.getSkill(e.getValue().getSkillId(), e.getValue().getSkillLevel()));
 		}
 		return tree;
 	}
@@ -467,13 +468,13 @@ public final class SkillTreesData extends DocumentParser
 	 * Gets the Game Master Aura skill tree.
 	 * @return the complete Game Master Aura Skill Tree
 	 */
-	public Map<Integer, L2Skill> getGMAuraSkillTree()
+	public Map<Integer, Skill> getGMAuraSkillTree()
 	{
-		final Map<Integer, L2Skill> tree = new HashMap<>();
-		final SkillTable st = SkillTable.getInstance();
+		final Map<Integer, Skill> tree = new HashMap<>();
+		final SkillData st = SkillData.getInstance();
 		for (Entry<Integer, L2SkillLearn> e : _gameMasterAuraSkillTree.entrySet())
 		{
-			tree.put(e.getKey(), st.getInfo(e.getValue().getSkillId(), e.getValue().getSkillLevel()));
+			tree.put(e.getKey(), st.getSkill(e.getValue().getSkillId(), e.getValue().getSkillLevel()));
 		}
 		return tree;
 	}
@@ -515,7 +516,7 @@ public final class SkillTreesData extends DocumentParser
 		{
 			if (((includeAutoGet && skill.isAutoGet()) || skill.isLearnedByNpc() || (includeByFs && skill.isLearnedByFS())) && (player.getLevel() >= skill.getGetLevel()))
 			{
-				final L2Skill oldSkill = holder.getKnownSkill(skill.getSkillId());
+				final Skill oldSkill = holder.getKnownSkill(skill.getSkillId());
 				if (oldSkill != null)
 				{
 					if (oldSkill.getLevel() == (skill.getSkillLevel() - 1))
@@ -532,7 +533,7 @@ public final class SkillTreesData extends DocumentParser
 		return result;
 	}
 	
-	public Collection<L2Skill> getAllAvailableSkills(L2PcInstance player, ClassId classId, boolean includeByFs, boolean includeAutoGet)
+	public Collection<Skill> getAllAvailableSkills(L2PcInstance player, ClassId classId, boolean includeByFs, boolean includeAutoGet)
 	{
 		// Get available skills
 		int unLearnable = 0;
@@ -542,8 +543,8 @@ public final class SkillTreesData extends DocumentParser
 		{
 			for (L2SkillLearn s : learnable)
 			{
-				L2Skill sk = SkillTable.getInstance().getInfo(s.getSkillId(), s.getSkillLevel());
-				if ((sk == null) || ((sk.getId() == L2Skill.SKILL_DIVINE_INSPIRATION) && !Config.AUTO_LEARN_DIVINE_INSPIRATION && !player.isGM()))
+				Skill sk = SkillData.getInstance().getSkill(s.getSkillId(), s.getSkillLevel());
+				if ((sk == null) || ((sk.getId() == CommonSkill.DIVINE_INSPIRATION.getId()) && !Config.AUTO_LEARN_DIVINE_INSPIRATION && !player.isGM()))
 				{
 					unLearnable++;
 					continue;
@@ -584,7 +585,7 @@ public final class SkillTreesData extends DocumentParser
 			
 			if (skill.isAutoGet() && (player.getLevel() >= skill.getGetLevel()))
 			{
-				final L2Skill oldSkill = player.getSkills().get(skill.getSkillId());
+				final Skill oldSkill = player.getSkills().get(skill.getSkillId());
 				if (oldSkill != null)
 				{
 					if (oldSkill.getLevel() < skill.getSkillLevel())
@@ -620,7 +621,7 @@ public final class SkillTreesData extends DocumentParser
 			
 			if (skill.isLearnedByNpc() && (player.getLevel() >= skill.getGetLevel()))
 			{
-				final L2Skill oldSkill = player.getSkills().get(skill.getSkillId());
+				final Skill oldSkill = player.getSkills().get(skill.getSkillId());
 				if (oldSkill != null)
 				{
 					if (oldSkill.getLevel() == (skill.getSkillLevel() - 1))
@@ -647,7 +648,7 @@ public final class SkillTreesData extends DocumentParser
 		final List<L2SkillLearn> result = new ArrayList<>();
 		for (L2SkillLearn skill : _collectSkillTree.values())
 		{
-			final L2Skill oldSkill = player.getSkills().get(skill.getSkillId());
+			final Skill oldSkill = player.getSkills().get(skill.getSkillId());
 			if (oldSkill != null)
 			{
 				if (oldSkill.getLevel() == (skill.getSkillLevel() - 1))
@@ -707,7 +708,7 @@ public final class SkillTreesData extends DocumentParser
 		{
 			if ((player.getLevel() >= skill.getGetLevel()) && (skill.getRaces().isEmpty() || skill.getRaces().contains(race)))
 			{
-				final L2Skill oldSkill = player.getSkills().get(skill.getSkillId());
+				final Skill oldSkill = player.getSkills().get(skill.getSkillId());
 				if (oldSkill != null)
 				{
 					if (oldSkill.getLevel() == (skill.getSkillLevel() - 1))
@@ -736,7 +737,7 @@ public final class SkillTreesData extends DocumentParser
 		{
 			if (!skill.isResidencialSkill() && (clan.getLevel() >= skill.getGetLevel()))
 			{
-				final L2Skill oldSkill = clan.getSkills().get(skill.getSkillId());
+				final Skill oldSkill = clan.getSkills().get(skill.getSkillId());
 				if (oldSkill != null)
 				{
 					if (oldSkill.getLevel() == (skill.getSkillLevel() - 1))
@@ -789,7 +790,7 @@ public final class SkillTreesData extends DocumentParser
 					subClassConds = skill.getSubClassConditions();
 					if (!subClassConds.isEmpty() && (subClass.getClassIndex() <= subClassConds.size()) && (subClass.getClassIndex() == subClassConds.get(subClass.getClassIndex() - 1).getSlot()) && (subClassConds.get(subClass.getClassIndex() - 1).getLvl() <= subClass.getLevel()))
 					{
-						final L2Skill oldSkill = player.getSkills().get(skill.getSkillId());
+						final Skill oldSkill = player.getSkills().get(skill.getSkillId());
 						if (oldSkill != null)
 						{
 							if (oldSkill.getLevel() == (skill.getSkillLevel() - 1))
@@ -875,7 +876,7 @@ public final class SkillTreesData extends DocumentParser
 	 */
 	public L2SkillLearn getTransformSkill(int id, int lvl)
 	{
-		return _transformSkillTree.get(SkillTable.getSkillHashCode(id, lvl));
+		return _transformSkillTree.get(SkillData.getSkillHashCode(id, lvl));
 	}
 	
 	/**
@@ -887,7 +888,7 @@ public final class SkillTreesData extends DocumentParser
 	 */
 	public L2SkillLearn getClassSkill(int id, int lvl, ClassId classId)
 	{
-		return getCompleteClassSkillTree(classId).get(SkillTable.getSkillHashCode(id, lvl));
+		return getCompleteClassSkillTree(classId).get(SkillData.getSkillHashCode(id, lvl));
 	}
 	
 	/**
@@ -898,7 +899,7 @@ public final class SkillTreesData extends DocumentParser
 	 */
 	public L2SkillLearn getFishingSkill(int id, int lvl)
 	{
-		return _fishingSkillTree.get(SkillTable.getSkillHashCode(id, lvl));
+		return _fishingSkillTree.get(SkillData.getSkillHashCode(id, lvl));
 	}
 	
 	/**
@@ -909,7 +910,7 @@ public final class SkillTreesData extends DocumentParser
 	 */
 	public L2SkillLearn getPledgeSkill(int id, int lvl)
 	{
-		return _pledgeSkillTree.get(SkillTable.getSkillHashCode(id, lvl));
+		return _pledgeSkillTree.get(SkillData.getSkillHashCode(id, lvl));
 	}
 	
 	/**
@@ -920,7 +921,7 @@ public final class SkillTreesData extends DocumentParser
 	 */
 	public L2SkillLearn getSubPledgeSkill(int id, int lvl)
 	{
-		return _subPledgeSkillTree.get(SkillTable.getSkillHashCode(id, lvl));
+		return _subPledgeSkillTree.get(SkillData.getSkillHashCode(id, lvl));
 	}
 	
 	/**
@@ -937,7 +938,7 @@ public final class SkillTreesData extends DocumentParser
 			final ClassId parentId = classId.getParent();
 			if (_transferSkillTrees.get(parentId) != null)
 			{
-				return _transferSkillTrees.get(parentId).get(SkillTable.getSkillHashCode(id, lvl));
+				return _transferSkillTrees.get(parentId).get(SkillData.getSkillHashCode(id, lvl));
 			}
 		}
 		return null;
@@ -951,7 +952,7 @@ public final class SkillTreesData extends DocumentParser
 	 */
 	public L2SkillLearn getSubClassSkill(int id, int lvl)
 	{
-		return _subClassSkillTree.get(SkillTable.getSkillHashCode(id, lvl));
+		return _subClassSkillTree.get(SkillData.getSkillHashCode(id, lvl));
 	}
 	
 	/**
@@ -962,7 +963,7 @@ public final class SkillTreesData extends DocumentParser
 	 */
 	public L2SkillLearn getCommonSkill(int id, int lvl)
 	{
-		return _commonSkillTree.get(SkillTable.getSkillHashCode(id, lvl));
+		return _commonSkillTree.get(SkillData.getSkillHashCode(id, lvl));
 	}
 	
 	/**
@@ -973,7 +974,7 @@ public final class SkillTreesData extends DocumentParser
 	 */
 	public L2SkillLearn getCollectSkill(int id, int lvl)
 	{
-		return _collectSkillTree.get(SkillTable.getSkillHashCode(id, lvl));
+		return _collectSkillTree.get(SkillData.getSkillHashCode(id, lvl));
 	}
 	
 	/**
@@ -1013,7 +1014,7 @@ public final class SkillTreesData extends DocumentParser
 	 */
 	public boolean isHeroSkill(int skillId, int skillLevel)
 	{
-		if (_heroSkillTree.containsKey(SkillTable.getSkillHashCode(skillId, skillLevel)))
+		if (_heroSkillTree.containsKey(SkillData.getSkillHashCode(skillId, skillLevel)))
 		{
 			return true;
 		}
@@ -1039,7 +1040,7 @@ public final class SkillTreesData extends DocumentParser
 		final Map<Integer, L2SkillLearn> gmSkills = new HashMap<>();
 		gmSkills.putAll(_gameMasterSkillTree);
 		gmSkills.putAll(_gameMasterAuraSkillTree);
-		if (gmSkills.containsKey(SkillTable.getSkillHashCode(skillId, skillLevel)))
+		if (gmSkills.containsKey(SkillData.getSkillHashCode(skillId, skillLevel)))
 		{
 			return true;
 		}
@@ -1062,7 +1063,7 @@ public final class SkillTreesData extends DocumentParser
 	 */
 	public boolean isClanSkill(int skillId, int skillLevel)
 	{
-		final int hashCode = SkillTable.getSkillHashCode(skillId, skillId);
+		final int hashCode = SkillData.getSkillHashCode(skillId, skillId);
 		return _pledgeSkillTree.containsKey(hashCode) || _subPledgeSkillTree.containsKey(hashCode);
 	}
 	
@@ -1074,10 +1075,10 @@ public final class SkillTreesData extends DocumentParser
 	public void addSkills(L2PcInstance gmchar, boolean auraSkills)
 	{
 		final Collection<L2SkillLearn> skills = auraSkills ? _gameMasterAuraSkillTree.values() : _gameMasterSkillTree.values();
-		final SkillTable st = SkillTable.getInstance();
+		final SkillData st = SkillData.getInstance();
 		for (L2SkillLearn sl : skills)
 		{
-			gmchar.addSkill(st.getInfo(sl.getSkillId(), sl.getSkillLevel()), false); // Don't Save GM skills to database
+			gmchar.addSkill(st.getSkill(sl.getSkillId(), sl.getSkillLevel()), false); // Don't Save GM skills to database
 		}
 	}
 	
@@ -1116,7 +1117,7 @@ public final class SkillTreesData extends DocumentParser
 			{
 				if (s.getRaces().contains(r))
 				{
-					list.add(SkillTable.getSkillHashCode(s.getSkillId(), s.getSkillLevel()));
+					list.add(SkillData.getSkillHashCode(s.getSkillId(), s.getSkillLevel()));
 				}
 			}
 			
@@ -1124,7 +1125,7 @@ public final class SkillTreesData extends DocumentParser
 			{
 				if (s.getRaces().contains(r))
 				{
-					list.add(SkillTable.getSkillHashCode(s.getSkillId(), s.getSkillLevel()));
+					list.add(SkillData.getSkillHashCode(s.getSkillId(), s.getSkillLevel()));
 				}
 			}
 			
@@ -1144,7 +1145,7 @@ public final class SkillTreesData extends DocumentParser
 		{
 			if (s.getRaces().isEmpty())
 			{
-				list.add(SkillTable.getSkillHashCode(s.getSkillId(), s.getSkillLevel()));
+				list.add(SkillData.getSkillHashCode(s.getSkillId(), s.getSkillLevel()));
 			}
 		}
 		
@@ -1152,7 +1153,7 @@ public final class SkillTreesData extends DocumentParser
 		{
 			if (s.getRaces().isEmpty())
 			{
-				list.add(SkillTable.getSkillHashCode(s.getSkillId(), s.getSkillLevel()));
+				list.add(SkillData.getSkillHashCode(s.getSkillId(), s.getSkillLevel()));
 			}
 		}
 		
@@ -1160,13 +1161,13 @@ public final class SkillTreesData extends DocumentParser
 		{
 			if (s.getRaces().isEmpty())
 			{
-				list.add(SkillTable.getSkillHashCode(s.getSkillId(), s.getSkillLevel()));
+				list.add(SkillData.getSkillHashCode(s.getSkillId(), s.getSkillLevel()));
 			}
 		}
 		
 		for (L2SkillLearn s : _collectSkillTree.values())
 		{
-			list.add(SkillTable.getSkillHashCode(s.getSkillId(), s.getSkillLevel()));
+			list.add(SkillData.getSkillHashCode(s.getSkillId(), s.getSkillLevel()));
 		}
 		
 		_allSkillsHashCodes = new int[list.size()];
@@ -1185,7 +1186,7 @@ public final class SkillTreesData extends DocumentParser
 	 * @param skill the skill to be verified
 	 * @return {@code true} if the skill is allowed to the given player
 	 */
-	public boolean isSkillAllowed(L2PcInstance player, L2Skill skill)
+	public boolean isSkillAllowed(L2PcInstance player, Skill skill)
 	{
 		if (skill.isExcludedFromCheck())
 		{
@@ -1203,8 +1204,8 @@ public final class SkillTreesData extends DocumentParser
 			return true;
 		}
 		
-		final int maxLvl = SkillTable.getInstance().getMaxLevel(skill.getId());
-		final int hashCode = SkillTable.getSkillHashCode(skill.getId(), Math.min(skill.getLevel(), maxLvl));
+		final int maxLvl = SkillData.getInstance().getMaxLevel(skill.getId());
+		final int hashCode = SkillData.getSkillHashCode(skill.getId(), Math.min(skill.getLevel(), maxLvl));
 		
 		if (Arrays.binarySearch(_skillsByClassIdHashCodes.get(player.getClassId().ordinal()), hashCode) >= 0)
 		{

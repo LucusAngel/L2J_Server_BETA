@@ -39,7 +39,8 @@ import com.l2jserver.gameserver.model.stats.Env;
 /**
  * Abstract effect implementation.<br>
  * Instant effects should not override {@link #onExit(BuffInfo)}.<br>
- * Instant effects should not override {@link #canStart(BuffInfo)}, all checks should be done {@link #onStart(BuffInfo)}. Do not call super class methods {@link #onStart(BuffInfo)} nor {@link #onExit(BuffInfo)}.<br>
+ * Instant effects should not override {@link #canStart(BuffInfo)}, all checks should be done {@link #onStart(BuffInfo)}.<br>
+ * Do not call super class methods {@link #onStart(BuffInfo)} nor {@link #onExit(BuffInfo)}.
  * @since <a href="http://trac.l2jserver.com/changeset/6249">Changeset 6249</a> the "effect steal constructor" is deprecated.
  * @author Zoey76
  */
@@ -48,9 +49,12 @@ public abstract class AbstractEffect implements IChanceSkillTrigger
 	protected static final Logger _log = Logger.getLogger(AbstractEffect.class.getName());
 	
 	// Conditions
+	/** Attach condition. */
 	private final Condition _attachCond;
+	// Apply condition
 	// private final Condition _applyCond; // TODO: Use or cleanup.
 	private List<FuncTemplate> _funcTemplates;
+	/** Effect class name. */
 	private final String _name;
 	private final double _val;
 	/** Ticks. */
@@ -58,14 +62,13 @@ public abstract class AbstractEffect implements IChanceSkillTrigger
 	private final int _triggeredId;
 	private final int _triggeredLevel;
 	private final ChanceCondition _chanceCondition;
-	private final StatsSet _parameters;
 	
 	/**
 	 * Abstract effect constructor.
-	 * @param attachCond
-	 * @param applyCond
-	 * @param set
-	 * @param params
+	 * @param attachCond the attach condition
+	 * @param applyCond the apply condition
+	 * @param set the attributes
+	 * @param params the parameters
 	 */
 	protected AbstractEffect(Condition attachCond, Condition applyCond, StatsSet set, StatsSet params)
 	{
@@ -77,9 +80,16 @@ public abstract class AbstractEffect implements IChanceSkillTrigger
 		_triggeredId = set.getInt("triggeredId", 0);
 		_triggeredLevel = set.getInt("triggeredLevel", 1);
 		_chanceCondition = ChanceCondition.parse(set.getString("chanceType", null), set.getInt("activationChance", -1), set.getInt("activationMinDamage", -1), set.getString("activationElements", null), set.getString("activationSkills", null), set.getBoolean("pvpChanceOnly", false));
-		_parameters = params;
 	}
 	
+	/**
+	 * Creates an effect given the parameters.
+	 * @param attachCond the attach condition
+	 * @param applyCond the apply condition
+	 * @param set the attributes
+	 * @param params the parameters
+	 * @return the new effect
+	 */
 	public static final AbstractEffect createEffect(Condition attachCond, Condition applyCond, StatsSet set, StatsSet params)
 	{
 		final String name = set.getString("name");
@@ -95,10 +105,9 @@ public abstract class AbstractEffect implements IChanceSkillTrigger
 		{
 			constructor = handler.getConstructor(Condition.class, Condition.class, StatsSet.class, StatsSet.class);
 		}
-		catch (NoSuchMethodException | SecurityException e1)
+		catch (NoSuchMethodException | SecurityException e)
 		{
-			_log.warning(AbstractEffect.class.getSimpleName() + ": Requested unexistent constructor for effect handler: " + name);
-			e1.printStackTrace();
+			_log.warning(AbstractEffect.class.getSimpleName() + ": Requested unexistent constructor for effect handler: " + name + ": " + e.getMessage());
 			return null;
 		}
 		
@@ -108,7 +117,7 @@ public abstract class AbstractEffect implements IChanceSkillTrigger
 		}
 		catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e)
 		{
-			e.printStackTrace();
+			_log.warning(AbstractEffect.class.getSimpleName() + ": Unable to initialize effect handler: " + name + ": " + e.getMessage());
 		}
 		return null;
 	}
@@ -124,7 +133,7 @@ public abstract class AbstractEffect implements IChanceSkillTrigger
 	}
 	
 	/**
-	 * Attachs a function template.
+	 * Attaches a function template.
 	 * @param f the function
 	 */
 	public void attach(FuncTemplate f)
@@ -189,24 +198,6 @@ public abstract class AbstractEffect implements IChanceSkillTrigger
 	public ChanceCondition getTriggeredChanceCondition()
 	{
 		return _chanceCondition;
-	}
-	
-	/**
-	 * Verify if this effect template has parameters.
-	 * @return {@code true} if this effect template has parameters, {@code false} otherwise
-	 */
-	public boolean hasParameters()
-	{
-		return _parameters != null;
-	}
-	
-	/**
-	 * Get the parameters.
-	 * @return the parameters of this effect template
-	 */
-	public StatsSet getParameters()
-	{
-		return _parameters;
 	}
 	
 	/**

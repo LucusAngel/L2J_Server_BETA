@@ -62,7 +62,7 @@ import com.l2jserver.gameserver.model.holders.ItemHolder;
 import com.l2jserver.gameserver.model.items.L2Item;
 import com.l2jserver.gameserver.model.items.instance.L2ItemInstance;
 import com.l2jserver.gameserver.model.quest.Quest;
-import com.l2jserver.gameserver.model.skills.L2Skill;
+import com.l2jserver.gameserver.model.skills.Skill;
 import com.l2jserver.gameserver.model.stats.Stats;
 import com.l2jserver.gameserver.network.SystemMessageId;
 import com.l2jserver.gameserver.network.clientpackets.Say2;
@@ -222,7 +222,7 @@ public class L2Attackable extends L2Npc
 	 * Use the skill if minimum checks are pass.
 	 * @param skill the skill
 	 */
-	public void useMagic(L2Skill skill)
+	public void useMagic(Skill skill)
 	{
 		if ((skill == null) || isAlikeDead() || skill.isPassive() || isCastingNow() || isSkillDisabled(skill))
 		{
@@ -265,7 +265,7 @@ public class L2Attackable extends L2Npc
 	 * @param attacker The L2Character who attacks
 	 */
 	@Override
-	public void reduceCurrentHp(double damage, L2Character attacker, L2Skill skill)
+	public void reduceCurrentHp(double damage, L2Character attacker, Skill skill)
 	{
 		reduceCurrentHp(damage, attacker, true, false, skill);
 	}
@@ -279,7 +279,7 @@ public class L2Attackable extends L2Npc
 	 * @param skill
 	 */
 	@Override
-	public void reduceCurrentHp(double damage, L2Character attacker, boolean awake, boolean isDOT, L2Skill skill)
+	public void reduceCurrentHp(double damage, L2Character attacker, boolean awake, boolean isDOT, Skill skill)
 	{
 		if (isRaid() && !isMinion() && (attacker != null) && (attacker.getParty() != null) && attacker.getParty().isInCommandChannel() && attacker.getParty().getCommandChannel().meetRaidWarCondition(this))
 		{
@@ -497,7 +497,7 @@ public class L2Attackable extends L2Npc
 					
 					// Penalty applied to the attacker's XP
 					// If this attacker have servitor, get Exp Penalty applied for the servitor.
-					final float penalty = attacker.hasServitor() ? ((L2ServitorInstance) attacker.getSummon()).getExpPenalty() : 0;
+					final float penalty = attacker.hasServitor() ? ((L2ServitorInstance) attacker.getSummon()).getExpMultiplier() : 1;
 					
 					// If there's NO party in progress
 					if (attackerParty == null)
@@ -521,7 +521,7 @@ public class L2Attackable extends L2Npc
 								sp *= Config.L2JMOD_CHAMPION_REWARDS;
 							}
 							
-							exp *= 1 - penalty;
+							exp *= penalty;
 							
 							// Check for an over-hit enabled strike
 							L2Character overhitAttacker = getOverhitAttacker();
@@ -673,7 +673,7 @@ public class L2Attackable extends L2Npc
 	 * @param damage The number of damages given by the attacker L2Character
 	 * @param skill
 	 */
-	public void addDamage(L2Character attacker, int damage, L2Skill skill)
+	public void addDamage(L2Character attacker, int damage, Skill skill)
 	{
 		if (attacker == null)
 		{

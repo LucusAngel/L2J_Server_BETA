@@ -28,8 +28,7 @@ import java.util.logging.Logger;
 import com.l2jserver.Config;
 import com.l2jserver.L2DatabaseFactory;
 import com.l2jserver.gameserver.ThreadPoolManager;
-import com.l2jserver.gameserver.datatables.SkillTable;
-import com.l2jserver.gameserver.datatables.SkillTable.FrequentSkill;
+import com.l2jserver.gameserver.datatables.SkillData;
 import com.l2jserver.gameserver.datatables.TransformData;
 import com.l2jserver.gameserver.instancemanager.CursedWeaponsManager;
 import com.l2jserver.gameserver.model.L2Party.messageType;
@@ -39,7 +38,8 @@ import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.interfaces.INamable;
 import com.l2jserver.gameserver.model.items.L2Item;
 import com.l2jserver.gameserver.model.items.instance.L2ItemInstance;
-import com.l2jserver.gameserver.model.skills.L2Skill;
+import com.l2jserver.gameserver.model.skills.CommonSkill;
+import com.l2jserver.gameserver.model.skills.Skill;
 import com.l2jserver.gameserver.network.SystemMessageId;
 import com.l2jserver.gameserver.network.serverpackets.Earthquake;
 import com.l2jserver.gameserver.network.serverpackets.ExRedSky;
@@ -89,7 +89,7 @@ public class CursedWeapon implements INamable
 		_name = name;
 		_itemId = itemId;
 		_skillId = skillId;
-		_skillMaxLevel = SkillTable.getInstance().getMaxLevel(_skillId);
+		_skillMaxLevel = SkillData.getInstance().getMaxLevel(_skillId);
 	}
 	
 	public void endOfLife()
@@ -331,14 +331,14 @@ public class CursedWeapon implements INamable
 			level = _skillMaxLevel;
 		}
 		
-		final L2Skill skill = SkillTable.getInstance().getInfo(_skillId, level);
+		final Skill skill = SkillData.getInstance().getSkill(_skillId, level);
 		_player.addSkill(skill, false);
 		
 		// Void Burst, Void Flow
-		_player.addSkill(FrequentSkill.VOID_BURST.getSkill(), false);
-		_player.addTransformSkill(FrequentSkill.VOID_BURST.getId());
-		_player.addSkill(FrequentSkill.VOID_FLOW.getSkill(), false);
-		_player.addTransformSkill(FrequentSkill.VOID_FLOW.getId());
+		_player.addSkill(CommonSkill.VOID_BURST.getSkill(), false);
+		_player.addTransformSkill(CommonSkill.VOID_BURST.getId());
+		_player.addSkill(CommonSkill.VOID_FLOW.getSkill(), false);
+		_player.addTransformSkill(CommonSkill.VOID_FLOW.getId());
 		_player.sendSkillList();
 	}
 	
@@ -375,8 +375,8 @@ public class CursedWeapon implements INamable
 	public void removeSkill()
 	{
 		_player.removeSkill(_skillId);
-		_player.removeSkill(SkillTable.FrequentSkill.VOID_BURST.getSkill().getId());
-		_player.removeSkill(SkillTable.FrequentSkill.VOID_FLOW.getSkill().getId());
+		_player.removeSkill(CommonSkill.VOID_BURST.getSkill().getId());
+		_player.removeSkill(CommonSkill.VOID_FLOW.getSkill().getId());
 		_player.untransform();
 		_player.sendSkillList();
 	}

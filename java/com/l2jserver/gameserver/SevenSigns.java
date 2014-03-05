@@ -34,7 +34,6 @@ import javolution.util.FastMap;
 
 import com.l2jserver.Config;
 import com.l2jserver.L2DatabaseFactory;
-import com.l2jserver.gameserver.datatables.SkillTable;
 import com.l2jserver.gameserver.instancemanager.CastleManager;
 import com.l2jserver.gameserver.model.AutoSpawnHandler;
 import com.l2jserver.gameserver.model.AutoSpawnHandler.AutoSpawnInstance;
@@ -44,6 +43,7 @@ import com.l2jserver.gameserver.model.TeleportWhereType;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.entity.Castle;
 import com.l2jserver.gameserver.model.interfaces.IProcedure;
+import com.l2jserver.gameserver.model.skills.CommonSkill;
 import com.l2jserver.gameserver.network.SystemMessageId;
 import com.l2jserver.gameserver.network.serverpackets.SSQInfo;
 import com.l2jserver.gameserver.network.serverpackets.SystemMessage;
@@ -1581,13 +1581,6 @@ public class SevenSigns
 			
 			setCalendarForNextPeriodChange();
 			
-			// make sure that all the scheduled siege dates are in the Seal Validation period
-			List<Castle> castles = CastleManager.getInstance().getCastles();
-			for (Castle castle : castles)
-			{
-				castle.getSiege().correctSiegeDateTime();
-			}
-			
 			SevenSignsPeriodChange sspc = new SevenSignsPeriodChange();
 			ThreadPoolManager.getInstance().scheduleGeneral(sspc, getMilliToPeriodChange());
 		}
@@ -1678,12 +1671,12 @@ public class SevenSigns
 				{
 					if (cabal == _strifeOwner)
 					{
-						character.addSkill(SkillTable.FrequentSkill.THE_VICTOR_OF_WAR.getSkill());
+						character.addSkill(CommonSkill.THE_VICTOR_OF_WAR.getSkill());
 					}
 					else
 					{
 						// Gives "The Vanquished of War" passive skill to all online characters with Cabal, which does not control Seal of Strife
-						character.addSkill(SkillTable.FrequentSkill.THE_VANQUISHED_OF_WAR.getSkill());
+						character.addSkill(CommonSkill.THE_VANQUISHED_OF_WAR.getSkill());
 					}
 				}
 			}
@@ -1704,8 +1697,8 @@ public class SevenSigns
 			if (character != null)
 			{
 				// Remove SevenSigns' buffs/debuffs.
-				character.removeSkill(SkillTable.FrequentSkill.THE_VICTOR_OF_WAR.getSkill());
-				character.removeSkill(SkillTable.FrequentSkill.THE_VANQUISHED_OF_WAR.getSkill());
+				character.removeSkill(CommonSkill.THE_VICTOR_OF_WAR.getSkill());
+				character.removeSkill(CommonSkill.THE_VANQUISHED_OF_WAR.getSkill());
 			}
 			return true;
 		}
@@ -1724,7 +1717,7 @@ public class SevenSigns
 			{
 				if (getPlayerCabal(activeChar.getObjectId()) == CABAL_DUSK)
 				{
-					activeChar.sendMessage("You cannot summon Siege Golem or Cannon while Seal of Strife posessed by Lords of Dawn.");
+					activeChar.sendPacket(SystemMessageId.SEAL_OF_STRIFE_FORBIDS_SUMMONING);
 					return true;
 				}
 			}

@@ -23,7 +23,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -57,6 +56,7 @@ import com.l2jserver.gameserver.model.actor.L2Attackable;
 import com.l2jserver.gameserver.model.actor.L2Character;
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.L2Playable;
+import com.l2jserver.gameserver.model.actor.L2Summon;
 import com.l2jserver.gameserver.model.actor.instance.L2DoorInstance;
 import com.l2jserver.gameserver.model.actor.instance.L2MonsterInstance;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
@@ -76,7 +76,7 @@ import com.l2jserver.gameserver.model.olympiad.CompetitionType;
 import com.l2jserver.gameserver.model.quest.AITasks.AggroRangeEnter;
 import com.l2jserver.gameserver.model.quest.AITasks.SeeCreature;
 import com.l2jserver.gameserver.model.quest.AITasks.SkillSee;
-import com.l2jserver.gameserver.model.skills.L2Skill;
+import com.l2jserver.gameserver.model.skills.Skill;
 import com.l2jserver.gameserver.model.stats.Stats;
 import com.l2jserver.gameserver.model.zone.L2ZoneType;
 import com.l2jserver.gameserver.network.NpcStringId;
@@ -103,9 +103,6 @@ import com.l2jserver.util.Util;
 public class Quest extends ManagedScript implements IIdentifiable
 {
 	public static final Logger _log = Logger.getLogger(Quest.class.getName());
-	
-	/** Map containing events from String value of the event. */
-	private static Map<String, Quest> _allEventsS = new HashMap<>();
 	
 	/** Map containing lists of timers from the name of the timer. */
 	private final Map<String, List<QuestTimer>> _allEventTimers = new L2FastMap<>(true);
@@ -151,14 +148,6 @@ public class Quest extends ManagedScript implements IIdentifiable
 	}
 	
 	/**
-	 * @return a collection of the values contained in the _allEventsS map.
-	 */
-	public static Collection<Quest> findAllEvents()
-	{
-		return _allEventsS.values();
-	}
-	
-	/**
 	 * The Quest object constructor.<br>
 	 * Constructing a quest also calls the {@code init_LoadGlobalData} convenience method.
 	 * @param questId ID of the quest
@@ -170,23 +159,24 @@ public class Quest extends ManagedScript implements IIdentifiable
 		_questId = questId;
 		_name = name;
 		_descr = descr;
-		if (questId != 0)
+		if (questId > 0)
 		{
 			QuestManager.getInstance().addQuest(this);
 		}
 		else
 		{
-			_allEventsS.put(name, this);
+			QuestManager.getInstance().addScript(this);
 		}
-		init_LoadGlobalData();
+		
+		loadGlobalData();
 	}
 	
 	/**
-	 * The function init_LoadGlobalData is, by default, called by the constructor of all quests.<br>
+	 * This method is, by default, called by the constructor of all scripts.<br>
 	 * Children of this class can implement this function in order to define what variables to load and what structures to save them in.<br>
 	 * By default, nothing is loaded.
 	 */
-	protected void init_LoadGlobalData()
+	protected void loadGlobalData()
 	{
 		
 	}
@@ -433,7 +423,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	 * @param isSummon if {@code true}, the attack was actually made by the player's summon
 	 * @param skill the skill used to attack the NPC (can be null)
 	 */
-	public final void notifyAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon, L2Skill skill)
+	public final void notifyAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon, Skill skill)
 	{
 		String res = null;
 		try
@@ -490,7 +480,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	 * @param player
 	 * @param skill
 	 */
-	public final void notifySpellFinished(L2Npc instance, L2PcInstance player, L2Skill skill)
+	public final void notifySpellFinished(L2Npc instance, L2PcInstance player, Skill skill)
 	{
 		String res = null;
 		try
@@ -667,7 +657,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	 * @param player the player
 	 * @param skill the skill
 	 */
-	public final void notifyAcquireSkillInfo(L2Npc npc, L2PcInstance player, L2Skill skill)
+	public final void notifyAcquireSkillInfo(L2Npc npc, L2PcInstance player, Skill skill)
 	{
 		String res = null;
 		try
@@ -688,7 +678,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	 * @param skill the skill
 	 * @param type the skill learn type
 	 */
-	public final void notifyAcquireSkill(L2Npc npc, L2PcInstance player, L2Skill skill, AcquireSkillType type)
+	public final void notifyAcquireSkill(L2Npc npc, L2PcInstance player, Skill skill, AcquireSkillType type)
 	{
 		String res = null;
 		try
@@ -780,7 +770,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	 * @param targets
 	 * @param isSummon
 	 */
-	public final void notifySkillSee(L2Npc npc, L2PcInstance caster, L2Skill skill, L2Object[] targets, boolean isSummon)
+	public final void notifySkillSee(L2Npc npc, L2PcInstance caster, Skill skill, L2Object[] targets, boolean isSummon)
 	{
 		ThreadPoolManager.getInstance().executeAi(new SkillSee(this, npc, caster, skill, targets, isSummon));
 	}
@@ -973,8 +963,8 @@ public class Quest extends ManagedScript implements IIdentifiable
 	// These are methods that java calls to invoke scripts.
 	
 	/**
-	 * This function is called in place of {@link #onAttack(L2Npc, L2PcInstance, int, boolean, L2Skill)} if the former is not implemented.<br>
-	 * If a script contains both onAttack(..) implementations, then this method will never be called unless the script's {@link #onAttack(L2Npc, L2PcInstance, int, boolean, L2Skill)} explicitly calls this method.
+	 * This function is called in place of {@link #onAttack(L2Npc, L2PcInstance, int, boolean, Skill)} if the former is not implemented.<br>
+	 * If a script contains both onAttack(..) implementations, then this method will never be called unless the script's {@link #onAttack(L2Npc, L2PcInstance, int, boolean, Skill)} explicitly calls this method.
 	 * @param npc this parameter contains a reference to the exact instance of the NPC that got attacked the NPC.
 	 * @param attacker this parameter contains a reference to the exact instance of the player who attacked.
 	 * @param damage this parameter represents the total damage that this attack has inflicted to the NPC.
@@ -996,7 +986,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	 * @param skill parameter is the skill that player used to attack NPC.
 	 * @return
 	 */
-	public String onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon, L2Skill skill)
+	public String onAttack(L2Npc npc, L2PcInstance attacker, int damage, boolean isSummon, Skill skill)
 	{
 		return onAttack(npc, attacker, damage, isSummon);
 	}
@@ -1144,7 +1134,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	 * @param skill this parameter contains a reference to the skill that the player requested its info.
 	 * @return
 	 */
-	public String onAcquireSkillInfo(L2Npc npc, L2PcInstance player, L2Skill skill)
+	public String onAcquireSkillInfo(L2Npc npc, L2PcInstance player, Skill skill)
 	{
 		return null;
 	}
@@ -1158,7 +1148,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	 * @param type the skill learn type
 	 * @return
 	 */
-	public String onAcquireSkill(L2Npc npc, L2PcInstance player, L2Skill skill, AcquireSkillType type)
+	public String onAcquireSkill(L2Npc npc, L2PcInstance player, Skill skill, AcquireSkillType type)
 	{
 		return null;
 	}
@@ -1189,7 +1179,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	 * @param isSummon if {@code true}, the skill was actually cast by the player's summon, not the player himself
 	 * @return
 	 */
-	public String onSkillSee(L2Npc npc, L2PcInstance caster, L2Skill skill, L2Object[] targets, boolean isSummon)
+	public String onSkillSee(L2Npc npc, L2PcInstance caster, Skill skill, L2Object[] targets, boolean isSummon)
 	{
 		return null;
 	}
@@ -1201,7 +1191,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	 * @param skill the actual skill that was used by the NPC.
 	 * @return
 	 */
-	public String onSpellFinished(L2Npc npc, L2PcInstance player, L2Skill skill)
+	public String onSpellFinished(L2Npc npc, L2PcInstance player, Skill skill)
 	{
 		return null;
 	}
@@ -1369,6 +1359,14 @@ public class Quest extends ManagedScript implements IIdentifiable
 	}
 	
 	/**
+	 * @param summon
+	 */
+	public void onSummon(L2Summon summon)
+	{
+		
+	}
+	
+	/**
 	 * Show an error message to the specified player.
 	 * @param player the player to whom to send the error (must be a GM)
 	 * @param t the {@link Throwable} to get the message/stacktrace from
@@ -1519,7 +1517,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 		}
 		
 		// events
-		for (String name : _allEventsS.keySet())
+		for (String name : QuestManager.getInstance().getScripts().keySet())
 		{
 			player.processQuestEvent(name, "enter");
 		}
@@ -2217,6 +2215,24 @@ public class Quest extends ManagedScript implements IIdentifiable
 	}
 	
 	/**
+	 * Register onSummon trigger when summon is spawned.
+	 * @param npcIds
+	 */
+	public void addSummonId(int... npcIds)
+	{
+		addEventId(QuestEventType.ON_SUMMON, npcIds);
+	}
+	
+	/**
+	 * Register onSummon trigger when summon is spawned.
+	 * @param npcIds
+	 */
+	public void addSummonId(Collection<Integer> npcIds)
+	{
+		addEventId(QuestEventType.ON_SUMMON, npcIds);
+	}
+	
+	/**
 	 * Use this method to get a random party member from a player's party.<br>
 	 * Useful when distributing rewards after killing an NPC.
 	 * @param player this parameter represents the player whom the party will taken.
@@ -2839,7 +2855,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	 * @param instanceId
 	 * @return
 	 */
-	public L2TrapInstance addTrap(int trapId, int x, int y, int z, int heading, L2Skill skill, int instanceId)
+	public L2TrapInstance addTrap(int trapId, int x, int y, int z, int heading, Skill skill, int instanceId)
 	{
 		final L2NpcTemplate npcTemplate = NpcData.getInstance().getTemplate(trapId);
 		L2TrapInstance trap = new L2TrapInstance(IdFactory.getInstance().getNextId(), npcTemplate, instanceId, -1);
@@ -2943,7 +2959,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 		
 		if (removeFromList)
 		{
-			return QuestManager.getInstance().removeQuest(this);
+			return QuestManager.getInstance().removeScript(this);
 		}
 		return true;
 	}

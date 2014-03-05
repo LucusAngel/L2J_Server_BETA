@@ -18,9 +18,6 @@
  */
 package com.l2jserver.gameserver.enums;
 
-/**
- * @author unknown
- */
 public enum InstanceType
 {
 	L2Object(null),
@@ -83,10 +80,8 @@ public enum InstanceType
 	// Fort Siege
 	L2FortCommanderInstance(L2DefenderInstance),
 	// Fort NPCs
-	L2FortEnvoyInstance(L2Npc),
 	L2FortLogisticsInstance(L2MerchantInstance),
 	L2FortManagerInstance(L2MerchantInstance),
-	L2FortSiegeNpcInstance(L2Npc),
 	// Seven Signs
 	L2SignsPriestInstance(L2Npc),
 	L2DawnPriestInstance(L2SignsPriestInstance),

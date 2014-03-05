@@ -52,7 +52,7 @@ public final class BuffInfo
 	private final List<AbstractEffect> _effects = new ArrayList<>(1);
 	// Tasks
 	/** Effect tasks for ticks. */
-	private Map<AbstractEffect, EffectTaskInfo> _tasks;
+	private volatile Map<AbstractEffect, EffectTaskInfo> _tasks;
 	/** Task for effect ending. */
 	private BuffTimeTask _effectTimeTask;
 	/** Scheduled future. */
@@ -132,7 +132,7 @@ public final class BuffInfo
 	 * Gets the skill that created this buff info.
 	 * @return the skill
 	 */
-	public L2Skill getSkill()
+	public Skill getSkill()
 	{
 		return _env.getSkill();
 	}
@@ -236,7 +236,7 @@ public final class BuffInfo
 	 * Stops all the effects for this buff info.<br>
 	 * Removes effects stats.<br>
 	 * <b>It will not remove the buff info from the effect list</b>.<br>
-	 * Instead call {@link CharEffectList#stopSkillEffects(boolean, L2Skill)}
+	 * Instead call {@link CharEffectList#stopSkillEffects(boolean, Skill)}
 	 * @param removed if {@code true} the skill will be handled as removed
 	 */
 	public void stopAllEffects(boolean removed)

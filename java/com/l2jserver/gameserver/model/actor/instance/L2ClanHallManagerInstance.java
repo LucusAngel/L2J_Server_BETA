@@ -23,7 +23,7 @@ import java.util.StringTokenizer;
 
 import com.l2jserver.Config;
 import com.l2jserver.gameserver.cache.HtmCache;
-import com.l2jserver.gameserver.datatables.SkillTable;
+import com.l2jserver.gameserver.datatables.SkillData;
 import com.l2jserver.gameserver.datatables.TeleportLocationTable;
 import com.l2jserver.gameserver.enums.InstanceType;
 import com.l2jserver.gameserver.instancemanager.CHSiegeManager;
@@ -32,11 +32,11 @@ import com.l2jserver.gameserver.model.ClanPrivilege;
 import com.l2jserver.gameserver.model.L2TeleportLocation;
 import com.l2jserver.gameserver.model.PcCondOverride;
 import com.l2jserver.gameserver.model.actor.templates.L2NpcTemplate;
+import com.l2jserver.gameserver.model.effects.L2EffectType;
 import com.l2jserver.gameserver.model.entity.ClanHall;
 import com.l2jserver.gameserver.model.entity.clanhall.AuctionableHall;
 import com.l2jserver.gameserver.model.entity.clanhall.SiegableHall;
-import com.l2jserver.gameserver.model.skills.L2Skill;
-import com.l2jserver.gameserver.model.skills.L2SkillType;
+import com.l2jserver.gameserver.model.skills.Skill;
 import com.l2jserver.gameserver.network.SystemMessageId;
 import com.l2jserver.gameserver.network.serverpackets.ActionFailed;
 import com.l2jserver.gameserver.network.serverpackets.AgitDecoInfo;
@@ -1362,7 +1362,7 @@ public class L2ClanHallManagerInstance extends L2MerchantInstance
 					return;
 				}
 				setTarget(player);
-				L2Skill skill;
+				Skill skill;
 				if (val.isEmpty())
 				{
 					return;
@@ -1378,8 +1378,8 @@ public class L2ClanHallManagerInstance extends L2MerchantInstance
 						{
 							skill_lvl = Integer.parseInt(st.nextToken());
 						}
-						skill = SkillTable.getInstance().getInfo(skill_id, skill_lvl);
-						if (skill.getSkillType() == L2SkillType.SUMMON)
+						skill = SkillData.getInstance().getSkill(skill_id, skill_lvl);
+						if (skill.hasEffectType(L2EffectType.SUMMON))
 						{
 							player.doSimultaneousCast(skill);
 						}

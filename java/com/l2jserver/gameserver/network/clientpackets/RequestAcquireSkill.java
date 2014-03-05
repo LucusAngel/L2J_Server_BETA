@@ -21,7 +21,7 @@ package com.l2jserver.gameserver.network.clientpackets;
 import java.util.List;
 
 import com.l2jserver.Config;
-import com.l2jserver.gameserver.datatables.SkillTable;
+import com.l2jserver.gameserver.datatables.SkillData;
 import com.l2jserver.gameserver.datatables.SkillTreesData;
 import com.l2jserver.gameserver.enums.IllegalActionPunishmentType;
 import com.l2jserver.gameserver.enums.QuestEventType;
@@ -40,7 +40,8 @@ import com.l2jserver.gameserver.model.holders.SkillHolder;
 import com.l2jserver.gameserver.model.items.instance.L2ItemInstance;
 import com.l2jserver.gameserver.model.quest.Quest;
 import com.l2jserver.gameserver.model.quest.QuestState;
-import com.l2jserver.gameserver.model.skills.L2Skill;
+import com.l2jserver.gameserver.model.skills.CommonSkill;
+import com.l2jserver.gameserver.model.skills.Skill;
 import com.l2jserver.gameserver.network.SystemMessageId;
 import com.l2jserver.gameserver.network.serverpackets.AcquireSkillDone;
 import com.l2jserver.gameserver.network.serverpackets.AcquireSkillList;
@@ -109,7 +110,7 @@ public final class RequestAcquireSkill extends L2GameClientPacket
 			return;
 		}
 		
-		final L2Skill skill = SkillTable.getInstance().getInfo(_id, _level);
+		final Skill skill = SkillData.getInstance().getSkill(_id, _level);
 		if (skill == null)
 		{
 			_log.warning(RequestAcquireSkill.class.getSimpleName() + ": Player " + activeChar.getName() + " is trying to learn a null skill Id: " + _id + " level: " + _level + "!");
@@ -279,7 +280,7 @@ public final class RequestAcquireSkill extends L2GameClientPacket
 				clan.broadcastToOnlineMembers(new PledgeSkillList(clan));
 				activeChar.sendPacket(new AcquireSkillDone());
 				
-				showSUbUnitSkillList(activeChar);
+				showSubUnitSkillList(activeChar);
 				break;
 			}
 			case TRANSFER:
@@ -297,6 +298,15 @@ public final class RequestAcquireSkill extends L2GameClientPacket
 				{
 					activeChar.sendPacket(SystemMessageId.SKILL_NOT_FOR_SUBCLASS);
 					Util.handleIllegalPlayerAction(activeChar, "Player " + activeChar.getName() + " is requesting skill Id: " + _id + " level " + _level + " while Sub-Class is active!", IllegalActionPunishmentType.NONE);
+					return;
+				}
+				
+				// Certification Skills - Exploit fix
+				if ((prevSkillLevel == -1) && (_level > 1))
+				{
+					// The previous level skill has not been learned.
+					activeChar.sendPacket(SystemMessageId.PREVIOUS_LEVEL_SKILL_NOT_LEARNED);
+					Util.handleIllegalPlayerAction(activeChar, "Player " + activeChar.getName() + " is requesting skill Id: " + _id + " level " + _level + " without knowing it's previous level!", IllegalActionPunishmentType.NONE);
 					return;
 				}
 				
@@ -401,6 +411,31 @@ public final class RequestAcquireSkill extends L2GameClientPacket
 		}
 	}
 	
+	public static void showSubUnitSkillList(L2PcInstance activeChar)
+	{
+		final List<L2SkillLearn> skills = SkillTreesData.getInstance().getAvailableSubPledgeSkills(activeChar.getClan());
+		final AcquireSkillList asl = new AcquireSkillList(AcquireSkillType.SUBPLEDGE);
+		int count = 0;
+		
+		for (L2SkillLearn s : skills)
+		{
+			if (SkillData.getInstance().getSkill(s.getSkillId(), s.getSkillLevel()) != null)
+			{
+				asl.addSkill(s.getSkillId(), s.getSkillLevel(), s.getSkillLevel(), s.getLevelUpSp(), 0);
+				++count;
+			}
+		}
+		
+		if (count == 0)
+		{
+			activeChar.sendPacket(SystemMessageId.NO_MORE_SKILLS_TO_LEARN);
+		}
+		else
+		{
+			activeChar.sendPacket(asl);
+		}
+	}
+	
 	/**
 	 * Perform a simple check for current player and skill.<br>
 	 * Takes the needed SP if the skill require it and all requirements are meet.<br>
@@ -433,7 +468,7 @@ public final class RequestAcquireSkill extends L2GameClientPacket
 					return false;
 				}
 				
-				if (!Config.DIVINE_SP_BOOK_NEEDED && (_id == L2Skill.SKILL_DIVINE_INSPIRATION))
+				if (!Config.DIVINE_SP_BOOK_NEEDED && (_id == CommonSkill.DIVINE_INSPIRATION.getId()))
 				{
 					return true;
 				}
@@ -445,7 +480,7 @@ public final class RequestAcquireSkill extends L2GameClientPacket
 					{
 						if (player.getSkillLevel(skill.getSkillId()) != skill.getSkillLvl())
 						{
-							if (skill.getSkillId() == L2Skill.SKILL_ONYX_BEAST_TRANSFORMATION)
+							if (skill.getSkillId() == CommonSkill.ONYX_BEAST_TRANSFORMATION.getId())
 							{
 								player.sendPacket(SystemMessageId.YOU_MUST_LEARN_ONYX_BEAST_SKILL);
 							}
@@ -503,7 +538,7 @@ public final class RequestAcquireSkill extends L2GameClientPacket
 	 * @param trainer the Npc teaching a skill.
 	 * @param skill the skill to be learn.
 	 */
-	private void giveSkill(L2PcInstance player, L2Npc trainer, L2Skill skill)
+	private void giveSkill(L2PcInstance player, L2Npc trainer, Skill skill)
 	{
 		// Send message.
 		final SystemMessage sm = SystemMessage.getSystemMessage(SystemMessageId.LEARNED_SKILL_S1);

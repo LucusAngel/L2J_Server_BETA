@@ -19,30 +19,28 @@
 package com.l2jserver.gameserver.datatables;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.l2jserver.Config;
 import com.l2jserver.gameserver.engines.DocumentEngine;
-import com.l2jserver.gameserver.model.holders.SkillHolder;
-import com.l2jserver.gameserver.model.skills.L2Skill;
-
-import gnu.trove.list.array.TIntArrayList;
-import gnu.trove.map.hash.TIntIntHashMap;
+import com.l2jserver.gameserver.model.skills.Skill;
 
 /**
- * Skill table.
+ * Skill data.
  */
-public final class SkillTable
+public final class SkillData
 {
-	private static Logger _log = Logger.getLogger(SkillTable.class.getName());
+	private static Logger _log = Logger.getLogger(SkillData.class.getName());
 	
-	private final Map<Integer, L2Skill> _skills = new HashMap<>();
-	private final TIntIntHashMap _skillMaxLevel = new TIntIntHashMap();
-	private final TIntArrayList _enchantable = new TIntArrayList();
+	private final Map<Integer, Skill> _skills = new HashMap<>();
+	private final Map<Integer, Integer> _skillMaxLevel = new HashMap<>();
+	private final Set<Integer> _enchantable = new HashSet<>();
 	
-	protected SkillTable()
+	protected SkillData()
 	{
 		load();
 	}
@@ -60,7 +58,7 @@ public final class SkillTable
 		DocumentEngine.getInstance().loadAllSkills(_skills);
 		
 		_skillMaxLevel.clear();
-		for (L2Skill skill : _skills.values())
+		for (Skill skill : _skills.values())
 		{
 			final int skillId = skill.getId();
 			final int skillLvl = skill.getLevel();
@@ -74,15 +72,12 @@ public final class SkillTable
 			}
 			
 			// only non-enchanted skills
-			final int maxLvl = _skillMaxLevel.get(skillId);
+			final int maxLvl = getMaxLevel(skillId);
 			if (skillLvl > maxLvl)
 			{
 				_skillMaxLevel.put(skillId, skillLvl);
 			}
 		}
-		
-		// Sorting for binarySearch
-		_enchantable.sort();
 	}
 	
 	/**
@@ -90,7 +85,7 @@ public final class SkillTable
 	 * @param skill The L2Skill to be hashed
 	 * @return getSkillHashCode(skill.getId(), skill.getLevel())
 	 */
-	public static int getSkillHashCode(L2Skill skill)
+	public static int getSkillHashCode(Skill skill)
 	{
 		return getSkillHashCode(skill.getId(), skill.getLevel());
 	}
@@ -106,16 +101,16 @@ public final class SkillTable
 		return (skillId * 1021) + skillLevel;
 	}
 	
-	public L2Skill getInfo(int skillId, int level)
+	public Skill getSkill(int skillId, int level)
 	{
-		final L2Skill result = _skills.get(getSkillHashCode(skillId, level));
+		final Skill result = _skills.get(getSkillHashCode(skillId, level));
 		if (result != null)
 		{
 			return result;
 		}
 		
 		// skill/level not found, fix for transformation scripts
-		final int maxLvl = _skillMaxLevel.get(skillId);
+		final int maxLvl = getMaxLevel(skillId);
 		// requested level too high
 		if ((maxLvl > 0) && (level > maxLvl))
 		{
@@ -132,12 +127,18 @@ public final class SkillTable
 	
 	public int getMaxLevel(int skillId)
 	{
-		return _skillMaxLevel.get(skillId);
+		final Integer maxLevel = _skillMaxLevel.get(skillId);
+		return maxLevel != null ? maxLevel : 0;
 	}
 	
+	/**
+	 * Verifies if the given skill ID correspond to an enchantable skill.
+	 * @param skillId the skill ID
+	 * @return {@code true} if the skill is enchantable, {@code false} otherwise
+	 */
 	public boolean isEnchantable(int skillId)
 	{
-		return _enchantable.binarySearch(skillId) >= 0;
+		return _enchantable.contains(skillId);
 	}
 	
 	/**
@@ -145,78 +146,32 @@ public final class SkillTable
 	 * @param hasCastle
 	 * @return an array with siege skills. If addNoble == true, will add also Advanced headquarters.
 	 */
-	public L2Skill[] getSiegeSkills(boolean addNoble, boolean hasCastle)
+	public Skill[] getSiegeSkills(boolean addNoble, boolean hasCastle)
 	{
-		L2Skill[] temp = new L2Skill[2 + (addNoble ? 1 : 0) + (hasCastle ? 2 : 0)];
+		Skill[] temp = new Skill[2 + (addNoble ? 1 : 0) + (hasCastle ? 2 : 0)];
 		int i = 0;
-		temp[i++] = _skills.get(SkillTable.getSkillHashCode(246, 1));
-		temp[i++] = _skills.get(SkillTable.getSkillHashCode(247, 1));
+		temp[i++] = _skills.get(SkillData.getSkillHashCode(246, 1));
+		temp[i++] = _skills.get(SkillData.getSkillHashCode(247, 1));
 		
 		if (addNoble)
 		{
-			temp[i++] = _skills.get(SkillTable.getSkillHashCode(326, 1));
+			temp[i++] = _skills.get(SkillData.getSkillHashCode(326, 1));
 		}
 		if (hasCastle)
 		{
-			temp[i++] = _skills.get(SkillTable.getSkillHashCode(844, 1));
-			temp[i++] = _skills.get(SkillTable.getSkillHashCode(845, 1));
+			temp[i++] = _skills.get(SkillData.getSkillHashCode(844, 1));
+			temp[i++] = _skills.get(SkillData.getSkillHashCode(845, 1));
 		}
 		return temp;
 	}
 	
-	/**
-	 * Enum to hold some important references to frequently used (hardcoded) skills in core
-	 * @author DrHouse
-	 */
-	public static enum FrequentSkill
-	{
-		RAID_CURSE(4215, 1),
-		RAID_CURSE2(4515, 1),
-		SEAL_OF_RULER(246, 1),
-		BUILD_HEADQUARTERS(247, 1),
-		WYVERN_BREATH(4289, 1),
-		STRIDER_SIEGE_ASSAULT(325, 1),
-		FIREWORK(5965, 1),
-		LARGE_FIREWORK(2025, 1),
-		BLESSING_OF_PROTECTION(5182, 1),
-		VOID_BURST(3630, 1),
-		VOID_FLOW(3631, 1),
-		THE_VICTOR_OF_WAR(5074, 1),
-		THE_VANQUISHED_OF_WAR(5075, 1),
-		SPECIAL_TREE_RECOVERY_BONUS(2139, 1),
-		WEAPON_GRADE_PENALTY(6209, 1),
-		ARMOR_GRADE_PENALTY(6213, 1);
-		
-		private final SkillHolder _holder;
-		
-		private FrequentSkill(int id, int level)
-		{
-			_holder = new SkillHolder(id, level);
-		}
-		
-		public int getId()
-		{
-			return _holder.getSkillId();
-		}
-		
-		public int getLevel()
-		{
-			return _holder.getSkillLvl();
-		}
-		
-		public L2Skill getSkill()
-		{
-			return _holder.getSkill();
-		}
-	}
-	
-	public static SkillTable getInstance()
+	public static SkillData getInstance()
 	{
 		return SingletonHolder._instance;
 	}
 	
 	private static class SingletonHolder
 	{
-		protected static final SkillTable _instance = new SkillTable();
+		protected static final SkillData _instance = new SkillData();
 	}
 }

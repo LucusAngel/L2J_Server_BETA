@@ -73,7 +73,7 @@ public final class Fort extends AbstractResidence
 	
 	private final List<L2DoorInstance> _doors = new ArrayList<>();
 	private L2StaticObjectInstance _flagPole = null;
-	private FortSiege _siege = null;
+	private volatile FortSiege _siege = null;
 	private Calendar _siegeDate;
 	private Calendar _lastOwnedTime;
 	private L2SiegeZone _zone;
@@ -264,7 +264,6 @@ public final class Fort extends AbstractResidence
 		if ((getOwnerClan() != null) && (getFortState() == 0))
 		{
 			spawnSpecialEnvoys();
-			ThreadPoolManager.getInstance().scheduleGeneral(new ScheduleSpecialEnvoysDeSpawn(this), 3600000); // Prepare 1hr task for special envoys despawn
 		}
 	}
 	
@@ -282,42 +281,9 @@ public final class Fort extends AbstractResidence
 		return null;
 	}
 	
-	public static class ScheduleSpecialEnvoysDeSpawn implements Runnable
-	{
-		private final Fort _fortInst;
-		
-		public ScheduleSpecialEnvoysDeSpawn(Fort pFort)
-		{
-			_fortInst = pFort;
-		}
-		
-		@Override
-		public void run()
-		{
-			try
-			{
-				// if state not decided, change state to indenpendent
-				if (_fortInst.getFortState() == 0)
-				{
-					_fortInst.setFortState(1, 0);
-				}
-				_fortInst.despawnSpecialEnvoys();
-			}
-			catch (Exception e)
-			{
-				_log.log(Level.WARNING, "Exception: ScheduleSpecialEnvoysSpawn() for Fort " + _fortInst.getName() + ": " + e.getMessage(), e);
-			}
-		}
-	}
-	
 	public void endOfSiege(L2Clan clan)
 	{
-		ThreadPoolManager.getInstance().scheduleGeneral(new endFortressSiege(this, clan), 1000);
-	}
-	
-	public void engrave(L2Clan clan)
-	{
-		setOwner(clan, true);
+		ThreadPoolManager.getInstance().executeAi(new endFortressSiege(this, clan));
 	}
 	
 	/**
@@ -422,6 +388,11 @@ public final class Fort extends AbstractResidence
 			_log.warning(getClass().getSimpleName() + ": Updating Fort owner with null clan!!!");
 			return false;
 		}
+		
+		final SystemMessage sm = SystemMessage.getSystemMessage(SystemMessageId.THE_FORTRESS_BATTLE_OF_S1_HAS_FINISHED);
+		sm.addCastleId(getResidenceId());
+		getSiege().announceToPlayer(sm);
+		
 		final L2Clan oldowner = getOwnerClan();
 		if ((oldowner != null) && (clan != oldowner))
 		{
@@ -460,7 +431,6 @@ public final class Fort extends AbstractResidence
 		}
 		
 		spawnSpecialEnvoys();
-		ThreadPoolManager.getInstance().scheduleGeneral(new ScheduleSpecialEnvoysDeSpawn(this), 3600000); // Prepare 1hr task for special envoys despawn
 		// if clan have already fortress, remove it
 		if (clan.getFortId() > 0)
 		{
@@ -913,7 +883,7 @@ public final class Fort extends AbstractResidence
 	
 	public final void setOwnerClan(L2Clan clan)
 	{
-		setVisibleFlag(clan != null ? true : false);
+		setVisibleFlag(clan != null);
 		_fortOwner = clan;
 	}
 	
@@ -948,7 +918,13 @@ public final class Fort extends AbstractResidence
 	{
 		if (_siege == null)
 		{
-			_siege = new FortSiege(this);
+			synchronized (this)
+			{
+				if (_siege == null)
+				{
+					return _siege = new FortSiege(this);
+				}
+			}
 		}
 		return _siege;
 	}
@@ -1023,7 +999,7 @@ public final class Fort extends AbstractResidence
 		{
 			try
 			{
-				_f.engrave(_clan);
+				_f.setOwner(_clan, true);
 			}
 			catch (Exception e)
 			{
@@ -1184,15 +1160,6 @@ public final class Fort extends AbstractResidence
 		{
 			spawnDat.doSpawn();
 			spawnDat.startRespawn();
-		}
-	}
-	
-	public void despawnSpecialEnvoys()
-	{
-		for (L2Spawn spawnDat : _specialEnvoys)
-		{
-			spawnDat.stopRespawn();
-			spawnDat.getLastSpawn().deleteMe();
 		}
 	}
 	
