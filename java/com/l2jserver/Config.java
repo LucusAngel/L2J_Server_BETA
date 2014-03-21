@@ -1841,7 +1841,6 @@ public final class Config
 			SAVE_DROPPED_ITEM_INTERVAL = General.getInt("SaveDroppedItemInterval", 60) * 60000;
 			CLEAR_DROPPED_ITEM_TABLE = General.getBoolean("ClearDroppedItemTable", false);
 			AUTODELETE_INVALID_QUEST_DATA = General.getBoolean("AutoDeleteInvalidQuestData", false);
-			PRECISE_DROP_CALCULATION = General.getBoolean("PreciseDropCalculation", true);
 			MULTIPLE_ITEM_DROP = General.getBoolean("MultipleItemDrop", true);
 			FORCE_INVENTORY_UPDATE = General.getBoolean("ForceInventoryUpdate", false);
 			LAZY_CACHE = General.getBoolean("LazyCache", true);
@@ -3054,9 +3053,6 @@ public final class Config
 				break;
 			case "cleardroppeditemtable":
 				CLEAR_DROPPED_ITEM_TABLE = Boolean.parseBoolean(pValue);
-				break;
-			case "precisedropcalculation":
-				PRECISE_DROP_CALCULATION = Boolean.parseBoolean(pValue);
 				break;
 			case "multipleitemdrop":
 				MULTIPLE_ITEM_DROP = Boolean.parseBoolean(pValue);
