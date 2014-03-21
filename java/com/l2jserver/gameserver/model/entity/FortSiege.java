@@ -38,7 +38,7 @@ import com.l2jserver.gameserver.enums.FortTeleportWhoType;
 import com.l2jserver.gameserver.instancemanager.FortManager;
 import com.l2jserver.gameserver.instancemanager.FortSiegeGuardManager;
 import com.l2jserver.gameserver.instancemanager.FortSiegeManager;
-import com.l2jserver.gameserver.model.ClanPrivilege;
+import com.l2jserver.gameserver.instancemanager.TerritoryWarManager;
 import com.l2jserver.gameserver.model.CombatFlag;
 import com.l2jserver.gameserver.model.FortSiegeSpawn;
 import com.l2jserver.gameserver.model.L2Clan;
@@ -77,7 +77,7 @@ public class FortSiege implements Siegable
 		@Override
 		public void run()
 		{
-			if (!getIsInProgress())
+			if (!isInProgress())
 			{
 				return;
 			}
@@ -108,7 +108,7 @@ public class FortSiege implements Siegable
 		@Override
 		public void run()
 		{
-			if (getIsInProgress())
+			if (isInProgress())
 			{
 				return;
 			}
@@ -191,7 +191,7 @@ public class FortSiege implements Siegable
 		@Override
 		public void run()
 		{
-			if (getIsInProgress())
+			if (isInProgress())
 			{
 				return;
 			}
@@ -212,7 +212,7 @@ public class FortSiege implements Siegable
 		@Override
 		public void run()
 		{
-			if (!getIsInProgress())
+			if (!isInProgress())
 			{
 				return;
 			}
@@ -250,13 +250,12 @@ public class FortSiege implements Siegable
 	}
 	
 	/**
-	 * When siege ends<BR>
-	 * <BR>
+	 * When siege ends.
 	 */
 	@Override
 	public void endSiege()
 	{
-		if (getIsInProgress())
+		if (isInProgress())
 		{
 			_isInProgress = false; // Flag so that siege instance can be started
 			removeFlags(); // Removes all flags. Note: Remove flag before teleporting players
@@ -307,13 +306,12 @@ public class FortSiege implements Siegable
 	}
 	
 	/**
-	 * When siege starts<BR>
-	 * <BR>
+	 * When siege starts
 	 */
 	@Override
 	public void startSiege()
 	{
-		if (!getIsInProgress())
+		if (!isInProgress())
 		{
 			if (!fireFortSiegeEventListeners(EventStage.START))
 			{
@@ -359,8 +357,7 @@ public class FortSiege implements Siegable
 	}
 	
 	/**
-	 * Announce to player.<BR>
-	 * <BR>
+	 * Announce to player.
 	 * @param sm the system message to send to player
 	 */
 	public void announceToPlayer(SystemMessage sm)
@@ -479,7 +476,7 @@ public class FortSiege implements Siegable
 	 */
 	public boolean checkIfInZone(int x, int y, int z)
 	{
-		return (getIsInProgress() && (getFort().checkIfInZone(x, y, z))); // Fort zone during siege
+		return (isInProgress() && (getFort().checkIfInZone(x, y, z))); // Fort zone during siege
 	}
 	
 	/**
@@ -528,7 +525,7 @@ public class FortSiege implements Siegable
 			getAttackerClans().clear();
 			
 			// if siege is in progress, end siege
-			if (getIsInProgress())
+			if (isInProgress())
 			{
 				endSiege();
 			}
@@ -619,6 +616,7 @@ public class FortSiege implements Siegable
 	}
 	
 	/**
+	 * TODO: To DP AI<br>
 	 * Commander was killed
 	 * @param instance
 	 */
@@ -718,41 +716,82 @@ public class FortSiege implements Siegable
 	}
 	
 	/**
-	 * Register clan as attacker<BR>
-	 * <BR>
-	 * @param player The L2PcInstance of the player trying to register
-	 * @param force
-	 * @return
+	 * Register clan as attacker.<BR>
+	 * @param player The L2PcInstance of the player trying to register.
+	 * @param checkConditions True if should be checked conditions, false otherwise
+	 * @return Number that defines what happened. <BR>
+	 *         0 - Player don't have clan.<BR>
+	 *         1 - Player don't have enough adena to register.<BR>
+	 *         2 - Is not right time to register Fortress now.<BR>
+	 *         3 - Players clan is already registered to siege.<BR>
+	 *         4 - Players clan is successfully registered to siege.
 	 */
-	public boolean registerAttacker(L2PcInstance player, boolean force)
+	public int addAttacker(L2PcInstance player, boolean checkConditions)
 	{
 		if (player.getClan() == null)
 		{
-			return false;
+			return 0; // Player dont have clan
 		}
 		
-		if (force || checkIfCanRegister(player))
+		if (checkConditions)
 		{
-			saveSiegeClan(player.getClan()); // Save to database
-			// if the first registering we start the timer
-			if (getAttackerClans().size() == 1)
+			if (getFort().getSiege().getAttackerClans().isEmpty() && (player.getInventory().getAdena() < 250000))
 			{
-				if (!force)
-				{
-					player.reduceAdena("siege", 250000, null, true);
-				}
-				startAutoTask(true);
+				return 1; // Player dont havee enough adena to register
 			}
-			return true;
+			
+			else if ((System.currentTimeMillis() < TerritoryWarManager.getInstance().getTWStartTimeInMillis()) && TerritoryWarManager.getInstance().getIsRegistrationOver())
+			{
+				return 2; // Is not right time to register Fortress now
+			}
+			
+			if ((System.currentTimeMillis() > TerritoryWarManager.getInstance().getTWStartTimeInMillis()) && TerritoryWarManager.getInstance().isTWChannelOpen())
+			{
+				return 2; // Is not right time to register Fortress now
+			}
+			
+			for (Fort fort : FortManager.getInstance().getForts())
+			{
+				if (fort.getSiege().getAttackerClan(player.getClanId()) != null)
+				{
+					return 3; // Players clan is already registred to siege
+				}
+				
+				if ((fort.getOwnerClan() == player.getClan()) && (fort.getSiege().isInProgress() || (fort.getSiege()._siegeStartTask != null)))
+				{
+					return 3; // Players clan is already registred to siege
+				}
+			}
 		}
-		return false;
+		
+		saveSiegeClan(player.getClan());
+		if (getAttackerClans().size() == 1)
+		{
+			if (checkConditions)
+			{
+				player.reduceAdena("FortressSiege", 250000, null, true);
+			}
+			startAutoTask(true);
+		}
+		return 4; // Players clan is successfully registred to siege
 	}
 	
 	/**
-	 * Remove clan from siege<BR>
-	 * <BR>
+	 * Remove clan from siege
+	 * @param clan The clan being removed
+	 */
+	public void removeAttacker(L2Clan clan)
+	{
+		if ((clan == null) || (clan.getFortId() == getFort().getResidenceId()) || !FortSiegeManager.getInstance().checkIsRegistered(clan, getFort().getResidenceId()))
+		{
+			return;
+		}
+		removeSiegeClan(clan.getId());
+	}
+	
+	/**
 	 * This function does not do any checks and should not be called from bypass !
-	 * @param clanId The int of player's clan id
+	 * @param clanId
 	 */
 	private void removeSiegeClan(int clanId)
 	{
@@ -770,7 +809,7 @@ public class FortSiege implements Siegable
 			loadSiegeClan();
 			if (getAttackerClans().isEmpty())
 			{
-				if (getIsInProgress())
+				if (isInProgress())
 				{
 					endSiege();
 				}
@@ -793,23 +832,7 @@ public class FortSiege implements Siegable
 	}
 	
 	/**
-	 * Remove clan from siege<BR>
-	 * <BR>
-	 * @param clan The clan being removed
-	 */
-	public void removeSiegeClan(L2Clan clan)
-	{
-		if ((clan == null) || (clan.getFortId() == getFort().getResidenceId()) || !FortSiegeManager.getInstance().checkIsRegistered(clan, getFort().getResidenceId()))
-		{
-			return;
-		}
-		
-		removeSiegeClan(clan.getId());
-	}
-	
-	/**
-	 * Start the auto tasks<BR>
-	 * <BR>
+	 * Start the auto tasks
 	 */
 	public void checkAutoTask()
 	{
@@ -826,7 +849,7 @@ public class FortSiege implements Siegable
 			saveFortSiege();
 			clearSiegeClan(); // remove all clans
 			// spawn suspicious merchant immediately
-			ThreadPoolManager.getInstance().executeTask(new ScheduleSuspiciousMerchantSpawn());
+			ThreadPoolManager.getInstance().executeGeneral(new ScheduleSuspiciousMerchantSpawn());
 		}
 		else
 		{
@@ -841,12 +864,12 @@ public class FortSiege implements Siegable
 				// preparing start siege task
 				if (delay > 3600000) // more than hour, how this can happens ? spawn suspicious merchant
 				{
-					ThreadPoolManager.getInstance().executeTask(new ScheduleSuspiciousMerchantSpawn());
+					ThreadPoolManager.getInstance().executeGeneral(new ScheduleSuspiciousMerchantSpawn());
 					_siegeStartTask = ThreadPoolManager.getInstance().scheduleGeneral(new FortSiege.ScheduleStartSiegeTask(3600), delay - 3600000);
 				}
 				if (delay > 600000) // more than 10 min, spawn suspicious merchant
 				{
-					ThreadPoolManager.getInstance().executeTask(new ScheduleSuspiciousMerchantSpawn());
+					ThreadPoolManager.getInstance().executeGeneral(new ScheduleSuspiciousMerchantSpawn());
 					_siegeStartTask = ThreadPoolManager.getInstance().scheduleGeneral(new FortSiege.ScheduleStartSiegeTask(600), delay - 600000);
 				}
 				else if (delay > 300000)
@@ -869,8 +892,7 @@ public class FortSiege implements Siegable
 	}
 	
 	/**
-	 * Start the auto tasks<BR>
-	 * <BR>
+	 * Start the auto task
 	 * @param setTime
 	 */
 	public void startAutoTask(boolean setTime)
@@ -926,9 +948,8 @@ public class FortSiege implements Siegable
 	}
 	
 	/**
-	 * Add clan as attacker<BR>
-	 * <BR>
-	 * @param clanId The int of clan's id
+	 * Add clan as attacker<
+	 * @param clanId
 	 */
 	private void addAttacker(int clanId)
 	{
@@ -936,66 +957,8 @@ public class FortSiege implements Siegable
 	}
 	
 	/**
-	 * @param player The L2PcInstance of the player trying to register
-	 * @return true if the player can register.
-	 */
-	public boolean checkIfCanRegister(L2PcInstance player)
-	{
-		boolean b = true;
-		if ((player.getClan() == null) || (player.getClan().getLevel() < FortSiegeManager.getInstance().getSiegeClanMinLevel()))
-		{
-			b = false;
-			player.sendMessage("Only clans with Level " + FortSiegeManager.getInstance().getSiegeClanMinLevel() + " and higher may register for a fortress siege.");
-		}
-		else if (!player.hasClanPrivilege(ClanPrivilege.CS_MANAGE_SIEGE))
-		{
-			b = false;
-			player.sendPacket(SystemMessageId.YOU_ARE_NOT_AUTHORIZED_TO_DO_THAT);
-		}
-		else if (player.getClan() == getFort().getOwnerClan())
-		{
-			b = false;
-			player.sendPacket(SystemMessageId.CLAN_THAT_OWNS_CASTLE_IS_AUTOMATICALLY_REGISTERED_DEFENDING);
-		}
-		else if ((getFort().getOwnerClan() != null) && (player.getClan().getCastleId() > 0) && (player.getClan().getCastleId() == getFort().getContractedCastleId()))
-		{
-			b = false;
-			player.sendPacket(SystemMessageId.CANT_REGISTER_TO_SIEGE_DUE_TO_CONTRACT);
-		}
-		else if ((getFort().getTimeTillRebelArmy() > 0) && (getFort().getTimeTillRebelArmy() <= 7200))
-		{
-			b = false;
-			player.sendMessage("You cannot register for the fortress siege 2 hours prior to rebel army attack.");
-		}
-		else if (getFort().getSiege().getAttackerClans().isEmpty() && (player.getInventory().getAdena() < 250000))
-		{
-			b = false;
-			player.sendMessage("You need 250,000 adena to register"); // replace me with html
-		}
-		else
-		{
-			for (Fort fort : FortManager.getInstance().getForts())
-			{
-				if (fort.getSiege().getAttackerClan(player.getClanId()) != null)
-				{
-					b = false;
-					player.sendPacket(SystemMessageId.ALREADY_REQUESTED_SIEGE_BATTLE);
-					break;
-				}
-				if ((fort.getOwnerClan() == player.getClan()) && (fort.getSiege().getIsInProgress() || (fort.getSiege()._siegeStartTask != null)))
-				{
-					b = false;
-					player.sendPacket(SystemMessageId.ALREADY_REQUESTED_SIEGE_BATTLE);
-					break;
-				}
-			}
-		}
-		return b;
-	}
-	
-	/**
-	 * @param clan The L2Clan of the player trying to register
-	 * @return true if the clan has already registered to a siege for the same day.
+	 * @param clan
+	 * @return {@code true} if the clan has already registered to a siege for the same day, {@code false} otherwise.
 	 */
 	public boolean checkIfAlreadyRegisteredForSameDay(L2Clan clan)
 	{
@@ -1116,9 +1079,8 @@ public class FortSiege implements Siegable
 	}
 	
 	/**
-	 * Save registration to database.<BR>
-	 * <BR>
-	 * @param clan The L2Clan of player
+	 * Save registration to database.
+	 * @param clan
 	 */
 	private void saveSiegeClan(L2Clan clan)
 	{
@@ -1202,8 +1164,7 @@ public class FortSiege implements Siegable
 	}
 	
 	/**
-	 * Spawn siege guard.<BR>
-	 * <BR>
+	 * Spawn siege guard.
 	 */
 	private void spawnSiegeGuard()
 	{
@@ -1246,7 +1207,7 @@ public class FortSiege implements Siegable
 		return _fort;
 	}
 	
-	public final boolean getIsInProgress()
+	public final boolean isInProgress()
 	{
 		return _isInProgress;
 	}

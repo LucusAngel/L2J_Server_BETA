@@ -152,20 +152,9 @@ public class L2DoorInstance extends L2Character
 	}
 	
 	@Override
-	public L2CharacterAI getAI()
+	protected L2CharacterAI initAI()
 	{
-		if (_ai == null)
-		{
-			synchronized (this)
-			{
-				if (_ai == null)
-				{
-					_ai = new L2DoorAI(new AIAccessor());
-				}
-				return _ai;
-			}
-		}
-		return _ai;
+		return new L2DoorAI(new AIAccessor());
 	}
 	
 	private void startTimerOpen()
@@ -707,8 +696,8 @@ public class L2DoorInstance extends L2Character
 			return false;
 		}
 		
-		boolean isFort = ((getFort() != null) && (getFort().getResidenceId() > 0) && getFort().getSiege().getIsInProgress());
-		boolean isCastle = ((getCastle() != null) && (getCastle().getResidenceId() > 0) && getCastle().getSiege().getIsInProgress());
+		boolean isFort = ((getFort() != null) && (getFort().getResidenceId() > 0) && getFort().getSiege().isInProgress());
+		boolean isCastle = ((getCastle() != null) && (getCastle().getResidenceId() > 0) && getCastle().getSiege().isInProgress());
 		boolean isHall = ((getClanHall() != null) && getClanHall().isSiegableHall() && ((SiegableHall) getClanHall()).isInSiege());
 		
 		if (isFort || isCastle || isHall)

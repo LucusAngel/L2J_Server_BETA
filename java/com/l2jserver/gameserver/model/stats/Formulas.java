@@ -561,7 +561,7 @@ public final class Formulas
 		}
 		
 		Siege siege = SiegeManager.getInstance().getSiege(activeChar.getX(), activeChar.getY(), activeChar.getZ());
-		if ((siege == null) || !siege.getIsInProgress())
+		if ((siege == null) || !siege.isInProgress())
 		{
 			return 0;
 		}
@@ -1867,19 +1867,12 @@ public final class Formulas
 	 */
 	public static boolean calcBuffDebuffReflection(L2Character target, Skill skill)
 	{
-		boolean reflect = false;
-		// Neither some special skills (like hero debuffs...) or those skills ignoring resistances can't be reflected
-		if ((skill.getPower() == -1) || ((skill.isHeroSkill() && skill.isDebuff()) || (!skill.isDebuff() && skill.isBad())))
+		if (!skill.isDebuff() || (skill.getActivateRate() == -1))
 		{
-			return reflect;
+			return false;
 		}
-		
 		final double reflectChance = target.calcStat(skill.isMagic() ? Stats.REFLECT_SKILL_MAGIC : Stats.REFLECT_SKILL_PHYSIC, 0, null, skill);
-		if (Rnd.get(100) < reflectChance)
-		{
-			reflect = true;
-		}
-		return reflect;
+		return reflectChance > Rnd.get(100);
 	}
 	
 	/**

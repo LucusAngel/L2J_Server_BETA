@@ -85,7 +85,6 @@ import com.l2jserver.gameserver.datatables.NpcData;
 import com.l2jserver.gameserver.datatables.PetDataTable;
 import com.l2jserver.gameserver.datatables.RecipeData;
 import com.l2jserver.gameserver.datatables.SkillData;
-import com.l2jserver.gameserver.datatables.SkillData.FrequentSkill;
 import com.l2jserver.gameserver.datatables.SkillTreesData;
 import com.l2jserver.gameserver.enums.CategoryType;
 import com.l2jserver.gameserver.enums.HtmlActionScope;
@@ -97,6 +96,7 @@ import com.l2jserver.gameserver.enums.PlayerAction;
 import com.l2jserver.gameserver.enums.PrivateStoreType;
 import com.l2jserver.gameserver.enums.QuestEventType;
 import com.l2jserver.gameserver.enums.Sex;
+import com.l2jserver.gameserver.enums.ShortcutType;
 import com.l2jserver.gameserver.enums.ShotType;
 import com.l2jserver.gameserver.enums.Team;
 import com.l2jserver.gameserver.handler.IItemHandler;
@@ -138,7 +138,6 @@ import com.l2jserver.gameserver.model.L2PremiumItem;
 import com.l2jserver.gameserver.model.L2Radar;
 import com.l2jserver.gameserver.model.L2RecipeList;
 import com.l2jserver.gameserver.model.L2Request;
-import com.l2jserver.gameserver.model.L2ShortCut;
 import com.l2jserver.gameserver.model.L2SkillLearn;
 import com.l2jserver.gameserver.model.L2World;
 import com.l2jserver.gameserver.model.L2WorldRegion;
@@ -150,6 +149,7 @@ import com.l2jserver.gameserver.model.PartyMatchRoomList;
 import com.l2jserver.gameserver.model.PartyMatchWaitingList;
 import com.l2jserver.gameserver.model.PcCondOverride;
 import com.l2jserver.gameserver.model.ShortCuts;
+import com.l2jserver.gameserver.model.Shortcut;
 import com.l2jserver.gameserver.model.TeleportBookmark;
 import com.l2jserver.gameserver.model.TeleportWhereType;
 import com.l2jserver.gameserver.model.TerritoryWard;
@@ -236,6 +236,7 @@ import com.l2jserver.gameserver.model.quest.QuestState;
 import com.l2jserver.gameserver.model.quest.State;
 import com.l2jserver.gameserver.model.skills.AbnormalType;
 import com.l2jserver.gameserver.model.skills.BuffInfo;
+import com.l2jserver.gameserver.model.skills.CommonSkill;
 import com.l2jserver.gameserver.model.skills.Skill;
 import com.l2jserver.gameserver.model.skills.targets.L2TargetType;
 import com.l2jserver.gameserver.model.stats.Formulas;
@@ -607,12 +608,10 @@ public final class L2PcInstance extends L2Playable
 	/** The table containing all Quests began by the L2PcInstance */
 	private final Map<String, QuestState> _quests = new FastMap<>();
 	
-	/** The list containing all shortCuts of this L2PcInstance */
+	/** The list containing all shortCuts of this player. */
 	private final ShortCuts _shortCuts = new ShortCuts(this);
 	
-	/**
-	 * The list containing all macros of this L2PcInstance.
-	 */
+	/** The list containing all macros of this player. */
 	private final MacroList _macros = new MacroList(this);
 	
 	private final List<L2PcInstance> _snoopListener = new FastList<>();
@@ -776,7 +775,7 @@ public final class L2PcInstance extends L2Playable
 	private int _fishy = 0;
 	private int _fishz = 0;
 	
-	private Set<Integer> _transformAllowedSkills;
+	private volatile Set<Integer> _transformAllowedSkills;
 	private ScheduledFuture<?> _taskRentPet;
 	private ScheduledFuture<?> _taskWater;
 	
@@ -1121,7 +1120,7 @@ public final class L2PcInstance extends L2Playable
 		_appearance = app;
 		
 		// Create an AI
-		_ai = new L2PlayerAI(new L2PcInstance.AIAccessor());
+		getAI();
 		
 		// Create a L2Radar object
 		_radar = new L2Radar(this);
@@ -1207,24 +1206,10 @@ public final class L2PcInstance extends L2Playable
 		super.setTemplate(CharTemplateTable.getInstance().getTemplate(newclass));
 	}
 	
-	/**
-	 * Return the AI of the L2PcInstance (create it if necessary).
-	 */
 	@Override
-	public L2CharacterAI getAI()
+	protected L2CharacterAI initAI()
 	{
-		if (_ai == null)
-		{
-			synchronized (this)
-			{
-				if (_ai == null)
-				{
-					_ai = new L2PlayerAI(new L2PcInstance.AIAccessor());
-				}
-				return _ai;
-			}
-		}
-		return _ai;
+		return new L2PlayerAI(new L2PcInstance.AIAccessor());
 	}
 	
 	/** Return the Level of the L2PcInstance. */
@@ -1396,9 +1381,9 @@ public final class L2PcInstance extends L2Playable
 			_log.warning("Attempted to remove unknown RecipeList: " + recipeId);
 		}
 		
-		for (L2ShortCut sc : getAllShortCuts())
+		for (Shortcut sc : getAllShortCuts())
 		{
-			if ((sc != null) && (sc.getId() == recipeId) && (sc.getType() == L2ShortCut.TYPE_RECIPE))
+			if ((sc != null) && (sc.getId() == recipeId) && (sc.getType() == ShortcutType.RECIPE))
 			{
 				deleteShortCut(sc.getSlot(), sc.getPage());
 			}
@@ -1766,7 +1751,7 @@ public final class L2PcInstance extends L2Playable
 	/**
 	 * @return a table containing all L2ShortCut of the L2PcInstance.
 	 */
-	public L2ShortCut[] getAllShortCuts()
+	public Shortcut[] getAllShortCuts()
 	{
 		return _shortCuts.getAllShortCuts();
 	}
@@ -1776,7 +1761,7 @@ public final class L2PcInstance extends L2Playable
 	 * @param page The page of shortCuts containing the slot
 	 * @return the L2ShortCut of the L2PcInstance corresponding to the position (page-slot).
 	 */
-	public L2ShortCut getShortCut(int slot, int page)
+	public Shortcut getShortCut(int slot, int page)
 	{
 		return _shortCuts.getShortCut(slot, page);
 	}
@@ -1785,7 +1770,7 @@ public final class L2PcInstance extends L2Playable
 	 * Add a L2shortCut to the L2PcInstance _shortCuts
 	 * @param shortcut
 	 */
-	public void registerShortCut(L2ShortCut shortcut)
+	public void registerShortCut(Shortcut shortcut)
 	{
 		_shortCuts.registerShortCut(shortcut);
 	}
@@ -2025,12 +2010,12 @@ public final class L2PcInstance extends L2Playable
 	 */
 	public boolean hasDwarvenCraft()
 	{
-		return getSkillLevel(Skill.SKILL_CREATE_DWARVEN) >= 1;
+		return getSkillLevel(CommonSkill.CREATE_DWARVEN.getId()) >= 1;
 	}
 	
 	public int getDwarvenCraft()
 	{
-		return getSkillLevel(Skill.SKILL_CREATE_DWARVEN);
+		return getSkillLevel(CommonSkill.CREATE_DWARVEN.getId());
 	}
 	
 	/**
@@ -2038,12 +2023,12 @@ public final class L2PcInstance extends L2Playable
 	 */
 	public boolean hasCommonCraft()
 	{
-		return getSkillLevel(Skill.SKILL_CREATE_COMMON) >= 1;
+		return getSkillLevel(CommonSkill.CREATE_COMMON.getId()) >= 1;
 	}
 	
 	public int getCommonCraft()
 	{
-		return getSkillLevel(Skill.SKILL_CREATE_COMMON);
+		return getSkillLevel(CommonSkill.CREATE_COMMON.getId());
 	}
 	
 	/**
@@ -2332,16 +2317,16 @@ public final class L2PcInstance extends L2Playable
 		weaponPenalty = weaponPenalty - expertiseLevel - bonus;
 		weaponPenalty = Math.min(Math.max(weaponPenalty, 0), 4);
 		
-		if ((getExpertiseWeaponPenalty() != weaponPenalty) || (getSkillLevel(FrequentSkill.WEAPON_GRADE_PENALTY.getId()) != weaponPenalty))
+		if ((getExpertiseWeaponPenalty() != weaponPenalty) || (getSkillLevel(CommonSkill.WEAPON_GRADE_PENALTY.getId()) != weaponPenalty))
 		{
 			_expertiseWeaponPenalty = weaponPenalty;
 			if (_expertiseWeaponPenalty > 0)
 			{
-				addSkill(SkillData.getInstance().getSkill(FrequentSkill.WEAPON_GRADE_PENALTY.getId(), _expertiseWeaponPenalty));
+				addSkill(SkillData.getInstance().getSkill(CommonSkill.WEAPON_GRADE_PENALTY.getId(), _expertiseWeaponPenalty));
 			}
 			else
 			{
-				removeSkill(getKnownSkill(FrequentSkill.WEAPON_GRADE_PENALTY.getId()), false, true);
+				removeSkill(getKnownSkill(CommonSkill.WEAPON_GRADE_PENALTY.getId()), false, true);
 			}
 			changed = true;
 		}
@@ -2350,16 +2335,16 @@ public final class L2PcInstance extends L2Playable
 		armorPenalty = armorPenalty - expertiseLevel - bonus;
 		armorPenalty = Math.min(Math.max(armorPenalty, 0), 4);
 		
-		if ((getExpertiseArmorPenalty() != armorPenalty) || (getSkillLevel(FrequentSkill.ARMOR_GRADE_PENALTY.getId()) != armorPenalty))
+		if ((getExpertiseArmorPenalty() != armorPenalty) || (getSkillLevel(CommonSkill.ARMOR_GRADE_PENALTY.getId()) != armorPenalty))
 		{
 			_expertiseArmorPenalty = armorPenalty;
 			if (_expertiseArmorPenalty > 0)
 			{
-				addSkill(SkillData.getInstance().getSkill(FrequentSkill.ARMOR_GRADE_PENALTY.getId(), _expertiseArmorPenalty));
+				addSkill(SkillData.getInstance().getSkill(CommonSkill.ARMOR_GRADE_PENALTY.getId(), _expertiseArmorPenalty));
 			}
 			else
 			{
-				removeSkill(getKnownSkill(FrequentSkill.ARMOR_GRADE_PENALTY.getId()), false, true);
+				removeSkill(getKnownSkill(CommonSkill.ARMOR_GRADE_PENALTY.getId()), false, true);
 			}
 			changed = true;
 		}
@@ -4288,9 +4273,7 @@ public final class L2PcInstance extends L2Playable
 			return false;
 		}
 		
-		// TODO: Should possibly be checked only in L2PcInstance's useMagic
-		// Can't use Hero and resurrect skills during Olympiad
-		if (isInOlympiadMode() && (skill.isHeroSkill() || (skill.hasEffectType(L2EffectType.RESURRECTION))))
+		if (isInOlympiadMode() && skill.isBlockedInOlympiad())
 		{
 			sendPacket(SystemMessageId.THIS_SKILL_IS_NOT_AVAILABLE_FOR_THE_OLYMPIAD_EVENT);
 			return false;
@@ -5801,7 +5784,7 @@ public final class L2PcInstance extends L2Playable
 	 */
 	public boolean isLucky()
 	{
-		return (getLevel() <= 9) && isAffectedBySkill(Skill.SKILL_LUCKY);
+		return (getLevel() <= 9) && isAffectedBySkill(CommonSkill.LUCKY.getId());
 	}
 	
 	/**
@@ -5831,7 +5814,7 @@ public final class L2PcInstance extends L2Playable
 		// Get the level of the L2PcInstance
 		final int lvl = getLevel();
 		
-		int clan_luck = getSkillLevel(Skill.SKILL_CLAN_LUCK);
+		int clan_luck = getSkillLevel(CommonSkill.CLAN_LUCK.getId());
 		
 		double clan_luck_modificator = 1.0;
 		
@@ -6755,7 +6738,7 @@ public final class L2PcInstance extends L2Playable
 		clearPetData();
 		if (wasFlying)
 		{
-			removeSkill(SkillData.FrequentSkill.WYVERN_BREATH.getSkill());
+			removeSkill(CommonSkill.WYVERN_BREATH.getSkill());
 		}
 		broadcastPacket(new Ride(this));
 		setMountObjectID(0);
@@ -7946,12 +7929,14 @@ public final class L2PcInstance extends L2Playable
 			return oldSkill;
 		}
 		
-		final L2ShortCut[] allShortCuts = getAllShortCuts();
-		for (L2ShortCut sc : allShortCuts)
+		if (skill != null)
 		{
-			if ((sc != null) && (skill != null) && (sc.getId() == skill.getId()) && (sc.getType() == L2ShortCut.TYPE_SKILL) && !((skill.getId() >= 3080) && (skill.getId() <= 3259)))
+			for (Shortcut sc : getAllShortCuts())
 			{
-				deleteShortCut(sc.getSlot(), sc.getPage());
+				if ((sc != null) && (sc.getId() == skill.getId()) && (sc.getType() == ShortcutType.SKILL) && !((skill.getId() >= 3080) && (skill.getId() <= 3259)))
+				{
+					deleteShortCut(sc.getSlot(), sc.getPage());
+				}
 			}
 		}
 		return oldSkill;
@@ -8831,14 +8816,14 @@ public final class L2PcInstance extends L2Playable
 		{
 			if ((((L2DoorInstance) target).getCastle() != null) && (((L2DoorInstance) target).getCastle().getResidenceId() > 0)) // If its castle door
 			{
-				if (!((L2DoorInstance) target).getCastle().getSiege().getIsInProgress())
+				if (!((L2DoorInstance) target).getCastle().getSiege().isInProgress())
 				{
 					return false;
 				}
 			}
 			else if ((((L2DoorInstance) target).getFort() != null) && (((L2DoorInstance) target).getFort().getResidenceId() > 0) && !((L2DoorInstance) target).getIsShowHp()) // If its fort door
 			{
-				if (!((L2DoorInstance) target).getFort().getSiege().getIsInProgress())
+				if (!((L2DoorInstance) target).getFort().getSiege().isInProgress())
 				{
 					return false;
 				}
@@ -9342,7 +9327,7 @@ public final class L2PcInstance extends L2Playable
 			{
 				if (isNoble())
 				{
-					addSkill(FrequentSkill.STRIDER_SIEGE_ASSAULT.getSkill(), false);
+					addSkill(CommonSkill.STRIDER_SIEGE_ASSAULT.getSkill(), false);
 				}
 				break;
 			}
@@ -13916,7 +13901,7 @@ public final class L2PcInstance extends L2Playable
 			learn = SkillTreesData.getInstance().getClassSkill(e.getKey(), e.getValue().getLevel() % 100, getClassId());
 			if (learn != null)
 			{
-				int lvlDiff = e.getKey() == Skill.SKILL_EXPERTISE ? 0 : 9;
+				int lvlDiff = e.getKey() == CommonSkill.EXPERTISE.getId() ? 0 : 9;
 				if (getLevel() < (learn.getGetLevel() - lvlDiff))
 				{
 					deacreaseSkillLevel(e.getValue(), lvlDiff);

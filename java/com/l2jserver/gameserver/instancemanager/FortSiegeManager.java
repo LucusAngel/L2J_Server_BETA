@@ -35,7 +35,6 @@ import javolution.util.FastMap;
 
 import com.l2jserver.Config;
 import com.l2jserver.L2DatabaseFactory;
-import com.l2jserver.gameserver.datatables.SkillData;
 import com.l2jserver.gameserver.model.CombatFlag;
 import com.l2jserver.gameserver.model.FortSiegeSpawn;
 import com.l2jserver.gameserver.model.L2Clan;
@@ -45,6 +44,7 @@ import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.entity.Fort;
 import com.l2jserver.gameserver.model.entity.FortSiege;
 import com.l2jserver.gameserver.model.items.instance.L2ItemInstance;
+import com.l2jserver.gameserver.model.skills.CommonSkill;
 import com.l2jserver.gameserver.network.SystemMessageId;
 import com.l2jserver.gameserver.network.serverpackets.SystemMessage;
 
@@ -57,6 +57,7 @@ public final class FortSiegeManager
 	// Fort Siege settings
 	private FastMap<Integer, FastList<FortSiegeSpawn>> _commanderSpawnList;
 	private FastMap<Integer, FastList<CombatFlag>> _flagList;
+	private boolean _justToTerritory = true; // Changeable in fortsiege.properties
 	private int _flagMaxCount = 1; // Changeable in fortsiege.properties
 	private int _siegeClanMinLevel = 4; // Changeable in fortsiege.properties
 	private int _siegeLength = 60; // Time in minute. Changeable in fortsiege.properties
@@ -71,8 +72,8 @@ public final class FortSiegeManager
 	
 	public final void addSiegeSkills(L2PcInstance character)
 	{
-		character.addSkill(SkillData.FrequentSkill.SEAL_OF_RULER.getSkill(), false);
-		character.addSkill(SkillData.FrequentSkill.BUILD_HEADQUARTERS.getSkill(), false);
+		character.addSkill(CommonSkill.SEAL_OF_RULER.getSkill(), false);
+		character.addSkill(CommonSkill.BUILD_HEADQUARTERS.getSkill(), false);
 	}
 	
 	/**
@@ -95,7 +96,7 @@ public final class FortSiegeManager
 		{
 			text = "You must be on fort ground to summon this";
 		}
-		else if (!fort.getSiege().getIsInProgress())
+		else if (!fort.getSiege().isInProgress())
 		{
 			text = "You can only summon this during a siege.";
 		}
@@ -151,8 +152,8 @@ public final class FortSiegeManager
 	
 	public final void removeSiegeSkills(L2PcInstance character)
 	{
-		character.removeSkill(SkillData.FrequentSkill.SEAL_OF_RULER.getSkill());
-		character.removeSkill(SkillData.FrequentSkill.BUILD_HEADQUARTERS.getSkill());
+		character.removeSkill(CommonSkill.SEAL_OF_RULER.getSkill());
+		character.removeSkill(CommonSkill.BUILD_HEADQUARTERS.getSkill());
 	}
 	
 	private final void load()
@@ -169,6 +170,7 @@ public final class FortSiegeManager
 		}
 		
 		// Siege setting
+		_justToTerritory = Boolean.parseBoolean(siegeSettings.getProperty("JustToTerritory", "true"));
 		_attackerMaxClans = Integer.decode(siegeSettings.getProperty("AttackerMaxClans", "500"));
 		_flagMaxCount = Integer.decode(siegeSettings.getProperty("MaxFlags", "1"));
 		_siegeClanMinLevel = Integer.decode(siegeSettings.getProperty("SiegeClanMinLevel", "4"));
@@ -264,6 +266,11 @@ public final class FortSiegeManager
 	public final int getFlagMaxCount()
 	{
 		return _flagMaxCount;
+	}
+	
+	public final boolean canRegisterJustTerritory()
+	{
+		return _justToTerritory;
 	}
 	
 	public final int getSuspiciousMerchantRespawnDelay()
@@ -366,7 +373,7 @@ public final class FortSiegeManager
 			player.sendPacket(sm);
 			return false;
 		}
-		else if (!fort.getSiege().getIsInProgress())
+		else if (!fort.getSiege().isInProgress())
 		{
 			player.sendPacket(sm);
 			return false;
@@ -390,7 +397,7 @@ public final class FortSiegeManager
 			if (cf.getPlayerObjectId() == player.getObjectId())
 			{
 				cf.dropIt();
-				if (fort.getSiege().getIsInProgress())
+				if (fort.getSiege().isInProgress())
 				{
 					cf.spawnMe();
 				}

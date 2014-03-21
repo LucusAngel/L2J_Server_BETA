@@ -460,6 +460,8 @@ public final class Config
 	public static boolean ALT_DEV_NO_HANDLERS;
 	public static boolean ALT_DEV_NO_QUESTS;
 	public static boolean ALT_DEV_NO_SPAWNS;
+	public static boolean ALT_DEV_SHOW_QUESTS_LOAD_IN_LOGS;
+	public static boolean ALT_DEV_SHOW_SCRIPTS_LOAD_IN_LOGS;
 	public static int THREAD_P_EFFECTS;
 	public static int THREAD_P_GENERAL;
 	public static int GENERAL_PACKET_THREAD_CORE_SIZE;
@@ -508,10 +510,6 @@ public final class Config
 	public static boolean GRIDS_ALWAYS_ON;
 	public static int GRID_NEIGHBOR_TURNON_TIME;
 	public static int GRID_NEIGHBOR_TURNOFF_TIME;
-	public static int WORLD_X_MIN;
-	public static int WORLD_X_MAX;
-	public static int WORLD_Y_MIN;
-	public static int WORLD_Y_MAX;
 	public static int GEODATA;
 	public static String GEODATA_DRIVER;
 	public static File PATHNODE_DIR;
@@ -829,6 +827,12 @@ public final class Config
 	public static int INVENTORY_MAXIMUM_PET;
 	public static double PET_HP_REGEN_MULTIPLIER;
 	public static double PET_MP_REGEN_MULTIPLIER;
+	public static int DROP_ADENA_MIN_LEVEL_DIFFERENCE;
+	public static int DROP_ADENA_MAX_LEVEL_DIFFERENCE;
+	public static double DROP_ADENA_MIN_LEVEL_GAP_CHANCE;
+	public static int DROP_ITEM_MIN_LEVEL_DIFFERENCE;
+	public static int DROP_ITEM_MAX_LEVEL_DIFFERENCE;
+	public static double DROP_ITEM_MIN_LEVEL_GAP_CHANCE;
 	public static List<Integer> NON_TALKING_NPCS;
 	
 	// --------------------------------------------------
@@ -1748,7 +1752,6 @@ public final class Config
 			
 			// Load General L2Properties file (if exists)
 			final PropertiesParser General = new PropertiesParser(GENERAL_CONFIG_FILE);
-			
 			EVERYBODY_HAS_ADMIN_RIGHTS = General.getBoolean("EverybodyHasAdminRights", false);
 			DISPLAY_SERVER_VERSION = General.getBoolean("DisplayServerRevision", true);
 			SERVER_LIST_BRACKET = General.getBoolean("ServerListBrackets", false);
@@ -1789,6 +1792,8 @@ public final class Config
 			ALT_DEV_NO_HANDLERS = General.getBoolean("AltDevNoHandlers", false) || Boolean.getBoolean("nohandlers");
 			ALT_DEV_NO_QUESTS = General.getBoolean("AltDevNoQuests", false) || Boolean.getBoolean("noquests");
 			ALT_DEV_NO_SPAWNS = General.getBoolean("AltDevNoSpawns", false) || Boolean.getBoolean("nospawns");
+			ALT_DEV_SHOW_QUESTS_LOAD_IN_LOGS = General.getBoolean("AltDevShowQuestsLoadInLogs", false);
+			ALT_DEV_SHOW_SCRIPTS_LOAD_IN_LOGS = General.getBoolean("AltDevShowScriptsLoadInLogs", false);
 			THREAD_P_EFFECTS = General.getInt("ThreadPoolSizeEffects", 10);
 			THREAD_P_GENERAL = General.getInt("ThreadPoolSizeGeneral", 13);
 			IO_PACKET_THREAD_CORE_SIZE = General.getInt("UrgentPacketThreadCoreSize", 2);
@@ -1850,10 +1855,6 @@ public final class Config
 			GRIDS_ALWAYS_ON = General.getBoolean("GridsAlwaysOn", false);
 			GRID_NEIGHBOR_TURNON_TIME = General.getInt("GridNeighborTurnOnTime", 1);
 			GRID_NEIGHBOR_TURNOFF_TIME = General.getInt("GridNeighborTurnOffTime", 90);
-			WORLD_X_MIN = General.getInt("WorldXMin", 10);
-			WORLD_X_MAX = General.getInt("WorldXMax", 26);
-			WORLD_Y_MIN = General.getInt("WorldYMin", 10);
-			WORLD_Y_MAX = General.getInt("WorldYMax", 26);
 			GEODATA = General.getInt("GeoData", 0);
 			GEODATA_DRIVER = General.getString("GeoDataDriver", "com.l2jserver.gameserver.geoengine.NullDriver");
 			try
@@ -2093,6 +2094,15 @@ public final class Config
 			INVENTORY_MAXIMUM_PET = NPC.getInt("MaximumSlotsForPet", 12);
 			PET_HP_REGEN_MULTIPLIER = NPC.getDouble("PetHpRegenMultiplier", 100) / 100;
 			PET_MP_REGEN_MULTIPLIER = NPC.getDouble("PetMpRegenMultiplier", 100) / 100;
+			
+			DROP_ADENA_MIN_LEVEL_DIFFERENCE = NPC.getInt("DropAdenaMinLevelDifference", 8);
+			DROP_ADENA_MAX_LEVEL_DIFFERENCE = NPC.getInt("DropAdenaMaxLevelDifference", 15);
+			DROP_ADENA_MIN_LEVEL_GAP_CHANCE = NPC.getDouble("DropAdenaMinLevelGapChance", 10);
+			
+			DROP_ITEM_MIN_LEVEL_DIFFERENCE = NPC.getInt("DropItemMinLevelDifference", 5);
+			DROP_ITEM_MAX_LEVEL_DIFFERENCE = NPC.getInt("DropItemMaxLevelDifference", 10);
+			DROP_ITEM_MIN_LEVEL_GAP_CHANCE = NPC.getDouble("DropItemMinLevelGapChance", 10);
+			
 			split = NPC.getString("NonTalkingNpcs", "18684,18685,18686,18687,18688,18689,18690,19691,18692,31202,31203,31204,31205,31206,31207,31208,31209,31266,31557,31593,31606,31671,31672,31673,31674,31758,31955,32026,32030,32031,32032,32306,32619,32620,32621").split(",");
 			NON_TALKING_NPCS = new ArrayList<>(split.length);
 			for (String npcId : split)
@@ -2511,7 +2521,7 @@ public final class Config
 			
 			OFFLINE_TRADE_ENABLE = L2JModSettings.getBoolean("OfflineTradeEnable", false);
 			OFFLINE_CRAFT_ENABLE = L2JModSettings.getBoolean("OfflineCraftEnable", false);
-			OFFLINE_MODE_IN_PEACE_ZONE = L2JModSettings.getBoolean("OfflineModeInPaceZone", false);
+			OFFLINE_MODE_IN_PEACE_ZONE = L2JModSettings.getBoolean("OfflineModeInPeaceZone", false);
 			OFFLINE_MODE_NO_DAMAGE = L2JModSettings.getBoolean("OfflineModeNoDamage", false);
 			OFFLINE_SET_NAME_COLOR = L2JModSettings.getBoolean("OfflineSetNameColor", false);
 			OFFLINE_NAME_COLOR = Integer.decode("0x" + L2JModSettings.getString("OfflineNameColor", "808080"));

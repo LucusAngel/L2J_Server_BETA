@@ -77,19 +77,6 @@ public final class Skill implements IChanceSkillTrigger, IIdentifiable
 	
 	private static final L2Object[] EMPTY_TARGET_LIST = new L2Object[0];
 	
-	public static final int SKILL_CUBIC_MASTERY = 143;
-	public static final int SKILL_CREATE_DWARVEN = 172;
-	public static final int SKILL_LUCKY = 194;
-	public static final int SKILL_EXPERTISE = 239;
-	public static final int SKILL_CRYSTALLIZE = 248;
-	public static final int SKILL_CLAN_LUCK = 390;
-	public static final int SKILL_ONYX_BEAST_TRANSFORMATION = 617;
-	public static final int SKILL_CREATE_COMMON = 1320;
-	public static final int SKILL_DIVINE_INSPIRATION = 1405;
-	public static final int SKILL_SERVITOR_SHARE = 1557;
-	public static final int SKILL_CARAVANS_SECRET_MEDICINE = 2341;
-	public static final int SKILL_NPC_RACE = 4416;
-	
 	/** Skill ID. */
 	private final int _id;
 	/** Skill level. */
@@ -173,6 +160,8 @@ public final class Skill implements IChanceSkillTrigger, IIdentifiable
 	private final boolean _removedOnAnyActionExceptMove;
 	private final boolean _removedOnDamage;
 	
+	private final boolean _blockedInOlympiad;
+	
 	private final byte _element;
 	private final int _elementPower;
 	
@@ -186,7 +175,6 @@ public final class Skill implements IChanceSkillTrigger, IIdentifiable
 	private final int _triggeredLevel;
 	private final String _chanceType;
 	private final int _soulMaxConsume;
-	private final boolean _dependOnTargetBuff;
 	
 	private final boolean _isHeroSkill; // If true the skill is a Hero Skill
 	private final boolean _isGMSkill; // True if skill is GM skill
@@ -228,7 +216,7 @@ public final class Skill implements IChanceSkillTrigger, IIdentifiable
 	
 	private final String _icon;
 	
-	private Byte[] _effectTypes;
+	private volatile Byte[] _effectTypes;
 	
 	// Channeling data
 	private final int _channelingSkillId;
@@ -333,6 +321,8 @@ public final class Skill implements IChanceSkillTrigger, IIdentifiable
 		_removedOnAnyActionExceptMove = set.getBoolean("removedOnAnyActionExceptMove", false);
 		_removedOnDamage = set.getBoolean("removedOnDamage", false);
 		
+		_blockedInOlympiad = set.getBoolean("blockedInOlympiad", false);
+		
 		_element = set.getByte("element", (byte) -1);
 		_elementPower = set.getInt("elementPower", 0);
 		
@@ -371,7 +361,6 @@ public final class Skill implements IChanceSkillTrigger, IIdentifiable
 		_canBeDispeled = set.getBoolean("canBeDispeled", true);
 		
 		_excludedFromCheck = set.getBoolean("excludedFromCheck", false);
-		_dependOnTargetBuff = set.getBoolean("dependOnTargetBuff", false);
 		_simultaneousCast = set.getBoolean("simultaneousCast", false);
 		
 		String capsuled_items = set.getString("capsuled_items_skill", null);
@@ -612,6 +601,14 @@ public final class Skill implements IChanceSkillTrigger, IIdentifiable
 	public boolean isRemovedOnDamage()
 	{
 		return _removedOnDamage;
+	}
+	
+	/**
+	 * @return {@code true} if skill can not be used in olympiad.
+	 */
+	public boolean isBlockedInOlympiad()
+	{
+		return _blockedInOlympiad;
 	}
 	
 	/**
@@ -931,19 +928,7 @@ public final class Skill implements IChanceSkillTrigger, IIdentifiable
 	 */
 	public boolean isHealingPotionSkill()
 	{
-		switch (getId())
-		{
-			case 2031: // Lesser Healing Potion
-			case 2032: // Healing Potion
-			case 2037: // Greater Healing Potion
-			case 2863: // Highest Power Healing Potion
-			case 26025: // Powerful Healing Potion
-			case 26026: // High-grade Healing Potion
-			{
-				return true;
-			}
-		}
-		return false;
+		return getAbnormalType() == AbnormalType.HP_RECOVER;
 	}
 	
 	public int getChargeConsume()
@@ -1199,7 +1184,7 @@ public final class Skill implements IChanceSkillTrigger, IIdentifiable
 			// target is mob
 			if ((targetPlayer == null) && (target instanceof L2Attackable) && (caster instanceof L2Attackable))
 			{
-				if (((L2Attackable) caster).isInEnemyClan((L2Attackable) target))
+				if (!((L2Attackable) caster).isInEnemyClan((L2Attackable) target))
 				{
 					return false;
 				}
@@ -1424,7 +1409,7 @@ public final class Skill implements IChanceSkillTrigger, IIdentifiable
 			
 			// Support for buff sharing feature.
 			// Avoiding Servitor Share since it's implementation already "shares" the effect.
-			if (addContinuousEffects && effected.isPlayer() && effected.hasServitor() && isContinuous() && !isDebuff() && (getId() != SKILL_SERVITOR_SHARE))
+			if (addContinuousEffects && effected.isPlayer() && effected.hasServitor() && isContinuous() && !isDebuff() && (getId() != CommonSkill.SERVITOR_SHARE.getId()))
 			{
 				applyEffects(effector, effected.getSummon(), false, 0);
 			}
@@ -1487,7 +1472,22 @@ public final class Skill implements IChanceSkillTrigger, IIdentifiable
 				{
 					if (Formulas.calcBuffDebuffReflection(target, this))
 					{
-						applyEffects(target, caster);
+						// if skill is reflected instant effects should be casted on target
+						// and continuous effects on caster
+						applyEffects(target, caster, false, 0);
+						
+						final Env env = new Env();
+						env.setCharacter(caster);
+						env.setTarget(target);
+						env.setSkill(this);
+						
+						final BuffInfo info = new BuffInfo(env);
+						applyEffectScope(EffectScope.GENERAL, info, true, false);
+						
+						EffectScope pvpOrPveEffectScope = caster.isPlayable() && target.isAttackable() ? EffectScope.PVE : caster.isPlayable() && target.isPlayable() ? EffectScope.PVP : null;
+						applyEffectScope(pvpOrPveEffectScope, info, true, false);
+						
+						applyEffectScope(EffectScope.CHANNELING, info, true, false);
 					}
 					else
 					{
@@ -1639,7 +1639,7 @@ public final class Skill implements IChanceSkillTrigger, IIdentifiable
 	 */
 	public boolean canBeStolen()
 	{
-		return !isPassive() && !isToggle() && !isDebuff() && !isHeroSkill() && !isGMSkill() && !(isStatic() && (getId() != SKILL_CARAVANS_SECRET_MEDICINE)) && canBeDispeled() && (getId() != SKILL_SERVITOR_SHARE);
+		return !isPassive() && !isToggle() && !isDebuff() && !isHeroSkill() && !isGMSkill() && !(isStatic() && (getId() != CommonSkill.CARAVANS_SECRET_MEDICINE.getId())) && canBeDispeled() && (getId() != CommonSkill.SERVITOR_SHARE.getId());
 	}
 	
 	public boolean isClanSkill()
@@ -1650,11 +1650,6 @@ public final class Skill implements IChanceSkillTrigger, IIdentifiable
 	public boolean isExcludedFromCheck()
 	{
 		return _excludedFromCheck;
-	}
-	
-	public boolean getDependOnTargetBuff()
-	{
-		return _dependOnTargetBuff;
 	}
 	
 	public boolean isSimultaneousCast()

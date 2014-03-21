@@ -1,18 +1,18 @@
 /*
  * Copyright (C) 2004-2014 L2J Server
- * 
+ *
  * This file is part of L2J Server.
- * 
+ *
  * L2J Server is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * L2J Server is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -111,18 +111,15 @@ import com.l2jserver.util.Util;
 public class Quest extends ManagedScript implements IIdentifiable
 {
 	public static final Logger _log = Logger.getLogger(Quest.class.getName());
-	
-	/** Map containing events from String value of the event. */
-	private static Map<String, Quest> _allEventsS = new HashMap<>();
-	
+
 	/** Map containing lists of timers from the name of the timer. */
 	private final Map<String, List<QuestTimer>> _allEventTimers = new L2FastMap<>(true);
 	private final Set<Integer> _questInvolvedNpcs = new HashSet<>();
-	
+
 	private final ReentrantReadWriteLock _rwLock = new ReentrantReadWriteLock();
 	private final WriteLock _writeLock = _rwLock.writeLock();
 	private final ReadLock _readLock = _rwLock.readLock();
-	
+
 	private final int _questId;
 	private final String _name;
 	private final String _descr;
@@ -130,18 +127,18 @@ public class Quest extends ManagedScript implements IIdentifiable
 	protected boolean _onEnterWorld = false;
 	private boolean _isCustom = false;
 	private boolean _isOlympiadUse = false;
-	
+
 	public int[] questItemIds = null;
-	
+
 	private static final String DEFAULT_NO_QUEST_MSG = "<html><body>You are either not on a quest that involves this NPC, or you don't meet this NPC's minimum quest requirements.</body></html>";
 	private static final String DEFAULT_ALREADY_COMPLETED_MSG = "<html><body>This quest has already been completed.</body></html>";
-	
+
 	private static final String QUEST_DELETE_FROM_CHAR_QUERY = "DELETE FROM character_quests WHERE charId=? AND name=?";
 	private static final String QUEST_DELETE_FROM_CHAR_QUERY_NON_REPEATABLE_QUERY = "DELETE FROM character_quests WHERE charId=? AND name=? AND var!=?";
-	
+
 	private static final int RESET_HOUR = 6;
 	private static final int RESET_MINUTES = 30;
-	
+
 	/**
 	 * @return the reset hour for a daily quest, could be overridden on a script.
 	 */
@@ -149,7 +146,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		return RESET_HOUR;
 	}
-	
+
 	/**
 	 * @return the reset minutes for a daily quest, could be overridden on a script.
 	 */
@@ -157,15 +154,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		return RESET_MINUTES;
 	}
-	
-	/**
-	 * @return a collection of the values contained in the _allEventsS map.
-	 */
-	public static Collection<Quest> findAllEvents()
-	{
-		return _allEventsS.values();
-	}
-	
+
 	/**
 	 * The Quest object constructor.<br>
 	 * Constructing a quest also calls the {@code init_LoadGlobalData} convenience method.
@@ -178,27 +167,28 @@ public class Quest extends ManagedScript implements IIdentifiable
 		_questId = questId;
 		_name = name;
 		_descr = descr;
-		if (questId != 0)
+		if (questId > 0)
 		{
 			QuestManager.getInstance().addQuest(this);
 		}
 		else
 		{
-			_allEventsS.put(name, this);
+			QuestManager.getInstance().addScript(this);
 		}
-		init_LoadGlobalData();
+
+		loadGlobalData();
 	}
-	
+
 	/**
-	 * The function init_LoadGlobalData is, by default, called by the constructor of all quests.<br>
+	 * This method is, by default, called by the constructor of all scripts.<br>
 	 * Children of this class can implement this function in order to define what variables to load and what structures to save them in.<br>
 	 * By default, nothing is loaded.
 	 */
-	protected void init_LoadGlobalData()
+	protected void loadGlobalData()
 	{
-		
+
 	}
-	
+
 	/**
 	 * The function saveGlobalData is, by default, called at shutdown, for all quests, by the QuestManager.<br>
 	 * Children of this class can implement this function in order to convert their structures<br>
@@ -207,9 +197,9 @@ public class Quest extends ManagedScript implements IIdentifiable
 	 */
 	public void saveGlobalData()
 	{
-		
+
 	}
-	
+
 	/**
 	 * Gets the quest ID.
 	 * @return the quest ID
@@ -219,7 +209,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		return _questId;
 	}
-	
+
 	/**
 	 * Add a new quest state of this quest to the database.
 	 * @param player the owner of the newly created quest state
@@ -229,7 +219,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		return new QuestState(this, player, _initialState);
 	}
-	
+
 	/**
 	 * Get the specified player's {@link QuestState} object for this quest.<br>
 	 * If the player does not have it and initIfNode is {@code true},<br>
@@ -248,7 +238,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 		}
 		return newQuestState(player);
 	}
-	
+
 	/**
 	 * @return the initial state of the quest
 	 */
@@ -256,7 +246,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		return _initialState;
 	}
-	
+
 	/**
 	 * @return the name of the quest
 	 */
@@ -264,7 +254,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		return _name;
 	}
-	
+
 	/**
 	 * @return the description of the quest
 	 */
@@ -272,7 +262,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		return _descr;
 	}
-	
+
 	/**
 	 * Add a timer to the quest (if it doesn't exist already) and start it.
 	 * @param name the name of the timer (also passed back as "event" in {@link #onAdvEvent(String, L2Npc, L2PcInstance)})
@@ -285,7 +275,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		startQuestTimer(name, time, npc, player, false);
 	}
-	
+
 	/**
 	 * Add a timer to the quest (if it doesn't exist already) and start it.
 	 * @param name the name of the timer (also passed back as "event" in {@link #onAdvEvent(String, L2Npc, L2PcInstance)})
@@ -324,7 +314,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 			}
 		}
 	}
-	
+
 	/**
 	 * Get a quest timer that matches the provided name and parameters.
 	 * @param name the name of the quest timer to get
@@ -358,7 +348,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Cancel all quest timers with the specified name.
 	 * @param name the name of the quest timers to cancel
@@ -386,7 +376,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 			}
 		}
 	}
-	
+
 	/**
 	 * Cancel the quest timer that matches the specified name and parameters.
 	 * @param name the name of the quest timer to cancel
@@ -401,7 +391,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 			timer.cancelAndRemove();
 		}
 	}
-	
+
 	/**
 	 * Remove a quest timer from the list of all timers.<br>
 	 * Note: does not stop the timer itself!
@@ -426,14 +416,14 @@ public class Quest extends ManagedScript implements IIdentifiable
 			}
 		}
 	}
-	
+
 	public Map<String, List<QuestTimer>> getQuestTimers()
 	{
 		return _allEventTimers;
 	}
-	
+
 	// These are methods to call within the core to call the quest events.
-	
+
 	/**
 	 * @param npc the NPC that was attacked
 	 * @param attacker the attacking player
@@ -455,7 +445,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 		}
 		showResult(attacker, res);
 	}
-	
+
 	/**
 	 * @param killer the character that killed the {@code victim}
 	 * @param victim the character that was killed by the {@code killer}
@@ -474,7 +464,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 		}
 		showResult(qs.getPlayer(), res);
 	}
-	
+
 	/**
 	 * @param item
 	 * @param player
@@ -492,7 +482,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 		}
 		showResult(player, res);
 	}
-	
+
 	/**
 	 * @param instance
 	 * @param player
@@ -511,7 +501,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 		}
 		showResult(player, res);
 	}
-	
+
 	/**
 	 * Notify quest script when something happens with a trap.
 	 * @param trap the trap instance which triggers the notification
@@ -539,7 +529,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 			showResult(trigger.getActingPlayer(), res);
 		}
 	}
-	
+
 	/**
 	 * @param npc the spawned NPC
 	 */
@@ -554,7 +544,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 			_log.log(Level.WARNING, "Exception on onSpawn() in notifySpawn(): " + e.getMessage(), e);
 		}
 	}
-	
+
 	/**
 	 * @param event
 	 * @param npc
@@ -574,7 +564,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 		}
 		return showResult(player, res, npc);
 	}
-	
+
 	/**
 	 * @param player the player entering the world
 	 */
@@ -591,7 +581,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 		}
 		showResult(player, res);
 	}
-	
+
 	/**
 	 * @param npc
 	 * @param killer
@@ -610,7 +600,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 		}
 		showResult(killer, res);
 	}
-	
+
 	/**
 	 * @param npc
 	 * @param qs
@@ -630,7 +620,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 		qs.getPlayer().setLastQuestNpcObject(npc.getObjectId());
 		return showResult(qs.getPlayer(), res, npc);
 	}
-	
+
 	/**
 	 * Override the default NPC dialogs when a quest defines this for the given NPC.<br>
 	 * Note: If the default html for this npc needs to be shown, onFirstTalk should call npc.showChatWindow(player) and then return null.
@@ -650,7 +640,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 		}
 		showResult(player, res, npc);
 	}
-	
+
 	/**
 	 * @param npc
 	 * @param player
@@ -668,7 +658,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 		}
 		showResult(player, res);
 	}
-	
+
 	/**
 	 * Notify the quest engine that an skill info has been acquired.
 	 * @param npc the NPC
@@ -688,7 +678,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 		}
 		showResult(player, res);
 	}
-	
+
 	/**
 	 * Notify the quest engine that an skill has been acquired.
 	 * @param npc the NPC
@@ -709,7 +699,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 		}
 		showResult(player, res);
 	}
-	
+
 	/**
 	 * @param item
 	 * @param player
@@ -739,7 +729,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 		}
 		return showResult(player, res);
 	}
-	
+
 	/**
 	 * @param item
 	 * @param player
@@ -749,7 +739,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		return null;
 	}
-	
+
 	/**
 	 * @param item
 	 * @param player
@@ -780,7 +770,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 		}
 		return showResult(player, res);
 	}
-	
+
 	/**
 	 * @param npc
 	 * @param caster
@@ -792,7 +782,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		ThreadPoolManager.getInstance().executeAi(new SkillSee(this, npc, caster, skill, targets, isSummon));
 	}
-	
+
 	/**
 	 * @param npc
 	 * @param caller
@@ -812,7 +802,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 		}
 		showResult(attacker, res);
 	}
-	
+
 	/**
 	 * @param npc
 	 * @param player
@@ -822,7 +812,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		ThreadPoolManager.getInstance().executeAi(new AggroRangeEnter(this, npc, player, isSummon));
 	}
-	
+
 	/**
 	 * @param npc the NPC that sees the creature
 	 * @param creature the creature seen by the NPC
@@ -832,7 +822,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		ThreadPoolManager.getInstance().executeAi(new SeeCreature(this, npc, creature, isSummon));
 	}
-	
+
 	/**
 	 * @param eventName - name of event
 	 * @param sender - NPC, who sent event
@@ -850,7 +840,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 			_log.log(Level.WARNING, "Exception on onEventReceived() in notifyEventReceived(): " + e.getMessage(), e);
 		}
 	}
-	
+
 	/**
 	 * @param character
 	 * @param zone
@@ -875,7 +865,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 			showResult(player, res);
 		}
 	}
-	
+
 	/**
 	 * @param character
 	 * @param zone
@@ -900,7 +890,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 			showResult(player, res);
 		}
 	}
-	
+
 	/**
 	 * @param winner
 	 * @param type {@code false} if there was an error, {@code true} otherwise
@@ -916,7 +906,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 			showError(winner, e);
 		}
 	}
-	
+
 	/**
 	 * @param loser
 	 * @param type {@code false} if there was an error, {@code true} otherwise
@@ -932,7 +922,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 			showError(loser, e);
 		}
 	}
-	
+
 	/**
 	 * @param npc
 	 */
@@ -947,7 +937,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 			_log.log(Level.WARNING, "Exception on onMoveFinished() in notifyMoveFinished(): " + e.getMessage(), e);
 		}
 	}
-	
+
 	/**
 	 * @param npc
 	 */
@@ -962,7 +952,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 			_log.log(Level.WARNING, "Exception on onNodeArrived() in notifyNodeArrived(): " + e.getMessage(), e);
 		}
 	}
-	
+
 	/**
 	 * @param npc
 	 */
@@ -977,9 +967,9 @@ public class Quest extends ManagedScript implements IIdentifiable
 			_log.log(Level.WARNING, "Exception on onRouteFinished() in notifyRouteFinished(): " + e.getMessage(), e);
 		}
 	}
-	
+
 	// These are methods that java calls to invoke scripts.
-	
+
 	/**
 	 * This function is called in place of {@link #onAttack(L2Npc, L2PcInstance, int, boolean, Skill)} if the former is not implemented.<br>
 	 * If a script contains both onAttack(..) implementations, then this method will never be called unless the script's {@link #onAttack(L2Npc, L2PcInstance, int, boolean, Skill)} explicitly calls this method.
@@ -993,7 +983,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		return null;
 	}
-	
+
 	/**
 	 * This function is called whenever a player attacks an NPC that is registered for the quest.<br>
 	 * If is not overridden by a subclass, then default to the returned value of the simpler (and older) {@link #onAttack(L2Npc, L2PcInstance, int, boolean)} override.<br>
@@ -1008,7 +998,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		return onAttack(npc, attacker, damage, isSummon);
 	}
-	
+
 	/**
 	 * This function is called whenever an <b>exact instance</b> of a character who was previously registered for this event dies.<br>
 	 * The registration for {@link #onDeath(L2Character, L2Character, QuestState)} events <b>is not</b> done via the quest itself, but it is instead handled by the QuestState of a particular player.
@@ -1021,7 +1011,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		return onAdvEvent("", ((killer instanceof L2Npc) ? ((L2Npc) killer) : null), qs.getPlayer());
 	}
-	
+
 	/**
 	 * This function is called whenever a player clicks on a link in a quest dialog and whenever a timer fires.<br>
 	 * If is not overridden by a subclass, then default to the returned value of the simpler (and older) {@link #onEvent(String, QuestState)} override.<br>
@@ -1055,7 +1045,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 		}
 		return null;
 	}
-	
+
 	/**
 	 * This function is called in place of {@link #onAdvEvent(String, L2Npc, L2PcInstance)} if the former is not implemented.<br>
 	 * If a script contains both {@link #onAdvEvent(String, L2Npc, L2PcInstance)} and this implementation, then this method will never be called unless the script's {@link #onAdvEvent(String, L2Npc, L2PcInstance)} explicitly calls this method.
@@ -1075,7 +1065,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		return null;
 	}
-	
+
 	/**
 	 * This function is called whenever a player kills a NPC that is registered for the quest.
 	 * @param npc this parameter contains a reference to the exact instance of the NPC that got killed.
@@ -1087,7 +1077,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		return null;
 	}
-	
+
 	/**
 	 * This function is called whenever a player clicks to the "Quest" link of an NPC that is registered for the quest.
 	 * @param npc this parameter contains a reference to the exact instance of the NPC that the player is talking with.
@@ -1098,7 +1088,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		return null;
 	}
-	
+
 	/**
 	 * This function is called whenever a player talks to an NPC that is registered for the quest.<br>
 	 * That is, it is triggered from the very first click on the NPC, not via another dialog.<br>
@@ -1121,7 +1111,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		return null;
 	}
-	
+
 	/**
 	 * @param item
 	 * @param player
@@ -1132,7 +1122,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		return null;
 	}
-	
+
 	/**
 	 * This function is called whenever a player request a skill list.<br>
 	 * TODO: Re-implement, since Skill Trees rework it's support was removed.
@@ -1144,7 +1134,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		return null;
 	}
-	
+
 	/**
 	 * This function is called whenever a player request a skill info.
 	 * @param npc this parameter contains a reference to the exact instance of the NPC that the player requested the skill info.
@@ -1156,7 +1146,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		return null;
 	}
-	
+
 	/**
 	 * This function is called whenever a player acquire a skill.<br>
 	 * TODO: Re-implement, since Skill Trees rework it's support was removed.
@@ -1170,7 +1160,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		return null;
 	}
-	
+
 	/**
 	 * This function is called whenever a player uses a quest item that has a quest events list.<br>
 	 * TODO: complete this documentation and unhardcode it to work with all item uses not with those listed.
@@ -1182,7 +1172,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		return null;
 	}
-	
+
 	/**
 	 * This function is called whenever a player casts a skill near a registered NPC (1000 distance).<br>
 	 * <b>Note:</b><br>
@@ -1201,7 +1191,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		return null;
 	}
-	
+
 	/**
 	 * This function is called whenever an NPC finishes casting a skill.
 	 * @param npc the NPC that casted the skill.
@@ -1213,7 +1203,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		return null;
 	}
-	
+
 	/**
 	 * This function is called whenever a trap action is performed.
 	 * @param trap this parameter contains a reference to the exact instance of the trap that was activated.
@@ -1225,7 +1215,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		return null;
 	}
-	
+
 	/**
 	 * This function is called whenever an NPC spawns or re-spawns and passes a reference to the newly (re)spawned NPC.<br>
 	 * Currently the only function that has no reference to a player.<br>
@@ -1237,7 +1227,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		return null;
 	}
-	
+
 	/**
 	 * This function is called whenever an NPC is called by another NPC in the same faction.
 	 * @param npc this parameter contains a reference to the exact instance of the NPC who is being asked for help.
@@ -1250,7 +1240,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		return null;
 	}
-	
+
 	/**
 	 * This function is called whenever a player enters an NPC aggression range.
 	 * @param npc this parameter contains a reference to the exact instance of the NPC whose aggression range is being transgressed.
@@ -1262,7 +1252,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		return null;
 	}
-	
+
 	/**
 	 * This function is called whenever a NPC "sees" a creature.
 	 * @param npc the NPC who sees the creature
@@ -1274,7 +1264,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		return null;
 	}
-	
+
 	/**
 	 * This function is called whenever a player enters the game.
 	 * @param player this parameter contains a reference to the exact instance of the player who is entering to the world.
@@ -1284,7 +1274,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		return null;
 	}
-	
+
 	/**
 	 * This function is called whenever a character enters a registered zone.
 	 * @param character this parameter contains a reference to the exact instance of the character who is entering the zone.
@@ -1295,7 +1285,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		return null;
 	}
-	
+
 	/**
 	 * This function is called whenever a character exits a registered zone.
 	 * @param character this parameter contains a reference to the exact instance of the character who is exiting the zone.
@@ -1306,7 +1296,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		return null;
 	}
-	
+
 	/**
 	 * @param eventName - name of event
 	 * @param sender - NPC, who sent event
@@ -1318,7 +1308,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		return null;
 	}
-	
+
 	/**
 	 * This function is called whenever a player wins an Olympiad Game.
 	 * @param winner this parameter contains a reference to the exact instance of the player who won the competition.
@@ -1326,9 +1316,9 @@ public class Quest extends ManagedScript implements IIdentifiable
 	 */
 	public void onOlympiadWin(L2PcInstance winner, CompetitionType type)
 	{
-		
+
 	}
-	
+
 	/**
 	 * This function is called whenever a player looses an Olympiad Game.
 	 * @param loser this parameter contains a reference to the exact instance of the player who lose the competition.
@@ -1336,36 +1326,36 @@ public class Quest extends ManagedScript implements IIdentifiable
 	 */
 	public void onOlympiadLose(L2PcInstance loser, CompetitionType type)
 	{
-		
+
 	}
-	
+
 	/**
 	 * This function is called whenever a NPC finishes moving
 	 * @param npc registered NPC
 	 */
 	public void onMoveFinished(L2Npc npc)
 	{
-		
+
 	}
-	
+
 	/**
 	 * This function is called whenever a walker NPC (controlled by WalkingManager) arrive a walking node
 	 * @param npc registered NPC
 	 */
 	public void onNodeArrived(L2Npc npc)
 	{
-		
+
 	}
-	
+
 	/**
 	 * This function is called whenever a walker NPC (controlled by WalkingManager) arrive to last node
 	 * @param npc registered NPC
 	 */
 	public void onRouteFinished(L2Npc npc)
 	{
-		
+
 	}
-	
+
 	/**
 	 * @param mob
 	 * @param playable
@@ -1375,15 +1365,15 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		return true;
 	}
-	
+
 	/**
 	 * @param summon
 	 */
 	public void onSummon(L2Summon summon)
 	{
-		
+
 	}
-	
+
 	/**
 	 * Show an error message to the specified player.
 	 * @param player the player to whom to send the error (must be a GM)
@@ -1404,7 +1394,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 		}
 		return false;
 	}
-	
+
 	/**
 	 * @param player the player to whom to show the result
 	 * @param res the message to show to the player
@@ -1415,7 +1405,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		return showResult(player, res, null);
 	}
-	
+
 	/**
 	 * Show a message to the specified player.<br>
 	 * <u><i>Concept:</i></u><br>
@@ -1436,7 +1426,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 		{
 			return true;
 		}
-		
+
 		if (res.endsWith(".htm") || res.endsWith(".html"))
 		{
 			showHtmlFile(player, res, npc);
@@ -1454,7 +1444,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Loads all quest states and variables for the specified player.
 	 * @param player the player who is entering the world
@@ -1465,9 +1455,9 @@ public class Quest extends ManagedScript implements IIdentifiable
 			PreparedStatement invalidQuestData = con.prepareStatement("DELETE FROM character_quests WHERE charId = ? AND name = ?");
 			PreparedStatement invalidQuestDataVar = con.prepareStatement("DELETE FROM character_quests WHERE charId = ? AND name = ? AND var = ?");
 			PreparedStatement ps1 = con.prepareStatement("SELECT name, value FROM character_quests WHERE charId = ? AND var = ?"))
-		{
+			{
 			// Get list of quests owned by the player from database
-			
+
 			ps1.setInt(1, player.getObjectId());
 			ps1.setString(2, "<state>");
 			try (ResultSet rs = ps1.executeQuery())
@@ -1477,7 +1467,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 					// Get the ID of the quest and its state
 					String questId = rs.getString("name");
 					String statename = rs.getString("value");
-					
+
 					// Search quest associated with the ID
 					Quest q = QuestManager.getInstance().getQuest(questId);
 					if (q == null)
@@ -1491,12 +1481,12 @@ public class Quest extends ManagedScript implements IIdentifiable
 						}
 						continue;
 					}
-					
+
 					// Create a new QuestState for the player that will be added to the player's list of quests
 					new QuestState(q, player, State.getStateId(statename));
 				}
 			}
-			
+
 			// Get list of quests owned by the player from the DB in order to add variables used in the quest.
 			try (PreparedStatement ps2 = con.prepareStatement("SELECT name, var, value FROM character_quests WHERE charId = ? AND var <> ?"))
 			{
@@ -1528,19 +1518,19 @@ public class Quest extends ManagedScript implements IIdentifiable
 					}
 				}
 			}
-		}
+			}
 		catch (Exception e)
 		{
 			_log.log(Level.WARNING, "could not insert char quest:", e);
 		}
-		
+
 		// events
-		for (String name : _allEventsS.keySet())
+		for (String name : QuestManager.getInstance().getScripts().keySet())
 		{
 			player.processQuestEvent(name, "enter");
 		}
 	}
-	
+
 	/**
 	 * Insert (or update) in the database variables that need to stay persistent for this quest after a reboot.<br>
 	 * This function is for storage of values that do not related to a specific player but are global for all characters.<br>
@@ -1552,18 +1542,18 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		try (Connection con = L2DatabaseFactory.getInstance().getConnection();
 			PreparedStatement statement = con.prepareStatement("REPLACE INTO quest_global_data (quest_name,var,value) VALUES (?,?,?)"))
-		{
+			{
 			statement.setString(1, getName());
 			statement.setString(2, var);
 			statement.setString(3, value);
 			statement.executeUpdate();
-		}
+			}
 		catch (Exception e)
 		{
 			_log.log(Level.WARNING, "could not insert global quest variable:", e);
 		}
 	}
-	
+
 	/**
 	 * Read from the database a previously saved variable for this quest.<br>
 	 * Due to performance considerations, this function should best be used only when the quest is first loaded.<br>
@@ -1578,7 +1568,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 		String result = "";
 		try (Connection con = L2DatabaseFactory.getInstance().getConnection();
 			PreparedStatement statement = con.prepareStatement("SELECT value FROM quest_global_data WHERE quest_name = ? AND var = ?"))
-		{
+			{
 			statement.setString(1, getName());
 			statement.setString(2, var);
 			try (ResultSet rs = statement.executeQuery())
@@ -1588,14 +1578,14 @@ public class Quest extends ManagedScript implements IIdentifiable
 					result = rs.getString(1);
 				}
 			}
-		}
+			}
 		catch (Exception e)
 		{
 			_log.log(Level.WARNING, "could not load global quest variable:", e);
 		}
 		return result;
 	}
-	
+
 	/**
 	 * Permanently delete from the database a global quest variable that was previously saved for this quest.
 	 * @param var the name of the variable to delete
@@ -1604,17 +1594,17 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		try (Connection con = L2DatabaseFactory.getInstance().getConnection();
 			PreparedStatement statement = con.prepareStatement("DELETE FROM quest_global_data WHERE quest_name = ? AND var = ?"))
-		{
+			{
 			statement.setString(1, getName());
 			statement.setString(2, var);
 			statement.executeUpdate();
-		}
+			}
 		catch (Exception e)
 		{
 			_log.log(Level.WARNING, "could not delete global quest variable:", e);
 		}
 	}
-	
+
 	/**
 	 * Permanently delete from the database all global quest variables that were previously saved for this quest.
 	 */
@@ -1622,16 +1612,16 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		try (Connection con = L2DatabaseFactory.getInstance().getConnection();
 			PreparedStatement statement = con.prepareStatement("DELETE FROM quest_global_data WHERE quest_name = ?"))
-		{
+			{
 			statement.setString(1, getName());
 			statement.executeUpdate();
-		}
+			}
 		catch (Exception e)
 		{
 			_log.log(Level.WARNING, "could not delete global quest variables:", e);
 		}
 	}
-	
+
 	/**
 	 * Insert in the database the quest for the player.
 	 * @param qs the {@link QuestState} object whose variable to insert
@@ -1642,20 +1632,20 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		try (Connection con = L2DatabaseFactory.getInstance().getConnection();
 			PreparedStatement statement = con.prepareStatement("INSERT INTO character_quests (charId,name,var,value) VALUES (?,?,?,?) ON DUPLICATE KEY UPDATE value=?"))
-		{
+			{
 			statement.setInt(1, qs.getPlayer().getObjectId());
 			statement.setString(2, qs.getQuestName());
 			statement.setString(3, var);
 			statement.setString(4, value);
 			statement.setString(5, value);
 			statement.executeUpdate();
-		}
+			}
 		catch (Exception e)
 		{
 			_log.log(Level.WARNING, "could not insert char quest:", e);
 		}
 	}
-	
+
 	/**
 	 * Update the value of the variable "var" for the specified quest in database
 	 * @param qs the {@link QuestState} object whose variable to update
@@ -1666,19 +1656,19 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		try (Connection con = L2DatabaseFactory.getInstance().getConnection();
 			PreparedStatement statement = con.prepareStatement("UPDATE character_quests SET value=? WHERE charId=? AND name=? AND var = ?"))
-		{
+			{
 			statement.setString(1, value);
 			statement.setInt(2, qs.getPlayer().getObjectId());
 			statement.setString(3, qs.getQuestName());
 			statement.setString(4, var);
 			statement.executeUpdate();
-		}
+			}
 		catch (Exception e)
 		{
 			_log.log(Level.WARNING, "could not update char quest:", e);
 		}
 	}
-	
+
 	/**
 	 * Delete a variable of player's quest from the database.
 	 * @param qs the {@link QuestState} object whose variable to delete
@@ -1688,18 +1678,18 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		try (Connection con = L2DatabaseFactory.getInstance().getConnection();
 			PreparedStatement statement = con.prepareStatement("DELETE FROM character_quests WHERE charId=? AND name=? AND var=?"))
-		{
+			{
 			statement.setInt(1, qs.getPlayer().getObjectId());
 			statement.setString(2, qs.getQuestName());
 			statement.setString(3, var);
 			statement.executeUpdate();
-		}
+			}
 		catch (Exception e)
 		{
 			_log.log(Level.WARNING, "could not delete char quest:", e);
 		}
 	}
-	
+
 	/**
 	 * Delete from the database all variables and states of the specified quest state.
 	 * @param qs the {@link QuestState} object whose variables to delete
@@ -1709,7 +1699,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		try (Connection con = L2DatabaseFactory.getInstance().getConnection();
 			PreparedStatement ps = con.prepareStatement(repeatable ? QUEST_DELETE_FROM_CHAR_QUERY : QUEST_DELETE_FROM_CHAR_QUERY_NON_REPEATABLE_QUERY))
-		{
+			{
 			ps.setInt(1, qs.getPlayer().getObjectId());
 			ps.setString(2, qs.getQuestName());
 			if (!repeatable)
@@ -1717,13 +1707,13 @@ public class Quest extends ManagedScript implements IIdentifiable
 				ps.setString(3, "<state>");
 			}
 			ps.executeUpdate();
-		}
+			}
 		catch (Exception e)
 		{
 			_log.log(Level.WARNING, "could not delete char quest:", e);
 		}
 	}
-	
+
 	/**
 	 * Create a database record for the specified quest state.
 	 * @param qs the {@link QuestState} object whose data to write in the database
@@ -1732,7 +1722,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		createQuestVarInDb(qs, "<state>", State.getStateName(qs.getState()));
 	}
-	
+
 	/**
 	 * Update a quest state record of the specified quest state in database.
 	 * @param qs the {@link QuestState} object whose data to update in the database
@@ -1741,7 +1731,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		updateQuestVarInDb(qs, "<state>", State.getStateName(qs.getState()));
 	}
-	
+
 	/**
 	 * @param player the player whose language settings to use in finding the html of the right language
 	 * @return the default html for when no quest is available: "You are either not on a quest that involves this NPC.."
@@ -1755,7 +1745,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 		}
 		return DEFAULT_NO_QUEST_MSG;
 	}
-	
+
 	/**
 	 * @param player the player whose language settings to use in finding the html of the right language
 	 * @return the default html for when no quest is already completed: "This quest has already been completed."
@@ -1769,7 +1759,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 		}
 		return DEFAULT_ALREADY_COMPLETED_MSG;
 	}
-	
+
 	/**
 	 * Add this quest to the list of quests that the passed mob will respond to for the specified Event type.
 	 * @param eventType type of event being registered
@@ -1791,7 +1781,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 			_log.log(Level.WARNING, "Exception on addEventId(): " + e.getMessage(), e);
 		}
 	}
-	
+
 	/**
 	 * Add this quest to the list of quests that the passed mob will respond to for the specified Event type.
 	 * @param eventType type of event being registered
@@ -1804,7 +1794,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 			addEventId(eventType, npcId);
 		}
 	}
-	
+
 	/**
 	 * Add this quest to the list of quests that the passed mob will respond to for the specified Event type.
 	 * @param eventType type of event being registered
@@ -1817,33 +1807,33 @@ public class Quest extends ManagedScript implements IIdentifiable
 			addEventId(eventType, npcId);
 		}
 	}
-	
+
 	// TODO: Remove after all Jython scripts are replaced with Java versions.
 	public void addStartNpc(int npcId)
 	{
 		addEventId(QuestEventType.QUEST_START, npcId);
 	}
-	
+
 	public void addFirstTalkId(int npcId)
 	{
 		addEventId(QuestEventType.ON_FIRST_TALK, npcId);
 	}
-	
+
 	public void addTalkId(int npcId)
 	{
 		addEventId(QuestEventType.ON_TALK, npcId);
 	}
-	
+
 	public void addKillId(int killId)
 	{
 		addEventId(QuestEventType.ON_KILL, killId);
 	}
-	
+
 	public void addAttackId(int npcId)
 	{
 		addEventId(QuestEventType.ON_ATTACK, npcId);
 	}
-	
+
 	/**
 	 * Add the quest to the NPC's startQuest
 	 * @param npcIds the IDs of the NPCs to register
@@ -1852,7 +1842,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		addEventId(QuestEventType.QUEST_START, npcIds);
 	}
-	
+
 	/**
 	 * Add the quest to the NPC's startQuest
 	 * @param npcIds the IDs of the NPCs to register
@@ -1861,7 +1851,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		addEventId(QuestEventType.QUEST_START, npcIds);
 	}
-	
+
 	/**
 	 * Add the quest to the NPC's first-talk (default action dialog).
 	 * @param npcIds the IDs of the NPCs to register
@@ -1870,7 +1860,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		addEventId(QuestEventType.ON_FIRST_TALK, npcIds);
 	}
-	
+
 	/**
 	 * Add the quest to the NPC's first-talk (default action dialog).
 	 * @param npcIds the IDs of the NPCs to register
@@ -1879,7 +1869,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		addEventId(QuestEventType.ON_FIRST_TALK, npcIds);
 	}
-	
+
 	/**
 	 * Add the NPC to the AcquireSkill dialog.
 	 * @param npcIds the IDs of the NPCs to register
@@ -1888,7 +1878,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		addEventId(QuestEventType.ON_SKILL_LEARN, npcIds);
 	}
-	
+
 	/**
 	 * Add the NPC to the AcquireSkill dialog.
 	 * @param npcIds the IDs of the NPCs to register
@@ -1897,7 +1887,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		addEventId(QuestEventType.ON_SKILL_LEARN, npcIds);
 	}
-	
+
 	/**
 	 * Add this quest to the list of quests that the passed mob will respond to for attack events.
 	 * @param npcIds the IDs of the NPCs to register
@@ -1906,7 +1896,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		addEventId(QuestEventType.ON_ATTACK, npcIds);
 	}
-	
+
 	/**
 	 * Add this quest to the list of quests that the passed mob will respond to for attack events.
 	 * @param npcIds the IDs of the NPCs to register
@@ -1915,7 +1905,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		addEventId(QuestEventType.ON_ATTACK, npcIds);
 	}
-	
+
 	/**
 	 * Add this quest to the list of quests that the passed mob will respond to for kill events.
 	 * @param killIds
@@ -1924,7 +1914,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		addEventId(QuestEventType.ON_KILL, killIds);
 	}
-	
+
 	/**
 	 * Add this quest event to the collection of NPC IDs that will respond to for on kill events.
 	 * @param killIds the collection of NPC IDs
@@ -1933,7 +1923,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		addEventId(QuestEventType.ON_KILL, killIds);
 	}
-	
+
 	/**
 	 * Add this quest to the list of quests that the passed npc will respond to for Talk Events.
 	 * @param npcIds the IDs of the NPCs to register
@@ -1942,12 +1932,12 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		addEventId(QuestEventType.ON_TALK, npcIds);
 	}
-	
+
 	public void addTalkId(Collection<Integer> npcIds)
 	{
 		addEventId(QuestEventType.ON_TALK, npcIds);
 	}
-	
+
 	/**
 	 * Add this quest to the list of quests that the passed npc will respond to for spawn events.
 	 * @param npcIds the IDs of the NPCs to register
@@ -1956,7 +1946,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		addEventId(QuestEventType.ON_SPAWN, npcIds);
 	}
-	
+
 	/**
 	 * Add this quest to the list of quests that the passed npc will respond to for spawn events.
 	 * @param npcIds the IDs of the NPCs to register
@@ -1965,7 +1955,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		addEventId(QuestEventType.ON_SPAWN, npcIds);
 	}
-	
+
 	/**
 	 * Add this quest to the list of quests that the passed npc will respond to for skill see events.
 	 * @param npcIds the IDs of the NPCs to register
@@ -1974,7 +1964,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		addEventId(QuestEventType.ON_SKILL_SEE, npcIds);
 	}
-	
+
 	/**
 	 * Add this quest to the list of quests that the passed npc will respond to for skill see events.
 	 * @param npcIds the IDs of the NPCs to register
@@ -1983,7 +1973,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		addEventId(QuestEventType.ON_SKILL_SEE, npcIds);
 	}
-	
+
 	/**
 	 * @param npcIds the IDs of the NPCs to register
 	 */
@@ -1991,7 +1981,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		addEventId(QuestEventType.ON_SPELL_FINISHED, npcIds);
 	}
-	
+
 	/**
 	 * @param npcIds the IDs of the NPCs to register
 	 */
@@ -1999,7 +1989,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		addEventId(QuestEventType.ON_SPELL_FINISHED, npcIds);
 	}
-	
+
 	/**
 	 * @param npcIds the IDs of the NPCs to register
 	 */
@@ -2007,7 +1997,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		addEventId(QuestEventType.ON_TRAP_ACTION, npcIds);
 	}
-	
+
 	/**
 	 * @param npcIds the IDs of the NPCs to register
 	 */
@@ -2015,7 +2005,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		addEventId(QuestEventType.ON_TRAP_ACTION, npcIds);
 	}
-	
+
 	/**
 	 * Add this quest to the list of quests that the passed npc will respond to for faction call events.
 	 * @param npcIds the IDs of the NPCs to register
@@ -2024,7 +2014,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		addEventId(QuestEventType.ON_FACTION_CALL, npcIds);
 	}
-	
+
 	/**
 	 * Add this quest to the list of quests that the passed npc will respond to for faction call events.
 	 * @param npcIds the IDs of the NPCs to register
@@ -2033,7 +2023,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		addEventId(QuestEventType.ON_FACTION_CALL, npcIds);
 	}
-	
+
 	/**
 	 * Add this quest to the list of quests that the passed npc will respond to for character see events.
 	 * @param npcIds the IDs of the NPCs to register
@@ -2042,7 +2032,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		addEventId(QuestEventType.ON_AGGRO_RANGE_ENTER, npcIds);
 	}
-	
+
 	/**
 	 * Add this quest to the list of quests that the passed npc will respond to for character see events.
 	 * @param npcIds the IDs of the NPCs to register
@@ -2051,7 +2041,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		addEventId(QuestEventType.ON_AGGRO_RANGE_ENTER, npcIds);
 	}
-	
+
 	/**
 	 * @param npcIds the IDs of the NPCs to register
 	 */
@@ -2059,7 +2049,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		addEventId(QuestEventType.ON_SEE_CREATURE, npcIds);
 	}
-	
+
 	/**
 	 * @param npcIds the IDs of the NPCs to register
 	 */
@@ -2067,7 +2057,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		addEventId(QuestEventType.ON_SEE_CREATURE, npcIds);
 	}
-	
+
 	/**
 	 * Register onEnterZone trigger for zone
 	 * @param zoneId the ID of the zone to register
@@ -2080,7 +2070,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 			zone.addQuestEvent(QuestEventType.ON_ENTER_ZONE, this);
 		}
 	}
-	
+
 	/**
 	 * Register onEnterZone trigger for zones
 	 * @param zoneIds the IDs of the zones to register
@@ -2092,7 +2082,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 			addEnterZoneId(zoneId);
 		}
 	}
-	
+
 	/**
 	 * Register onEnterZone trigger for zones
 	 * @param zoneIds the IDs of the zones to register
@@ -2104,7 +2094,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 			addEnterZoneId(zoneId);
 		}
 	}
-	
+
 	/**
 	 * Register onExitZone trigger for zone
 	 * @param zoneId the ID of the zone to register
@@ -2117,7 +2107,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 			zone.addQuestEvent(QuestEventType.ON_EXIT_ZONE, this);
 		}
 	}
-	
+
 	/**
 	 * Register onExitZone trigger for zones
 	 * @param zoneIds the IDs of the zones to register
@@ -2129,7 +2119,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 			addExitZoneId(zoneId);
 		}
 	}
-	
+
 	/**
 	 * Register onExitZone trigger for zones
 	 * @param zoneIds the IDs of the zones to register
@@ -2141,7 +2131,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 			addExitZoneId(zoneId);
 		}
 	}
-	
+
 	/**
 	 * Register onEventReceived trigger for NPC
 	 * @param npcIds the IDs of the NPCs to register
@@ -2150,7 +2140,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		addEventId(QuestEventType.ON_EVENT_RECEIVED, npcIds);
 	}
-	
+
 	/**
 	 * Register onEventReceived trigger for NPC
 	 * @param npcIds the IDs of the NPCs to register
@@ -2159,7 +2149,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		addEventId(QuestEventType.ON_EVENT_RECEIVED, npcIds);
 	}
-	
+
 	/**
 	 * Register onMoveFinished trigger for NPC
 	 * @param npcIds the IDs of the NPCs to register
@@ -2168,7 +2158,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		addEventId(QuestEventType.ON_MOVE_FINISHED, npcIds);
 	}
-	
+
 	/**
 	 * Register onMoveFinished trigger for NPC
 	 * @param npcIds the IDs of the NPCs to register
@@ -2177,7 +2167,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		addEventId(QuestEventType.ON_MOVE_FINISHED, npcIds);
 	}
-	
+
 	/**
 	 * Register onNodeArrived trigger for NPC
 	 * @param npcIds the IDs of the NPCs to register
@@ -2186,7 +2176,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		addEventId(QuestEventType.ON_NODE_ARRIVED, npcIds);
 	}
-	
+
 	/**
 	 * Register onNodeArrived trigger for NPC
 	 * @param npcIds the IDs of the NPCs to register
@@ -2195,7 +2185,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		addEventId(QuestEventType.ON_NODE_ARRIVED, npcIds);
 	}
-	
+
 	/**
 	 * Register onRouteFinished trigger for NPC
 	 * @param npcIds the IDs of the NPCs to register
@@ -2204,7 +2194,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		addEventId(QuestEventType.ON_ROUTE_FINISHED, npcIds);
 	}
-	
+
 	/**
 	 * Register onRouteFinished trigger for NPC
 	 * @param npcIds the IDs of the NPCs to register
@@ -2213,7 +2203,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		addEventId(QuestEventType.ON_ROUTE_FINISHED, npcIds);
 	}
-	
+
 	/**
 	 * Register onNpcHate trigger for NPC
 	 * @param npcIds
@@ -2222,7 +2212,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		addEventId(QuestEventType.ON_NPC_HATE, npcIds);
 	}
-	
+
 	/**
 	 * Register onNpcHate trigger for NPC
 	 * @param npcIds
@@ -2231,7 +2221,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		addEventId(QuestEventType.ON_NPC_HATE, npcIds);
 	}
-	
+
 	/**
 	 * Register onSummon trigger when summon is spawned.
 	 * @param npcIds
@@ -2240,7 +2230,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		addEventId(QuestEventType.ON_SUMMON, npcIds);
 	}
-	
+
 	/**
 	 * Register onSummon trigger when summon is spawned.
 	 * @param npcIds
@@ -2249,7 +2239,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		addEventId(QuestEventType.ON_SUMMON, npcIds);
 	}
-	
+
 	/**
 	 * Use this method to get a random party member from a player's party.<br>
 	 * Useful when distributing rewards after killing an NPC.
@@ -2269,7 +2259,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 		}
 		return party.getMembers().get(Rnd.get(party.getMembers().size()));
 	}
-	
+
 	/**
 	 * Get a random party member with required cond value.
 	 * @param player the instance of a player whose party is to be searched
@@ -2280,7 +2270,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		return getRandomPartyMember(player, "cond", String.valueOf(cond));
 	}
-	
+
 	/**
 	 * Auxiliary function for party quests.<br>
 	 * Note: This function is only here because of how commonly it may be used by quest developers.<br>
@@ -2299,13 +2289,13 @@ public class Quest extends ManagedScript implements IIdentifiable
 		{
 			return null;
 		}
-		
+
 		// for null var condition, return any random party member.
 		if (var == null)
 		{
 			return getRandomPartyMember(player);
 		}
-		
+
 		// normal cases...if the player is not in a party, check the player's state
 		QuestState temp = null;
 		L2Party party = player.getParty();
@@ -2319,7 +2309,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 			}
 			return null; // no match
 		}
-		
+
 		// if the player is in a party, gather a list of all matching party members (possibly including this player)
 		List<L2PcInstance> candidates = new ArrayList<>();
 		// get the target for enforcing distance limitations.
@@ -2328,7 +2318,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 		{
 			target = player;
 		}
-		
+
 		for (L2PcInstance partyMember : party.getMembers())
 		{
 			if (partyMember == null)
@@ -2349,7 +2339,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 		// if a match was found from the party, return one of them at random.
 		return candidates.get(Rnd.get(candidates.size()));
 	}
-	
+
 	/**
 	 * Auxiliary function for party quests.<br>
 	 * Note: This function is only here because of how commonly it may be used by quest developers.<br>
@@ -2365,7 +2355,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 		{
 			return null;
 		}
-		
+
 		// normal cases...if the player is not in a party check the player's state
 		QuestState temp = null;
 		L2Party party = player.getParty();
@@ -2377,21 +2367,21 @@ public class Quest extends ManagedScript implements IIdentifiable
 			{
 				return player; // match
 			}
-			
+
 			return null; // no match
 		}
-		
+
 		// if the player is in a party, gather a list of all matching party members (possibly
 		// including this player)
 		List<L2PcInstance> candidates = new ArrayList<>();
-		
+
 		// get the target for enforcing distance limitations.
 		L2Object target = player.getTarget();
 		if (target == null)
 		{
 			target = player;
 		}
-		
+
 		for (L2PcInstance partyMember : party.getMembers())
 		{
 			if (partyMember == null)
@@ -2409,11 +2399,11 @@ public class Quest extends ManagedScript implements IIdentifiable
 		{
 			return null;
 		}
-		
+
 		// if a match was found from the party, return one of them at random.
 		return candidates.get(Rnd.get(candidates.size()));
 	}
-	
+
 	/**
 	 * Get a random party member from the specified player's party.<br>
 	 * If the player is not in a party, only the player himself is checked.<br>
@@ -2441,11 +2431,11 @@ public class Quest extends ManagedScript implements IIdentifiable
 		else
 		{
 			int highestRoll = 0;
-			
+
 			for (L2PcInstance member : party.getMembers())
 			{
 				final int rnd = getRandom(1000);
-				
+
 				if ((rnd > highestRoll) && checkPartyMember(member, npc))
 				{
 					highestRoll = rnd;
@@ -2459,7 +2449,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 		}
 		return null;
 	}
-	
+
 	/**
 	 * This method is called for every party member in {@link #getRandomPartyMember(L2PcInstance, L2Npc)}.<br>
 	 * It is intended to be overriden by the specific quest implementations.
@@ -2471,7 +2461,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		return true;
 	}
-	
+
 	/**
 	 * Get a random party member from the player's party who has this quest at the specified quest progress.<br>
 	 * If the player is not in a party, only the player himself is checked.
@@ -2488,7 +2478,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 		{
 			return null;
 		}
-		
+
 		QuestState qs = player.getQuestState(getName());
 		if (!player.isInParty())
 		{
@@ -2502,7 +2492,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 			}
 			return qs;
 		}
-		
+
 		final List<QuestState> candidates = new ArrayList<>();
 		if (checkPartyMemberConditions(qs, condition, target) && (playerChance > 0))
 		{
@@ -2511,26 +2501,26 @@ public class Quest extends ManagedScript implements IIdentifiable
 				candidates.add(qs);
 			}
 		}
-		
+
 		for (L2PcInstance member : player.getParty().getMembers())
 		{
 			if (member == player)
 			{
 				continue;
 			}
-			
+
 			qs = member.getQuestState(getName());
 			if (checkPartyMemberConditions(qs, condition, target))
 			{
 				candidates.add(qs);
 			}
 		}
-		
+
 		if (candidates.isEmpty())
 		{
 			return null;
 		}
-		
+
 		qs = candidates.get(getRandom(candidates.size()));
 		if (!checkDistanceToTarget(qs.getPlayer(), target))
 		{
@@ -2538,17 +2528,17 @@ public class Quest extends ManagedScript implements IIdentifiable
 		}
 		return qs;
 	}
-	
+
 	private boolean checkPartyMemberConditions(QuestState qs, int condition, L2Npc npc)
 	{
 		return ((qs != null) && ((condition == -1) ? qs.isStarted() : qs.isCond(condition)) && checkPartyMember(qs, npc));
 	}
-	
+
 	private static boolean checkDistanceToTarget(L2PcInstance player, L2Npc target)
 	{
 		return ((target == null) || com.l2jserver.gameserver.util.Util.checkIfInRange(1500, player, target, true));
 	}
-	
+
 	/**
 	 * This method is called for every party member in {@link #getRandomPartyMemberState(L2PcInstance, int, int, L2Npc)} if/after all the standard checks are passed.<br>
 	 * It is intended to be overriden by the specific quest implementations.<br>
@@ -2562,7 +2552,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		return true;
 	}
-	
+
 	/**
 	 * Show an on screen message to the player.
 	 * @param player the player to display the message to
@@ -2573,7 +2563,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		player.sendPacket(new ExShowScreenMessage(text, time));
 	}
-	
+
 	/**
 	 * Show an on screen message to the player.
 	 * @param player the player to display the message to
@@ -2586,7 +2576,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		player.sendPacket(new ExShowScreenMessage(npcString, position, time, params));
 	}
-	
+
 	/**
 	 * Show an on screen message to the player.
 	 * @param player the player to display the message to
@@ -2599,7 +2589,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		player.sendPacket(new ExShowScreenMessage(systemMsg, position, time, params));
 	}
-	
+
 	/**
 	 * Send an HTML file to the specified player.
 	 * @param player the player to send the HTML to
@@ -2611,7 +2601,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		return showHtmlFile(player, filename, null);
 	}
-	
+
 	/**
 	 * Send an HTML file to the specified player.
 	 * @param player the player to send the HTML file to
@@ -2624,10 +2614,10 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		boolean questwindow = !filename.endsWith(".html");
 		int questId = getId();
-		
+
 		// Create handler to file linked to the quest
 		String content = getHtm(player.getHtmlPrefix(), filename);
-		
+
 		// Send message to client if message not empty
 		if (content != null)
 		{
@@ -2635,7 +2625,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 			{
 				content = content.replaceAll("%objectId%", Integer.toString(npc.getObjectId()));
 			}
-			
+
 			if (questwindow && (questId > 0) && (questId < 20000) && (questId != 999))
 			{
 				NpcQuestHtmlMessage npcReply = new NpcQuestHtmlMessage(npc != null ? npc.getObjectId() : 0, questId);
@@ -2651,10 +2641,10 @@ public class Quest extends ManagedScript implements IIdentifiable
 			}
 			player.sendPacket(ActionFailed.STATIC_PACKET);
 		}
-		
+
 		return content;
 	}
-	
+
 	/**
 	 * @param prefix player's language prefix.
 	 * @param fileName the html file to be get.
@@ -2674,7 +2664,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 		}
 		return content;
 	}
-	
+
 	/**
 	 * Add a temporary spawn of the specified NPC.
 	 * @param npcId the ID of the NPC to spawn
@@ -2687,7 +2677,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		return addSpawn(npcId, pos.getX(), pos.getY(), pos.getZ(), pos.getHeading(), false, 0, false, 0);
 	}
-	
+
 	/**
 	 * Add a temporary spawn of the specified NPC.
 	 * @param npcId the ID of the NPC to spawn
@@ -2701,7 +2691,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		return addSpawn(npcId, pos.getX(), pos.getY(), pos.getZ(), pos.getHeading(), false, 0, isSummonSpawn, 0);
 	}
-	
+
 	/**
 	 * Add a temporary spawn of the specified NPC.
 	 * @param npcId the ID of the NPC to spawn
@@ -2716,7 +2706,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		return addSpawn(npcId, pos.getX(), pos.getY(), pos.getZ(), pos.getHeading(), randomOffset, despawnDelay, false, 0);
 	}
-	
+
 	/**
 	 * Add a temporary spawn of the specified NPC.
 	 * @param npcId the ID of the NPC to spawn
@@ -2732,7 +2722,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		return addSpawn(npcId, pos.getX(), pos.getY(), pos.getZ(), pos.getHeading(), randomOffset, despawnDelay, isSummonSpawn, 0);
 	}
-	
+
 	/**
 	 * Add a temporary spawn of the specified NPC.
 	 * @param npcId the ID of the NPC to spawn
@@ -2752,7 +2742,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		return addSpawn(npcId, pos.getX(), pos.getY(), pos.getZ(), pos.getHeading(), randomOffset, despawnDelay, isSummonSpawn, instanceId);
 	}
-	
+
 	/**
 	 * Add a temporary spawn of the specified NPC.
 	 * @param npcId the ID of the NPC to spawn
@@ -2770,7 +2760,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		return addSpawn(npcId, x, y, z, heading, randomOffset, despawnDelay, false, 0);
 	}
-	
+
 	/**
 	 * Add a temporary spawn of the specified NPC.
 	 * @param npcId the ID of the NPC to spawn
@@ -2789,7 +2779,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		return addSpawn(npcId, x, y, z, heading, randomOffset, despawnDelay, isSummonSpawn, 0);
 	}
-	
+
 	/**
 	 * Add a temporary spawn of the specified NPC.
 	 * @param npcId the ID of the NPC to spawn
@@ -2830,7 +2820,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 						offset *= -1;
 					}
 					x += offset;
-					
+
 					offset = Rnd.get(50, 100);
 					if (Rnd.nextBoolean())
 					{
@@ -2846,12 +2836,12 @@ public class Quest extends ManagedScript implements IIdentifiable
 				spawn.setZ(z);
 				spawn.stopRespawn();
 				L2Npc result = spawn.spawnOne(isSummonSpawn);
-				
+
 				if (despawnDelay > 0)
 				{
 					result.scheduleDespawn(despawnDelay);
 				}
-				
+
 				return result;
 			}
 		}
@@ -2859,10 +2849,10 @@ public class Quest extends ManagedScript implements IIdentifiable
 		{
 			_log.warning("Could not spawn NPC #" + npcId + "; error: " + e1.getMessage());
 		}
-		
+
 		return null;
 	}
-	
+
 	/**
 	 * @param trapId
 	 * @param x
@@ -2884,7 +2874,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 		trap.spawnMe(x, y, z);
 		return trap;
 	}
-	
+
 	/**
 	 * @param master
 	 * @param minionId
@@ -2894,7 +2884,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		return MinionList.spawnMinion(master, minionId);
 	}
-	
+
 	/**
 	 * @return the registered quest items IDs.
 	 */
@@ -2902,7 +2892,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		return questItemIds;
 	}
-	
+
 	/**
 	 * Registers all items that have to be destroyed in case player abort the quest or finish it.
 	 * @param items
@@ -2911,32 +2901,32 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		questItemIds = items;
 	}
-	
+
 	@Override
 	public String getScriptName()
 	{
 		return getName();
 	}
-	
+
 	@Override
 	public void setActive(boolean status)
 	{
 		// TODO: Implement me.
 	}
-	
+
 	@Override
 	public boolean reload()
 	{
 		unload();
 		return super.reload();
 	}
-	
+
 	@Override
 	public boolean unload()
 	{
 		return unload(true);
 	}
-	
+
 	/**
 	 * @param removeFromList
 	 * @return
@@ -2964,7 +2954,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 			timers.clear();
 		}
 		_allEventTimers.clear();
-		
+
 		for (Integer npcId : _questInvolvedNpcs)
 		{
 			L2NpcTemplate template = NpcData.getInstance().getTemplate(npcId.intValue());
@@ -2974,25 +2964,25 @@ public class Quest extends ManagedScript implements IIdentifiable
 			}
 		}
 		_questInvolvedNpcs.clear();
-		
+
 		if (removeFromList)
 		{
-			return QuestManager.getInstance().removeQuest(this);
+			return QuestManager.getInstance().removeScript(this);
 		}
 		return true;
 	}
-	
+
 	public Set<Integer> getQuestInvolvedNpcs()
 	{
 		return _questInvolvedNpcs;
 	}
-	
+
 	@Override
 	public ScriptManager<?> getScriptManager()
 	{
 		return QuestManager.getInstance();
 	}
-	
+
 	/**
 	 * @param val
 	 */
@@ -3000,7 +2990,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		_onEnterWorld = val;
 	}
-	
+
 	/**
 	 * @return
 	 */
@@ -3008,7 +2998,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		return _onEnterWorld;
 	}
-	
+
 	/**
 	 * If a quest is set as custom, it will display it's name in the NPC Quest List.<br>
 	 * Retail quests are unhardcoded to display the name using a client string.
@@ -3018,7 +3008,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		_isCustom = val;
 	}
-	
+
 	/**
 	 * @return {@code true} if the quest script is a custom quest, {@code false} otherwise.
 	 */
@@ -3026,7 +3016,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		return _isCustom;
 	}
-	
+
 	/**
 	 * @param val
 	 */
@@ -3034,7 +3024,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		_isOlympiadUse = val;
 	}
-	
+
 	/**
 	 * @return {@code true} if the quest script is used for Olympiad quests, {@code false} otherwise.
 	 */
@@ -3042,7 +3032,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		return _isOlympiadUse;
 	}
-	
+
 	/**
 	 * Get the amount of an item in player's inventory.
 	 * @param player the player whose inventory to check
@@ -3053,7 +3043,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		return player.getInventory().getInventoryItemCount(itemId, -1);
 	}
-	
+
 	/**
 	 * Get the total amount of all specified items in player's inventory.
 	 * @param player the player whose inventory to check
@@ -3069,7 +3059,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 			{
 				continue;
 			}
-			
+
 			for (int itemId : itemIds)
 			{
 				if (item.getId() == itemId)
@@ -3084,7 +3074,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 		}
 		return count;
 	}
-	
+
 	/**
 	 * Check if the player has the specified item in his inventory.
 	 * @param player the player whose inventory to check for the specified item
@@ -3095,7 +3085,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		return hasItem(player, item, true);
 	}
-	
+
 	/**
 	 * Check if the player has the required count of the specified item in his inventory.
 	 * @param player the player whose inventory to check for the specified item
@@ -3116,7 +3106,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 		}
 		return hasQuestItems(player, item.getId());
 	}
-	
+
 	/**
 	 * Check if the player has all the specified items in his inventory and, if necessary, if their count is also as required.
 	 * @param player the player whose inventory to check for the specified item
@@ -3140,7 +3130,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 		}
 		return true;
 	}
-	
+
 	/**
 	 * Check for an item in player's inventory.
 	 * @param player the player whose inventory to check for quest items
@@ -3151,7 +3141,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		return (player.getInventory().getItemByItemId(itemId) != null);
 	}
-	
+
 	/**
 	 * Check for multiple items in player's inventory.
 	 * @param player the player whose inventory to check for quest items
@@ -3174,7 +3164,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 		}
 		return true;
 	}
-	
+
 	/**
 	 * Check for multiple items in player's inventory.
 	 * @param player the player whose inventory to check for quest items
@@ -3193,7 +3183,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Get the enchantment level of an item in player's inventory.
 	 * @param player the player whose item to check
@@ -3209,7 +3199,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 		}
 		return enchantedItem.getEnchantLevel();
 	}
-	
+
 	/**
 	 * Give Adena to the player.
 	 * @param player the player to whom to give the Adena
@@ -3227,7 +3217,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 			giveItems(player, Inventory.ADENA_ID, count);
 		}
 	}
-	
+
 	/**
 	 * Give a reward to player using multipliers.
 	 * @param player the player to whom to give the item
@@ -3237,7 +3227,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		rewardItems(player, holder.getId(), holder.getCount());
 	}
-	
+
 	/**
 	 * Give a reward to player using multipliers.
 	 * @param player the player to whom to give the item
@@ -3250,13 +3240,13 @@ public class Quest extends ManagedScript implements IIdentifiable
 		{
 			return;
 		}
-		
+
 		final L2ItemInstance _tmpItem = ItemTable.getInstance().createDummyItem(itemId);
 		if (_tmpItem == null)
 		{
 			return;
 		}
-		
+
 		try
 		{
 			if (itemId == Inventory.ADENA_ID)
@@ -3297,17 +3287,17 @@ public class Quest extends ManagedScript implements IIdentifiable
 		{
 			count = Long.MAX_VALUE;
 		}
-		
+
 		// Add items to player's inventory
 		L2ItemInstance item = player.getInventory().addItem("Quest", itemId, count, player, player.getTarget());
 		if (item == null)
 		{
 			return;
 		}
-		
+
 		sendItemGetMessage(player, item, count);
 	}
-	
+
 	/**
 	 * Send the system message and the status update packets to the player.
 	 * @param player the player that has got the item
@@ -3345,7 +3335,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 		su.addAttribute(StatusUpdate.CUR_LOAD, player.getCurrentLoad());
 		player.sendPacket(su);
 	}
-	
+
 	/**
 	 * Give item/reward to the player
 	 * @param player
@@ -3356,7 +3346,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		giveItems(player, itemId, count, 0);
 	}
-	
+
 	/**
 	 * Give item/reward to the player
 	 * @param player
@@ -3366,7 +3356,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		giveItems(player, holder.getId(), holder.getCount());
 	}
-	
+
 	/**
 	 * @param player
 	 * @param itemId
@@ -3379,23 +3369,23 @@ public class Quest extends ManagedScript implements IIdentifiable
 		{
 			return;
 		}
-		
+
 		// Add items to player's inventory
 		final L2ItemInstance item = player.getInventory().addItem("Quest", itemId, count, player, player.getTarget());
 		if (item == null)
 		{
 			return;
 		}
-		
+
 		// set enchant level for item if that item is not adena
 		if ((enchantlevel > 0) && (itemId != Inventory.ADENA_ID))
 		{
 			item.setEnchantLevel(enchantlevel);
 		}
-		
+
 		sendItemGetMessage(player, item, count);
 	}
-	
+
 	/**
 	 * @param player
 	 * @param itemId
@@ -3409,14 +3399,14 @@ public class Quest extends ManagedScript implements IIdentifiable
 		{
 			return;
 		}
-		
+
 		// Add items to player's inventory
 		final L2ItemInstance item = player.getInventory().addItem("Quest", itemId, count, player, player.getTarget());
 		if (item == null)
 		{
 			return;
 		}
-		
+
 		// set enchant level for item if that item is not adena
 		if ((attributeId >= 0) && (attributeLevel > 0))
 		{
@@ -3425,15 +3415,15 @@ public class Quest extends ManagedScript implements IIdentifiable
 			{
 				item.updateElementAttrBonus(player);
 			}
-			
+
 			InventoryUpdate iu = new InventoryUpdate();
 			iu.addModifiedItem(item);
 			player.sendPacket(iu);
 		}
-		
+
 		sendItemGetMessage(player, item, count);
 	}
-	
+
 	/**
 	 * Give the specified player a set amount of items if he is lucky enough.<br>
 	 * Not recommended to use this for non-stacking items.
@@ -3449,7 +3439,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		return giveItemRandomly(player, null, itemId, amountToGive, amountToGive, limit, dropChance, playSound);
 	}
-	
+
 	/**
 	 * Give the specified player a set amount of items if he is lucky enough.<br>
 	 * Not recommended to use this for non-stacking items.
@@ -3466,7 +3456,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		return giveItemRandomly(player, npc, itemId, amountToGive, amountToGive, limit, dropChance, playSound);
 	}
-	
+
 	/**
 	 * Give the specified player a random amount of items if he is lucky enough.<br>
 	 * Not recommended to use this for non-stacking items.
@@ -3483,12 +3473,12 @@ public class Quest extends ManagedScript implements IIdentifiable
 	public static boolean giveItemRandomly(L2PcInstance player, L2Npc npc, int itemId, long minAmount, long maxAmount, long limit, double dropChance, boolean playSound)
 	{
 		final long currentCount = getQuestItemsCount(player, itemId);
-		
+
 		if ((limit > 0) && (currentCount >= limit))
 		{
 			return true;
 		}
-		
+
 		minAmount *= Config.RATE_QUEST_DROP;
 		maxAmount *= Config.RATE_QUEST_DROP;
 		dropChance *= Config.RATE_QUEST_DROP; // TODO separate configs for rate and amount
@@ -3506,7 +3496,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 				maxAmount *= Config.L2JMOD_CHAMPION_REWARDS;
 			}
 		}
-		
+
 		long amountToGive = ((minAmount == maxAmount) ? minAmount : Rnd.get(minAmount, maxAmount));
 		final double random = Rnd.nextDouble();
 		// Inventory slot check (almost useless for non-stacking items)
@@ -3516,7 +3506,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 			{
 				amountToGive = limit - currentCount;
 			}
-			
+
 			// Give the item to player
 			L2ItemInstance item = player.addItem("Quest", itemId, amountToGive, npc, true);
 			if (item != null)
@@ -3530,7 +3520,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 					}
 					return true;
 				}
-				
+
 				if (playSound)
 				{
 					playSound(player, QuestSound.ITEMSOUND_QUEST_ITEMGET);
@@ -3544,7 +3534,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 		}
 		return false;
 	}
-	
+
 	/**
 	 * @param player
 	 * @param item
@@ -3561,7 +3551,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 		giveItems(player, items);
 		return true;
 	}
-	
+
 	/**
 	 * @param player
 	 * @param items
@@ -3572,9 +3562,9 @@ public class Quest extends ManagedScript implements IIdentifiable
 		{
 			giveItems(player, item);
 		}
-		
+
 	}
-	
+
 	/**
 	 * Gives an item to the player
 	 * @param player
@@ -3592,7 +3582,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 		giveItems(player, item.getId(), Math.min(maxToGive, item.getCount()));
 		return true;
 	}
-	
+
 	protected static boolean giveItems(L2PcInstance player, ItemHolder item, long limit, boolean playSound)
 	{
 		boolean drop = giveItems(player, item, limit);
@@ -3602,7 +3592,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 		}
 		return drop;
 	}
-	
+
 	/**
 	 * @param player
 	 * @param items
@@ -3618,7 +3608,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 		}
 		return b;
 	}
-	
+
 	protected static boolean giveItems(L2PcInstance player, List<ItemHolder> items, long limit, boolean playSound)
 	{
 		boolean drop = giveItems(player, items, limit);
@@ -3628,7 +3618,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 		}
 		return drop;
 	}
-	
+
 	/**
 	 * @param player
 	 * @param items
@@ -3652,7 +3642,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 		}
 		return b;
 	}
-	
+
 	protected static boolean giveItems(L2PcInstance player, List<ItemHolder> items, Map<Integer, Long> limit, boolean playSound)
 	{
 		boolean drop = giveItems(player, items, limit);
@@ -3662,7 +3652,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 		}
 		return drop;
 	}
-	
+
 	/**
 	 * @param player
 	 * @param item
@@ -3674,7 +3664,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		return giveItems(player, item.calculateDrops(victim, player), limit);
 	}
-	
+
 	protected static boolean giveItems(L2PcInstance player, IDropItem item, L2Character victim, int limit, boolean playSound)
 	{
 		boolean drop = giveItems(player, item, victim, limit);
@@ -3684,7 +3674,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 		}
 		return drop;
 	}
-	
+
 	/**
 	 * @param player
 	 * @param item
@@ -3696,7 +3686,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		return giveItems(player, item.calculateDrops(victim, player), limit);
 	}
-	
+
 	protected static boolean giveItems(L2PcInstance player, IDropItem item, L2Character victim, Map<Integer, Long> limit, boolean playSound)
 	{
 		boolean drop = giveItems(player, item, victim, limit, playSound);
@@ -3706,7 +3696,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 		}
 		return drop;
 	}
-	
+
 	/**
 	 * Distributes items to players equally
 	 * @param players the players to whom the items will be distributed
@@ -3722,7 +3712,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 		giveItems(rewardedCounts, playSound);
 		return rewardedCounts;
 	}
-	
+
 	/**
 	 * Distributes items to players equally
 	 * @param players the players to whom the items will be distributed
@@ -3735,7 +3725,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		return distributeItems(players, items, new StaticMap<Integer, Long>(limit), playSound);
 	}
-	
+
 	/**
 	 * Distributes items to players equally
 	 * @param players the players to whom the items will be distributed
@@ -3757,7 +3747,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 		}
 		return returnMap;
 	}
-	
+
 	/**
 	 * Distributes items to players equally
 	 * @param players the players to whom the items will be distributed
@@ -3772,7 +3762,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		return distributeItems(players, items.calculateDrops(victim, killer), limit, playSound);
 	}
-	
+
 	/**
 	 * Distributes items to players equally
 	 * @param players the players to whom the items will be distributed
@@ -3787,7 +3777,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		return distributeItems(players, items.calculateDrops(victim, killer), limit, playSound);
 	}
-	
+
 	/**
 	 * Distributes items to players equally
 	 * @param players the players to whom the items will be distributed
@@ -3807,20 +3797,20 @@ public class Quest extends ManagedScript implements IIdentifiable
 			toDrop = new GroupedGeneralDropItem(items.getChance(), items.getDropCalculationStrategy(), items.getKillerChanceModifierStrategy(), items.getPreciseStrategy());
 			List<GeneralDropItem> dropItems = new LinkedList<>(items.getItems());
 			itemLoop:
-			for (Iterator<GeneralDropItem> it = dropItems.iterator(); it.hasNext();)
-			{
-				GeneralDropItem item = it.next();
-				for (L2PcInstance player : players)
+				for (Iterator<GeneralDropItem> it = dropItems.iterator(); it.hasNext();)
 				{
-					if (player.getInventory().getInventoryItemCount(item.getItemId(), -1, true) < limit.get(item.getItemId()))
+					GeneralDropItem item = it.next();
+					for (L2PcInstance player : players)
 					{
-						// we can give this item to this player
-						continue itemLoop;
+						if (player.getInventory().getInventoryItemCount(item.getItemId(), -1, true) < limit.get(item.getItemId()))
+						{
+							// we can give this item to this player
+							continue itemLoop;
+						}
 					}
+					// there's nobody to give this item to
+					it.remove();
 				}
-				// there's nobody to give this item to
-				it.remove();
-			}
 			toDrop.setItems(dropItems);
 			toDrop = toDrop.normalizeMe(victim, killer);
 		}
@@ -3830,7 +3820,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 		}
 		return distributeItems(players, toDrop, killer, victim, limit, playSound);
 	}
-	
+
 	/**
 	 * Distributes items to players equally
 	 * @param players the players to whom the items will be distributed
@@ -3846,7 +3836,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		return distributeItems(players, items, killer, victim, new StaticMap<Integer, Long>(limit), playSound, smartDrop);
 	}
-	
+
 	/**
 	 * @param players
 	 * @param items
@@ -3909,7 +3899,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 		}
 		return rewardedCounts;
 	}
-	
+
 	/**
 	 * Distributes items to players
 	 * @param rewardedCounts A scheme of distribution items (the structure is: Map<player Map<itemId, count>>)
@@ -3935,7 +3925,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 			}
 		}
 	}
-	
+
 	/**
 	 * Take an amount of a specified item from player's inventory.
 	 * @param player the player whose item to take
@@ -3951,13 +3941,13 @@ public class Quest extends ManagedScript implements IIdentifiable
 		{
 			return false;
 		}
-		
+
 		// Tests on count value in order not to have negative value
 		if ((amount < 0) || (amount > item.getCount()))
 		{
 			amount = item.getCount();
 		}
-		
+
 		// Destroy the quantity of items wanted
 		if (item.isEquipped())
 		{
@@ -3972,7 +3962,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 		}
 		return player.destroyItemByItemId("Quest", itemId, amount, player, true);
 	}
-	
+
 	/**
 	 * Take a set amount of a specified item from player's inventory.
 	 * @param player the player whose item to take
@@ -3987,7 +3977,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 		}
 		return takeItems(player, holder.getId(), holder.getCount());
 	}
-	
+
 	/**
 	 * Take a set amount of all specified items from player's inventory.
 	 * @param player the player whose items to take
@@ -4015,7 +4005,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 		}
 		return true;
 	}
-	
+
 	/**
 	 * Take an amount of all specified items from player's inventory.
 	 * @param player the player whose items to take
@@ -4035,7 +4025,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 		}
 		return check;
 	}
-	
+
 	/**
 	 * Remove all quest items associated with this quest from the specified player's inventory.
 	 * @param player the player whose quest items to remove
@@ -4044,7 +4034,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		takeItems(player, -1, questItemIds);
 	}
-	
+
 	/**
 	 * Send a packet in order to play a sound to the player.
 	 * @param player the player whom to send the packet
@@ -4054,7 +4044,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		player.sendPacket(QuestSound.getSound(sound));
 	}
-	
+
 	/**
 	 * Send a packet in order to play a sound to the player.
 	 * @param player the player whom to send the packet
@@ -4064,7 +4054,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		player.sendPacket(sound.getPacket());
 	}
-	
+
 	/**
 	 * Add EXP and SP as quest reward.
 	 * @param player the player whom to reward with the EXP/SP
@@ -4075,7 +4065,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		player.addExpAndSp((long) player.calcStat(Stats.EXPSP_RATE, exp * Config.RATE_QUEST_REWARD_XP, null, null), (int) player.calcStat(Stats.EXPSP_RATE, sp * Config.RATE_QUEST_REWARD_SP, null, null));
 	}
-	
+
 	/**
 	 * Get a random integer from 0 (inclusive) to {@code max} (exclusive).<br>
 	 * Use this method instead of importing {@link com.l2jserver.util.Rnd} utility.
@@ -4086,7 +4076,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		return Rnd.get(max);
 	}
-	
+
 	/**
 	 * Get a random integer from {@code min} (inclusive) to {@code max} (inclusive).<br>
 	 * Use this method instead of importing {@link com.l2jserver.util.Rnd} utility.
@@ -4098,7 +4088,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		return Rnd.get(min, max);
 	}
-	
+
 	/**
 	 * Get a random boolean.<br>
 	 * Use this method instead of importing {@link com.l2jserver.util.Rnd} utility.
@@ -4108,7 +4098,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		return Rnd.nextBoolean();
 	}
-	
+
 	/**
 	 * Get the ID of the item equipped in the specified inventory slot of the player.
 	 * @param player the player whose inventory to check
@@ -4119,7 +4109,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		return player.getInventory().getPaperdollItemId(slot);
 	}
-	
+
 	/**
 	 * @return the number of ticks from the {@link com.l2jserver.gameserver.GameTimeController}.
 	 */
@@ -4127,7 +4117,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		return GameTimeController.getInstance().getGameTicks();
 	}
-	
+
 	/**
 	 * Execute a procedure for each player depending on the parameters.
 	 * @param player the player on which the procedure will be executed
@@ -4144,26 +4134,26 @@ public class Quest extends ManagedScript implements IIdentifiable
 			if (includeCommandChannel && player.getParty().isInCommandChannel())
 			{
 				player.getParty().getCommandChannel().forEachMember(new IProcedure<L2PcInstance, Boolean>()
-				{
+					{
 					@Override
 					public Boolean execute(L2PcInstance member)
 					{
 						actionForEachPlayer(member, npc, isSummon);
 						return true;
 					}
-				});
+					});
 			}
 			else if (includeParty)
 			{
 				player.getParty().forEachMember(new IProcedure<L2PcInstance, Boolean>()
-				{
+					{
 					@Override
 					public Boolean execute(L2PcInstance member)
 					{
 						actionForEachPlayer(member, npc, isSummon);
 						return true;
 					}
-				});
+					});
 			}
 		}
 		else
@@ -4171,7 +4161,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 			actionForEachPlayer(player, npc, isSummon);
 		}
 	}
-	
+
 	/**
 	 * Overridable method called from {@link #executeForEachPlayer(L2PcInstance, L2Npc, boolean, boolean, boolean)}
 	 * @param player the player on which the action will be run
@@ -4182,7 +4172,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		// To be overridden in quest scripts.
 	}
-	
+
 	/**
 	 * Open a door if it is present on the instance and its not open.
 	 * @param doorId the ID of the door to open
@@ -4200,7 +4190,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 			door.openMe();
 		}
 	}
-	
+
 	/**
 	 * Close a door if it is present in a specified the instance and its open.
 	 * @param doorId the ID of the door to close
@@ -4218,7 +4208,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 			door.closeMe();
 		}
 	}
-	
+
 	/**
 	 * Retrieve a door from an instance or the real world.
 	 * @param doorId the ID of the door to get
@@ -4242,7 +4232,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 		}
 		return door;
 	}
-	
+
 	/**
 	 * Teleport a player into/out of an instance.
 	 * @param player the player to teleport
@@ -4253,7 +4243,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		teleportPlayer(player, loc, instanceId, true);
 	}
-	
+
 	/**
 	 * Teleport a player into/out of an instance.
 	 * @param player the player to teleport
@@ -4266,7 +4256,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 		loc.setInstanceId(instanceId);
 		player.teleToLocation(loc, allowRandomOffset);
 	}
-	
+
 	/**
 	 * Sends the special camera packet to the player.
 	 * @param player the player
@@ -4286,7 +4276,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		player.sendPacket(new SpecialCamera(creature, force, angle1, angle2, time, range, duration, relYaw, relPitch, isWide, relAngle));
 	}
-	
+
 	/**
 	 * Sends the special camera packet to the player.
 	 * @param player
@@ -4305,7 +4295,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		player.sendPacket(new SpecialCamera(creature, player, force, angle1, angle2, time, duration, relYaw, relPitch, isWide, relAngle));
 	}
-	
+
 	/**
 	 * Sends the special camera packet to the player.
 	 * @param player
@@ -4326,7 +4316,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 	{
 		player.sendPacket(new SpecialCamera(creature, force, angle1, angle2, time, range, duration, relYaw, relPitch, isWide, relAngle, unk));
 	}
-	
+
 	/**
 	 * A static map, which always gets same value
 	 * @author Battlecruiser
@@ -4335,14 +4325,14 @@ public class Quest extends ManagedScript implements IIdentifiable
 	 */
 	private static class StaticMap<K, V> implements Map<K, V>
 	{
-		
+
 		private final V _value;
-		
+
 		public StaticMap(V value)
 		{
 			_value = value;
 		}
-		
+
 		/*
 		 * (non-Javadoc)
 		 * @see java.util.Map#clear()
@@ -4351,9 +4341,9 @@ public class Quest extends ManagedScript implements IIdentifiable
 		public void clear()
 		{
 			// do nothing
-			
+
 		}
-		
+
 		/*
 		 * (non-Javadoc)
 		 * @see java.util.Map#containsKey(java.lang.Object)
@@ -4363,7 +4353,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 		{
 			return key != null;
 		}
-		
+
 		/*
 		 * (non-Javadoc)
 		 * @see java.util.Map#containsValue(java.lang.Object)
@@ -4373,7 +4363,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 		{
 			return _value.equals(value);
 		}
-		
+
 		/*
 		 * (non-Javadoc)
 		 * @see java.util.Map#entrySet()
@@ -4383,7 +4373,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 		{
 			throw new UnsupportedOperationException();
 		}
-		
+
 		/*
 		 * (non-Javadoc)
 		 * @see java.util.Map#get(java.lang.Object)
@@ -4393,7 +4383,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 		{
 			return key == null ? null : _value;
 		}
-		
+
 		/*
 		 * (non-Javadoc)
 		 * @see java.util.Map#isEmpty()
@@ -4403,7 +4393,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 		{
 			return false;
 		}
-		
+
 		/*
 		 * (non-Javadoc)
 		 * @see java.util.Map#keySet()
@@ -4413,7 +4403,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 		{
 			throw new UnsupportedOperationException();
 		}
-		
+
 		/*
 		 * (non-Javadoc)
 		 * @see java.util.Map#put(java.lang.Object, java.lang.Object)
@@ -4423,7 +4413,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 		{
 			return value;
 		}
-		
+
 		/*
 		 * (non-Javadoc)
 		 * @see java.util.Map#putAll(java.util.Map)
@@ -4433,7 +4423,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 		{
 			// do nothing
 		}
-		
+
 		/*
 		 * (non-Javadoc)
 		 * @see java.util.Map#remove(java.lang.Object)
@@ -4443,7 +4433,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 		{
 			return _value;
 		}
-		
+
 		/*
 		 * (non-Javadoc)
 		 * @see java.util.Map#size()
@@ -4453,7 +4443,7 @@ public class Quest extends ManagedScript implements IIdentifiable
 		{
 			return 1;
 		}
-		
+
 		/*
 		 * (non-Javadoc)
 		 * @see java.util.Map#values()
