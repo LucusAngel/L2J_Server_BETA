@@ -442,7 +442,7 @@ public final class Fort extends AbstractResidence
 		updateOwnerInDB(); // Update in database
 		saveFortVariables();
 		
-		if (getSiege().getIsInProgress())
+		if (getSiege().isInProgress())
 		{
 			getSiege().endSiege();
 		}
@@ -779,7 +779,7 @@ public final class Fort extends AbstractResidence
 	private void removeDoorUpgrade()
 	{
 		try (Connection con = L2DatabaseFactory.getInstance().getConnection();
-			PreparedStatement ps = con.prepareStatement("DELETE FROM fort_doorupgrade WHERE WHERE fortId = ?"))
+			PreparedStatement ps = con.prepareStatement("DELETE FROM fort_doorupgrade WHERE fortId = ?"))
 		{
 			ps.setInt(1, getResidenceId());
 			ps.execute();
