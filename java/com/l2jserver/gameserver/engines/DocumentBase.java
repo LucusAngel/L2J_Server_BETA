@@ -37,12 +37,14 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
 import com.l2jserver.gameserver.datatables.ItemTable;
+import com.l2jserver.gameserver.enums.CategoryType;
 import com.l2jserver.gameserver.enums.InstanceType;
 import com.l2jserver.gameserver.enums.NpcRace;
 import com.l2jserver.gameserver.enums.PcRace;
 import com.l2jserver.gameserver.model.StatsSet;
 import com.l2jserver.gameserver.model.base.PlayerState;
 import com.l2jserver.gameserver.model.conditions.Condition;
+import com.l2jserver.gameserver.model.conditions.ConditionCategoryType;
 import com.l2jserver.gameserver.model.conditions.ConditionChangeWeapon;
 import com.l2jserver.gameserver.model.conditions.ConditionGameChance;
 import com.l2jserver.gameserver.model.conditions.ConditionGameTime;
@@ -121,12 +123,13 @@ import com.l2jserver.gameserver.model.conditions.ConditionTargetUsesWeaponKind;
 import com.l2jserver.gameserver.model.conditions.ConditionTargetWeight;
 import com.l2jserver.gameserver.model.conditions.ConditionUsingItemType;
 import com.l2jserver.gameserver.model.conditions.ConditionUsingSkill;
+import com.l2jserver.gameserver.model.conditions.ConditionUsingSlotType;
 import com.l2jserver.gameserver.model.conditions.ConditionWithSkill;
 import com.l2jserver.gameserver.model.effects.AbstractEffect;
 import com.l2jserver.gameserver.model.interfaces.IIdentifiable;
 import com.l2jserver.gameserver.model.items.L2Item;
-import com.l2jserver.gameserver.model.items.type.L2ArmorType;
-import com.l2jserver.gameserver.model.items.type.L2WeaponType;
+import com.l2jserver.gameserver.model.items.type.ArmorType;
+import com.l2jserver.gameserver.model.items.type.WeaponType;
 import com.l2jserver.gameserver.model.skills.AbnormalType;
 import com.l2jserver.gameserver.model.skills.EffectScope;
 import com.l2jserver.gameserver.model.skills.Skill;
@@ -930,6 +933,17 @@ public abstract class DocumentBase
 					}
 					break;
 				}
+				case "categorytype":
+				{
+					final String[] values = a.getNodeValue().split(",");
+					final Set<CategoryType> array = new HashSet<>(values.length);
+					for (String value : values)
+					{
+						array.add(CategoryType.valueOf(getValue(value, null)));
+					}
+					cond = joinAnd(cond, new ConditionCategoryType(array));
+					break;
+				}
 			}
 		}
 		
@@ -1075,17 +1089,17 @@ public abstract class DocumentBase
 					while (st.hasMoreTokens())
 					{
 						String item = st.nextToken().trim();
-						for (L2WeaponType wt : L2WeaponType.values())
+						for (WeaponType wt : WeaponType.values())
 						{
-							if (wt.getName().equals(item))
+							if (wt.name().equals(item))
 							{
 								mask |= wt.mask();
 								break;
 							}
 						}
-						for (L2ArmorType at : L2ArmorType.values())
+						for (ArmorType at : ArmorType.values())
 						{
-							if (at.getName().equals(item))
+							if (at.name().equals(item))
 							{
 								mask |= at.mask();
 								break;
@@ -1165,14 +1179,20 @@ public abstract class DocumentBase
 					{
 						int old = mask;
 						String item = st.nextToken().trim();
-						if (ItemTable._weaponTypes.containsKey(item))
+						for (WeaponType wt : WeaponType.values())
 						{
-							mask |= ItemTable._weaponTypes.get(item).mask();
+							if (wt.name().equals(item))
+							{
+								mask |= wt.mask();
+							}
 						}
 						
-						if (ItemTable._armorTypes.containsKey(item))
+						for (ArmorType at : ArmorType.values())
 						{
-							mask |= ItemTable._armorTypes.get(item).mask();
+							if (at.name().equals(item))
+							{
+								mask |= at.mask();
+							}
 						}
 						
 						if (old == mask)
@@ -1181,6 +1201,27 @@ public abstract class DocumentBase
 						}
 					}
 					cond = joinAnd(cond, new ConditionUsingItemType(mask));
+					break;
+				}
+				case "slot":
+				{
+					int mask = 0;
+					StringTokenizer st = new StringTokenizer(a.getNodeValue(), ",");
+					while (st.hasMoreTokens())
+					{
+						int old = mask;
+						String item = st.nextToken().trim();
+						if (ItemTable._slots.containsKey(item))
+						{
+							mask |= ItemTable._slots.get(item);
+						}
+						
+						if (old == mask)
+						{
+							_log.info("[parseUsingCondition=\"slot\"] Unknown item slot name: " + item);
+						}
+					}
+					cond = joinAnd(cond, new ConditionUsingSlotType(mask));
 					break;
 				}
 				case "skill":

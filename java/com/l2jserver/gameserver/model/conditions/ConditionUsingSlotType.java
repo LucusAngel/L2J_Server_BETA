@@ -16,51 +16,31 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.l2jserver.gameserver.model.items.type;
+package com.l2jserver.gameserver.model.conditions;
+
+import com.l2jserver.gameserver.model.stats.Env;
 
 /**
- * Description of Armor Type
+ * @author Nos
  */
-
-public enum L2ArmorType implements L2ItemType
+public class ConditionUsingSlotType extends Condition
 {
-	NONE("None"),
-	LIGHT("Light"),
-	HEAVY("Heavy"),
-	MAGIC("Magic"),
-	SIGIL("Sigil"),
+	private final int _mask;
 	
-	// L2J CUSTOM
-	SHIELD("Shield");
-	
-	final int _mask;
-	final String _name;
-	
-	/**
-	 * Constructor of the L2ArmorType.
-	 * @param name : String designating the name of the ArmorType
-	 */
-	private L2ArmorType(String name)
+	public ConditionUsingSlotType(int mask)
 	{
-		_mask = 1 << (ordinal() + L2WeaponType.values().length);
-		_name = name;
+		_mask = mask;
 	}
 	
-	/**
-	 * @return the ID of the ArmorType after applying a mask.
-	 */
 	@Override
-	public int mask()
+	public boolean testImpl(Env env)
 	{
-		return _mask;
+		if ((env.getCharacter() == null) || !env.getCharacter().isPlayer())
+		{
+			return false;
+		}
+		
+		return (env.getPlayer().getActiveWeaponItem().getBodyPart() & _mask) != 0;
 	}
 	
-	/**
-	 * @return the name of the ArmorType
-	 */
-	@Override
-	public String getName()
-	{
-		return _name;
-	}
 }
