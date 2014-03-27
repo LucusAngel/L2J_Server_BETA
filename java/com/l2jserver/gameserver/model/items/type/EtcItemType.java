@@ -19,12 +19,52 @@
 package com.l2jserver.gameserver.model.items.type;
 
 /**
- * Created for allow comparing different item types
- * @author DS
+ * EtcItem Type enumerated.
  */
-public interface L2ItemType
+public enum EtcItemType implements ItemType
 {
-	public int mask();
+	NONE,
+	ARROW,
+	POTION,
+	SCRL_ENCHANT_WP,
+	SCRL_ENCHANT_AM,
+	SCROLL,
+	RECIPE,
+	MATERIAL,
+	PET_COLLAR,
+	CASTLE_GUARD,
+	LOTTO,
+	RACE_TICKET,
+	DYE,
+	SEED,
+	CROP,
+	MATURECROP,
+	HARVEST,
+	SEED2,
+	TICKET_OF_LORD,
+	LURE,
+	BLESS_SCRL_ENCHANT_WP,
+	BLESS_SCRL_ENCHANT_AM,
+	COUPON,
+	ELIXIR,
+	SCRL_ENCHANT_ATTR,
+	BOLT,
+	SCRL_INC_ENCHANT_PROP_WP,
+	SCRL_INC_ENCHANT_PROP_AM,
+	ANCIENT_CRYSTAL_ENCHANT_WP,
+	ANCIENT_CRYSTAL_ENCHANT_AM,
+	RUNE_SELECT,
+	RUNE,
 	
-	public String getName();
+	// L2J CUSTOM, BACKWARD COMPATIBILITY
+	SHOT;
+	
+	/**
+	 * @return the ID of the item after applying the mask.
+	 */
+	@Override
+	public int mask()
+	{
+		return 0;
+	}
 }
