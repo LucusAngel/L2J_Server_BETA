@@ -22,7 +22,6 @@ import com.l2jserver.Config;
 import com.l2jserver.gameserver.Announcements;
 import com.l2jserver.gameserver.LoginServerThread;
 import com.l2jserver.gameserver.SevenSigns;
-import com.l2jserver.gameserver.TaskPriority;
 import com.l2jserver.gameserver.cache.HtmCache;
 import com.l2jserver.gameserver.communitybbs.Manager.RegionBBSManager;
 import com.l2jserver.gameserver.datatables.AdminTable;
@@ -105,11 +104,6 @@ public class EnterWorld extends L2GameClientPacket
 	
 	private final int[][] tracert = new int[5][4];
 	
-	public TaskPriority getPriority()
-	{
-		return TaskPriority.PR_URGENT;
-	}
-	
 	@Override
 	protected void readImpl()
 	{
@@ -182,7 +176,7 @@ public class EnterWorld extends L2GameClientPacket
 			
 			if (Config.GM_STARTUP_INVISIBLE && AdminTable.getInstance().hasAccess("admin_invisible", activeChar.getAccessLevel()))
 			{
-				activeChar.getAppearance().setInvisible();
+				activeChar.setInvisible(true);
 			}
 			
 			if (Config.GM_STARTUP_SILENCE && AdminTable.getInstance().hasAccess("admin_silence", activeChar.getAccessLevel()))
@@ -390,13 +384,23 @@ public class EnterWorld extends L2GameClientPacket
 			loadTutorial(activeChar);
 		}
 		
-		for (Quest quest : QuestManager.getInstance().getAllManagedScripts())
+		// Notify quests.
+		for (Quest quest : QuestManager.getInstance().getQuests().values())
 		{
 			if ((quest != null) && quest.getOnEnterWorld())
 			{
 				quest.notifyEnterWorld(activeChar);
 			}
 		}
+		// Notify scripts.
+		for (Quest quest : QuestManager.getInstance().getScripts().values())
+		{
+			if ((quest != null) && quest.getOnEnterWorld())
+			{
+				quest.notifyEnterWorld(activeChar);
+			}
+		}
+		
 		activeChar.sendPacket(new QuestList());
 		
 		if (Config.PLAYER_SPAWN_PROTECTION > 0)

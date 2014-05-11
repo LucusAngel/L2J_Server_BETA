@@ -18,6 +18,8 @@
  */
 package com.l2jserver.gameserver.model.actor.stat;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 import com.l2jserver.Config;
 import com.l2jserver.gameserver.datatables.ExperienceTable;
 import com.l2jserver.gameserver.datatables.PetDataTable;
@@ -52,6 +54,11 @@ public class PcStat extends PlayableStat
 	private float _vitalityPoints = 1;
 	private byte _vitalityLevel = 0;
 	private long _startingXp;
+	/** Player's maximum cubic count. */
+	private int _maxCubicCount = 1;
+	/** Player's maximum talisman count. */
+	private final AtomicInteger _talismanSlots = new AtomicInteger();
+	private boolean _cloakSlot = false;
 	
 	public static final int VITALITY_LEVELS[] =
 	{
@@ -394,6 +401,48 @@ public class PcStat extends PlayableStat
 	public long getStartingExp()
 	{
 		return _startingXp;
+	}
+	
+	/**
+	 * Gets the maximum cubic count.
+	 * @return the maximum cubic count
+	 */
+	public int getMaxCubicCount()
+	{
+		return _maxCubicCount;
+	}
+	
+	/**
+	 * Sets the maximum cubic count.
+	 * @param cubicCount the maximum cubic count
+	 */
+	public void setMaxCubicCount(int cubicCount)
+	{
+		_maxCubicCount = cubicCount;
+	}
+	
+	/**
+	 * Gets the maximum talisman count.
+	 * @return the maximum talisman count
+	 */
+	public int getTalismanSlots()
+	{
+		return _talismanSlots.get();
+	}
+	
+	public void addTalismanSlots(int count)
+	{
+		_talismanSlots.addAndGet(count);
+	}
+	
+	public boolean canEquipCloak()
+	{
+		return _cloakSlot;
+	}
+	
+	public void setCloakSlotStatus(boolean cloakSlot)
+	{
+		_cloakSlot = cloakSlot;
 	}
 	
 	@Override

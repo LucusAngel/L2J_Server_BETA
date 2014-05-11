@@ -52,6 +52,7 @@ public enum Stats
 	ATK_REUSE("atkReuse"), // Bows Hits Reuse Rate
 	P_REUSE("pReuse"), // Physical Skill Reuse Rate
 	MAGIC_REUSE_RATE("mReuse"), // Magic Skill Reuse Rate
+	DANCE_REUSE("dReuse"), // Dance Skill Reuse Rate
 	SHIELD_DEFENCE("sDef"),
 	CRITICAL_DAMAGE("cAtk"),
 	CRITICAL_DAMAGE_ADD("cAtkAdd"), // this is another type for special critical damage mods - vicious stance, critical power and critical damage SA
@@ -75,7 +76,10 @@ public enum Stats
 	// ATTACK & DEFENCE RATES
 	EVASION_RATE("rEvas"),
 	P_SKILL_EVASION("pSkillEvas"),
-	CRIT_DAMAGE_EVASION("critDamEvas"),
+	DEFENCE_CRITICAL_RATE("defCritRate"),
+	DEFENCE_CRITICAL_RATE_ADD("defCritRateAdd"),
+	DEFENCE_CRITICAL_DAMAGE("defCritDamage"),
+	DEFENCE_CRITICAL_DAMAGE_ADD("defCritDamageAdd"), // Resistance to critical damage in value (Example: +100 will be 100 more critical damage, NOT 100% more).
 	SHIELD_RATE("rShld"),
 	CRITICAL_RATE("rCrit"),
 	BLOW_RATE("blowRate"),
@@ -84,7 +88,6 @@ public enum Stats
 	BONUS_EXP("bonusExp"),
 	BONUS_SP("bonusSp"),
 	ATTACK_CANCEL("cancel"),
-	MAGIC_FAILURE_RATE("magicFailureRate"),
 	
 	// ACCURACY & RANGE
 	ACCURACY_COMBAT("accCombat"),
@@ -114,9 +117,6 @@ public enum Stats
 	CANCEL_VULN("cancelVuln"), // Resistance for cancel type skills
 	DEBUFF_VULN("debuffVuln"),
 	BUFF_VULN("buffVuln"),
-	CRIT_VULN("critVuln"), // Resistance to critical damage in percent.
-	CRIT_ADD_VULN("critAddVuln"), // Resistance to critical damage in value (Example: +100 will be 100 more critical damage, NOT 100% more).
-	MAGIC_DAMAGE_VULN("magicDamVul"),
 	
 	// RESISTANCES
 	FIRE_RES("fireRes"),
@@ -138,9 +138,7 @@ public enum Stats
 	DARK_POWER("darkPower"),
 	
 	// PROFICIENCY
-	PROF("movementProf"),
 	CANCEL_PROF("cancelProf"),
-	DEBUFF_PROF("debuffProf"),
 	
 	REFLECT_DAMAGE_PERCENT("reflectDam"),
 	REFLECT_SKILL_MAGIC("reflectSkillMagic"),
@@ -171,10 +169,6 @@ public enum Stats
 	DANCE_MP_CONSUME_RATE("DanceMpConsumeRate"),
 	BOW_MP_CONSUME_RATE("BowMpConsumeRate"),
 	MP_CONSUME("MpConsume"),
-	
-	// T1 stats
-	TALISMAN_SLOTS("talisman"),
-	CLOAK_SLOT("cloak"),
 	
 	// Shield Stats
 	SHIELD_DEFENCE_ANGLE("shieldDefAngle"),

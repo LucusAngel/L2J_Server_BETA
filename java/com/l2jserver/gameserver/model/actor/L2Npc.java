@@ -31,12 +31,10 @@ import com.l2jserver.gameserver.SevenSigns;
 import com.l2jserver.gameserver.SevenSignsFestival;
 import com.l2jserver.gameserver.ThreadPoolManager;
 import com.l2jserver.gameserver.cache.HtmCache;
-import com.l2jserver.gameserver.datatables.CategoryData;
 import com.l2jserver.gameserver.datatables.ItemTable;
 import com.l2jserver.gameserver.datatables.NpcPersonalAIData;
 import com.l2jserver.gameserver.enums.AISkillScope;
 import com.l2jserver.gameserver.enums.AIType;
-import com.l2jserver.gameserver.enums.CategoryType;
 import com.l2jserver.gameserver.enums.InstanceType;
 import com.l2jserver.gameserver.enums.NpcRace;
 import com.l2jserver.gameserver.enums.PrivateStoreType;
@@ -127,6 +125,7 @@ public class L2Npc extends L2Character
 	private final int _minimalSocialInterval = 6000;
 	/** Support for random animation switching */
 	private boolean _isRandomAnimationEnabled = true;
+	private boolean _isTalking = true;
 	
 	protected RandomAnimationTask _rAniTask = null;
 	private int _currentLHandId; // normally this shouldn't change from the template, but there exist exceptions
@@ -554,7 +553,7 @@ public class L2Npc extends L2Character
 		Collection<L2PcInstance> plrs = getKnownList().getKnownPlayers().values();
 		for (L2PcInstance player : plrs)
 		{
-			if (player == null)
+			if ((player == null) || !isVisibleFor(player))
 			{
 				continue;
 			}
@@ -1075,7 +1074,7 @@ public class L2Npc extends L2Character
 	 */
 	public void showChatWindow(L2PcInstance player, int val)
 	{
-		if (Config.NON_TALKING_NPCS.contains(getId()))
+		if (!isTalking())
 		{
 			player.sendPacket(ActionFailed.STATIC_PACKET);
 			return;
@@ -1584,18 +1583,21 @@ public class L2Npc extends L2Character
 	@Override
 	public void sendInfo(L2PcInstance activeChar)
 	{
-		if (Config.CHECK_KNOWN && activeChar.isGM())
+		if (isVisibleFor(activeChar))
 		{
-			activeChar.sendMessage("Added NPC: " + getName());
-		}
-		
-		if (getRunSpeed() == 0)
-		{
-			activeChar.sendPacket(new ServerObjectInfo(this, activeChar));
-		}
-		else
-		{
-			activeChar.sendPacket(new AbstractNpcInfo.NpcInfo(this, activeChar));
+			if (Config.CHECK_KNOWN && activeChar.isGM())
+			{
+				activeChar.sendMessage("Added NPC: " + getName());
+			}
+			
+			if (getRunSpeed() == 0)
+			{
+				activeChar.sendPacket(new ServerObjectInfo(this, activeChar));
+			}
+			else
+			{
+				activeChar.sendPacket(new AbstractNpcInfo.NpcInfo(this, activeChar));
+			}
 		}
 	}
 	
@@ -1714,10 +1716,7 @@ public class L2Npc extends L2Character
 	public void setTeam(Team team)
 	{
 		super.setTeam(team);
-		for (L2PcInstance player : getKnownList().getKnownPlayers().values())
-		{
-			player.sendPacket(new AbstractNpcInfo.NpcInfo(this, player));
-		}
+		broadcastInfo();
 	}
 	
 	/**
@@ -1903,12 +1902,6 @@ public class L2Npc extends L2Character
 		return new Location((int) (getX() + (radius * Math.cos(angle))), (int) (getY() + (radius * Math.sin(angle))), getZ());
 	}
 	
-	@Override
-	public boolean isInCategory(CategoryType type)
-	{
-		return CategoryData.getInstance().isInCategory(type, getId());
-	}
-	
 	/**
 	 * Drops an item.
 	 * @param player the last attacker or main damage dealer
@@ -1979,5 +1972,36 @@ public class L2Npc extends L2Character
 	public final String getName()
 	{
 		return getTemplate().getName();
+	}
+	
+	@Override
+	public boolean isVisibleFor(L2PcInstance player)
+	{
+		if (getTemplate().getEventQuests(QuestEventType.ON_CAN_SEE_ME) != null)
+		{
+			for (Quest quest : getTemplate().getEventQuests(QuestEventType.ON_CAN_SEE_ME))
+			{
+				return quest.notifyOnCanSeeMe(this, player);
+			}
+		}
+		return super.isVisibleFor(player);
+	}
+	
+	/**
+	 * Sets if the players can talk with this npc or not
+	 * @param val {@code true} if the players can talk, {@code false} otherwise
+	 */
+	public void setTalking(boolean val)
+	{
+		_isTalking = val;
+	}
+	
+	/**
+	 * Checks if the players can talk to this npc.
+	 * @return {@code true} if the players can talk, {@code false} otherwise.
+	 */
+	public boolean isTalking()
+	{
+		return _isTalking;
 	}
 }

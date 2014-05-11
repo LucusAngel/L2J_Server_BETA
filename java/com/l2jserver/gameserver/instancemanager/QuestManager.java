@@ -196,7 +196,7 @@ public final class QuestManager extends ScriptManager<Quest>
 		if (old != null)
 		{
 			old.unload();
-			_log.info(getClass().getSimpleName() + ": Replaced: " + old.getName() + " with a new version!");
+			_log.info(getClass().getSimpleName() + ": Replaced quest " + old.getName() + " (" + old.getId() + ") with a new version!");
 			
 		}
 		
@@ -227,10 +227,9 @@ public final class QuestManager extends ScriptManager<Quest>
 		return false;
 	}
 	
-	@Override
-	public Iterable<Quest> getAllManagedScripts()
+	public Map<String, Quest> getQuests()
 	{
-		return _quests.values();
+		return _quests;
 	}
 	
 	@Override
@@ -250,6 +249,7 @@ public final class QuestManager extends ScriptManager<Quest>
 	 * Gets all the registered scripts.
 	 * @return all the scripts
 	 */
+	@Override
 	public Map<String, Quest> getScripts()
 	{
 		return _scripts;
@@ -265,7 +265,7 @@ public final class QuestManager extends ScriptManager<Quest>
 		if (old != null)
 		{
 			old.unload();
-			_log.info(getClass().getSimpleName() + ": Replaced: " + old.getName() + " with a new version!");
+			_log.info(getClass().getSimpleName() + ": Replaced script " + old.getName() + " with a new version!");
 		}
 		
 		if (Config.ALT_DEV_SHOW_SCRIPTS_LOAD_IN_LOGS)
