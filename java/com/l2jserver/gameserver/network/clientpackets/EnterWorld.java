@@ -18,11 +18,12 @@
  */
 package com.l2jserver.gameserver.network.clientpackets;
 
+import java.util.Base64;
+
 import com.l2jserver.Config;
 import com.l2jserver.gameserver.Announcements;
 import com.l2jserver.gameserver.LoginServerThread;
 import com.l2jserver.gameserver.SevenSigns;
-import com.l2jserver.gameserver.TaskPriority;
 import com.l2jserver.gameserver.cache.HtmCache;
 import com.l2jserver.gameserver.communitybbs.Manager.RegionBBSManager;
 import com.l2jserver.gameserver.datatables.AdminTable;
@@ -88,7 +89,6 @@ import com.l2jserver.gameserver.network.serverpackets.QuestList;
 import com.l2jserver.gameserver.network.serverpackets.ShortCutInit;
 import com.l2jserver.gameserver.network.serverpackets.SkillCoolTime;
 import com.l2jserver.gameserver.network.serverpackets.SystemMessage;
-import com.l2jserver.util.Base64;
 
 /**
  * Enter World Packet Handler
@@ -104,11 +104,6 @@ public class EnterWorld extends L2GameClientPacket
 	private static final String _C__11_ENTERWORLD = "[C] 11 EnterWorld";
 	
 	private final int[][] tracert = new int[5][4];
-	
-	public TaskPriority getPriority()
-	{
-		return TaskPriority.PR_URGENT;
-	}
 	
 	@Override
 	protected void readImpl()
@@ -182,7 +177,7 @@ public class EnterWorld extends L2GameClientPacket
 			
 			if (Config.GM_STARTUP_INVISIBLE && AdminTable.getInstance().hasAccess("admin_invisible", activeChar.getAccessLevel()))
 			{
-				activeChar.getAppearance().setInvisible();
+				activeChar.setInvisible(true);
 			}
 			
 			if (Config.GM_STARTUP_SILENCE && AdminTable.getInstance().hasAccess("admin_silence", activeChar.getAccessLevel()))
@@ -390,13 +385,23 @@ public class EnterWorld extends L2GameClientPacket
 			loadTutorial(activeChar);
 		}
 		
-		for (Quest quest : QuestManager.getInstance().getAllManagedScripts())
+		// Notify quests.
+		for (Quest quest : QuestManager.getInstance().getQuests().values())
 		{
 			if ((quest != null) && quest.getOnEnterWorld())
 			{
 				quest.notifyEnterWorld(activeChar);
 			}
 		}
+		// Notify scripts.
+		for (Quest quest : QuestManager.getInstance().getScripts().values())
+		{
+			if ((quest != null) && quest.getOnEnterWorld())
+			{
+				quest.notifyEnterWorld(activeChar);
+			}
+		}
+		
 		activeChar.sendPacket(new QuestList());
 		
 		if (Config.PLAYER_SPAWN_PROTECTION > 0)
@@ -447,8 +452,8 @@ public class EnterWorld extends L2GameClientPacket
 		
 		activeChar.sendPacket(SystemMessageId.WELCOME_TO_LINEAGE);
 		
-		activeChar.sendMessage(getText("VGhpcyBTZXJ2ZXIgdXNlcyBMMkosIGEgUHJvamVjdCBmb3VuZGVkIGJ5IEwyQ2hlZg==" + Config.EOL));
-		activeChar.sendMessage(getText("YW5kIGRldmVsb3BlZCBieSBMMkogVGVhbSBhdCB3d3cubDJqc2VydmVyLmNvbQ==" + Config.EOL));
+		activeChar.sendMessage(getText("VGhpcyBTZXJ2ZXIgdXNlcyBMMkosIGEgUHJvamVjdCBmb3VuZGVkIGJ5IEwyQ2hlZg=="));
+		activeChar.sendMessage(getText("YW5kIGRldmVsb3BlZCBieSBMMkogVGVhbSBhdCB3d3cubDJqc2VydmVyLmNvbQ=="));
 		
 		if (Config.DISPLAY_SERVER_VERSION)
 		{
@@ -462,8 +467,8 @@ public class EnterWorld extends L2GameClientPacket
 				activeChar.sendMessage(getText("TDJKIERhdGFQYWNrIFZlcnNpb246") + " " + Config.DATAPACK_VERSION);
 			}
 		}
-		activeChar.sendMessage(getText("Q29weXJpZ2h0IDIwMDQtMjAxNA==" + Config.EOL));
-		activeChar.sendMessage(getText("VGhhbmsgeW91IGZvciAxMCB5ZWFycyE=" + Config.EOL));
+		activeChar.sendMessage(getText("Q29weXJpZ2h0IDIwMDQtMjAxNA=="));
+		activeChar.sendMessage(getText("VGhhbmsgeW91IGZvciAxMCB5ZWFycyE="));
 		
 		SevenSigns.getInstance().sendCurrentPeriodMsg(activeChar);
 		Announcements.getInstance().showAnnouncements(activeChar);
@@ -695,7 +700,7 @@ public class EnterWorld extends L2GameClientPacket
 	 */
 	private String getText(String string)
 	{
-		return new String(Base64.decode(string));
+		return new String(Base64.getDecoder().decode(string));
 	}
 	
 	private void loadTutorial(L2PcInstance player)

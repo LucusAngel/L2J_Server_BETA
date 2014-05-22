@@ -833,7 +833,6 @@ public final class Config
 	public static int DROP_ITEM_MIN_LEVEL_DIFFERENCE;
 	public static int DROP_ITEM_MAX_LEVEL_DIFFERENCE;
 	public static double DROP_ITEM_MIN_LEVEL_GAP_CHANCE;
-	public static List<Integer> NON_TALKING_NPCS;
 	
 	// --------------------------------------------------
 	// PvP Settings
@@ -1082,10 +1081,6 @@ public final class Config
 	// Queen Ant
 	public static int QUEEN_ANT_SPAWN_INTERVAL;
 	public static int QUEEN_ANT_SPAWN_RANDOM;
-	
-	// Zaken
-	public static int ZAKEN_SPAWN_INTERVAL;
-	public static int ZAKEN_SPAWN_RANDOM;
 	
 	// Beleth
 	public static int BELETH_MIN_PLAYERS;
@@ -1513,7 +1508,7 @@ public final class Config
 			STARTING_VITALITY_POINTS = Character.getInt("StartingVitalityPoints", 20000);
 			MAX_BONUS_EXP = Character.getDouble("MaxExpBonus", 3.5);
 			MAX_BONUS_SP = Character.getDouble("MaxSpBonus", 3.5);
-			MAX_RUN_SPEED = Character.getInt("MaxRunSpeed", 300);
+			MAX_RUN_SPEED = Character.getInt("MaxRunSpeed", 250);
 			MAX_PCRIT_RATE = Character.getInt("MaxPCritRate", 500);
 			MAX_MCRIT_RATE = Character.getInt("MaxMCritRate", 200);
 			MAX_PATK_SPEED = Character.getInt("MaxPAtkSpeed", 1500);
@@ -2102,23 +2097,6 @@ public final class Config
 			DROP_ITEM_MIN_LEVEL_DIFFERENCE = NPC.getInt("DropItemMinLevelDifference", 5);
 			DROP_ITEM_MAX_LEVEL_DIFFERENCE = NPC.getInt("DropItemMaxLevelDifference", 10);
 			DROP_ITEM_MIN_LEVEL_GAP_CHANCE = NPC.getDouble("DropItemMinLevelGapChance", 10);
-			
-			split = NPC.getString("NonTalkingNpcs", "18684,18685,18686,18687,18688,18689,18690,19691,18692,31202,31203,31204,31205,31206,31207,31208,31209,31266,31557,31593,31606,31671,31672,31673,31674,31758,31955,32026,32030,32031,32032,32306,32619,32620,32621").split(",");
-			NON_TALKING_NPCS = new ArrayList<>(split.length);
-			for (String npcId : split)
-			{
-				try
-				{
-					NON_TALKING_NPCS.add(Integer.parseInt(npcId));
-				}
-				catch (NumberFormatException nfe)
-				{
-					if (!npcId.isEmpty())
-					{
-						_log.warning("Could not parse " + npcId + " id for NonTalkingNpcs. Please check that all values are digits and coma separated.");
-					}
-				}
-			}
 			
 			// Load Rates L2Properties file (if exists)
 			final PropertiesParser RatesSettings = new PropertiesParser(RATES_CONFIG_FILE);
@@ -2748,9 +2726,6 @@ public final class Config
 			
 			QUEEN_ANT_SPAWN_INTERVAL = GrandBossSettings.getInt("IntervalOfQueenAntSpawn", 36);
 			QUEEN_ANT_SPAWN_RANDOM = GrandBossSettings.getInt("RandomOfQueenAntSpawn", 17);
-			
-			ZAKEN_SPAWN_INTERVAL = GrandBossSettings.getInt("IntervalOfZakenSpawn", 60);
-			ZAKEN_SPAWN_RANDOM = GrandBossSettings.getInt("RandomOfZakenSpawn", 20);
 			
 			BELETH_SPAWN_INTERVAL = GrandBossSettings.getInt("IntervalOfBelethSpawn", 192);
 			BELETH_SPAWN_RANDOM = GrandBossSettings.getInt("RandomOfBelethSpawn", 148);

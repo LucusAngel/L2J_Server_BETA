@@ -19,10 +19,10 @@
 package com.l2jserver.gameserver.network.clientpackets;
 
 import com.l2jserver.Config;
+import com.l2jserver.gameserver.enums.PartyDistributionType;
 import com.l2jserver.gameserver.model.BlockList;
 import com.l2jserver.gameserver.model.L2Party;
 import com.l2jserver.gameserver.model.L2World;
-import com.l2jserver.gameserver.model.PcCondOverride;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.network.SystemMessageId;
 import com.l2jserver.gameserver.network.serverpackets.ActionFailed;
@@ -38,13 +38,13 @@ public final class RequestJoinParty extends L2GameClientPacket
 	private static final String _C__42_REQUESTJOINPARTY = "[C] 42 RequestJoinParty";
 	
 	private String _name;
-	private int _itemDistribution;
+	private int _partyDistributionTypeId;
 	
 	@Override
 	protected void readImpl()
 	{
 		_name = readS();
-		_itemDistribution = readD();
+		_partyDistributionTypeId = readD();
 	}
 	
 	@Override
@@ -85,7 +85,7 @@ public final class RequestJoinParty extends L2GameClientPacket
 			return;
 		}
 		
-		if (!requestor.canOverrideCond(PcCondOverride.SEE_ALL_PLAYERS) && target.getAppearance().getInvisible())
+		if (!target.isVisibleFor(requestor))
 		{
 			requestor.sendPacket(SystemMessageId.TARGET_IS_INCORRECT);
 			return;
@@ -184,7 +184,7 @@ public final class RequestJoinParty extends L2GameClientPacket
 		{
 			requestor.onTransactionRequest(target);
 			// in case a leader change has happened, use party's mode
-			target.sendPacket(new AskJoinParty(requestor.getName(), party.getLootDistribution()));
+			target.sendPacket(new AskJoinParty(requestor.getName(), party.getDistributionType()));
 			party.setPendingInvitation(true);
 			
 			if (Config.DEBUG)
@@ -212,12 +212,18 @@ public final class RequestJoinParty extends L2GameClientPacket
 	 */
 	private void createNewParty(L2PcInstance target, L2PcInstance requestor)
 	{
+		PartyDistributionType partyDistributionType = PartyDistributionType.findById(_partyDistributionTypeId);
+		if (partyDistributionType == null)
+		{
+			return;
+		}
+		
 		if (!target.isProcessingRequest())
 		{
-			requestor.setParty(new L2Party(requestor, _itemDistribution));
+			requestor.setParty(new L2Party(requestor, partyDistributionType));
 			
 			requestor.onTransactionRequest(target);
-			target.sendPacket(new AskJoinParty(requestor.getName(), _itemDistribution));
+			target.sendPacket(new AskJoinParty(requestor.getName(), partyDistributionType));
 			requestor.getParty().setPendingInvitation(true);
 			
 			if (Config.DEBUG)

@@ -44,6 +44,7 @@ import com.l2jserver.gameserver.ai.CtrlEvent;
 import com.l2jserver.gameserver.ai.CtrlIntention;
 import com.l2jserver.gameserver.ai.L2AttackableAI;
 import com.l2jserver.gameserver.ai.L2CharacterAI;
+import com.l2jserver.gameserver.datatables.CategoryData;
 import com.l2jserver.gameserver.datatables.DoorTable;
 import com.l2jserver.gameserver.datatables.ItemTable;
 import com.l2jserver.gameserver.datatables.SkillData;
@@ -84,7 +85,6 @@ import com.l2jserver.gameserver.model.actor.tasks.character.UsePotionTask;
 import com.l2jserver.gameserver.model.actor.templates.L2CharTemplate;
 import com.l2jserver.gameserver.model.actor.transform.Transform;
 import com.l2jserver.gameserver.model.actor.transform.TransformTemplate;
-import com.l2jserver.gameserver.model.effects.AbstractEffect;
 import com.l2jserver.gameserver.model.effects.EffectFlag;
 import com.l2jserver.gameserver.model.effects.L2EffectType;
 import com.l2jserver.gameserver.model.entity.Instance;
@@ -230,9 +230,8 @@ public abstract class L2Character extends L2Object implements ISkillsHolder, IDe
 	private volatile Map<Integer, OptionsSkillHolder> _triggerSkills;
 	
 	private volatile Map<Integer, InvulSkillHolder> _invulAgainst;
-	
+	/** Creatures effect list. */
 	private final CharEffectList _effectList = new CharEffectList(this);
-	
 	/** The character that summons this character. */
 	private L2Character _summoner = null;
 	
@@ -572,6 +571,7 @@ public abstract class L2Character extends L2Object implements ISkillsHolder, IDe
 	 */
 	public void broadcastPacket(L2GameServerPacket mov)
 	{
+		mov.setInvisible(isInvisible());
 		Collection<L2PcInstance> plrs = getKnownList().getKnownPlayers().values();
 		for (L2PcInstance player : plrs)
 		{
@@ -592,6 +592,7 @@ public abstract class L2Character extends L2Object implements ISkillsHolder, IDe
 	 */
 	public void broadcastPacket(L2GameServerPacket mov, int radiusInKnownlist)
 	{
+		mov.setInvisible(isInvisible());
 		Collection<L2PcInstance> plrs = getKnownList().getKnownPlayers().values();
 		for (L2PcInstance player : plrs)
 		{
@@ -1835,9 +1836,13 @@ public abstract class L2Character extends L2Object implements ISkillsHolder, IDe
 		{
 			reuseDelay = (int) (skill.getReuseDelay() * calcStat(Stats.MAGIC_REUSE_RATE, 1, null, null));
 		}
-		else
+		else if (skill.isPhysical())
 		{
 			reuseDelay = (int) (skill.getReuseDelay() * calcStat(Stats.P_REUSE, 1, null, null));
+		}
+		else
+		{
+			reuseDelay = (int) (skill.getReuseDelay() * calcStat(Stats.DANCE_REUSE, 1, null, null));
 		}
 		
 		boolean skillMastery = Formulas.calcSkillMastery(this, skill);
@@ -2950,7 +2955,7 @@ public abstract class L2Character extends L2Object implements ISkillsHolder, IDe
 			Collection<L2PcInstance> plrs = getKnownList().getKnownPlayers().values();
 			for (L2PcInstance player : plrs)
 			{
-				if (player == null)
+				if ((player == null) || !isVisibleFor(player))
 				{
 					continue;
 				}
@@ -3917,7 +3922,7 @@ public abstract class L2Character extends L2Object implements ISkillsHolder, IDe
 					Collection<L2PcInstance> plrs = getKnownList().getKnownPlayers().values();
 					for (L2PcInstance player : plrs)
 					{
-						if (player == null)
+						if ((player == null) || !isVisibleFor(player))
 						{
 							continue;
 						}
@@ -5928,6 +5933,11 @@ public abstract class L2Character extends L2Object implements ISkillsHolder, IDe
 			}
 		}
 		
+		if (skill.isBad() && (skill.getTargetType() != L2TargetType.UNLOCKABLE))
+		{
+			getAI().clientStartAutoAttack();
+		}
+		
 		// Notify the AI of the L2Character with EVT_FINISH_CASTING
 		getAI().notifyEvent(CtrlEvent.EVT_FINISH_CASTING);
 		
@@ -5983,105 +5993,84 @@ public abstract class L2Character extends L2Object implements ISkillsHolder, IDe
 			}
 			
 			// Initial checks
-			for (L2Object trg : targets)
+			for (L2Object obj : targets)
 			{
-				if (trg instanceof L2Character)
+				if ((obj == null) || !obj.isCharacter())
 				{
-					// Set some values inside target's instance for later use
-					L2Character target = (L2Character) trg;
-					
-					// Check Raidboss attack and
-					// check buffing chars who attack raidboss. Results in mute.
-					L2Character targetsAttackTarget = null;
-					L2Character targetsCastTarget = null;
-					if (target.hasAI())
+					continue;
+				}
+				
+				final L2Character target = (L2Character) obj;
+				// Check raid monster attack and check buffing characters who attack raid monsters.
+				L2Character targetsAttackTarget = null;
+				L2Character targetsCastTarget = null;
+				if (target.hasAI())
+				{
+					targetsAttackTarget = target.getAI().getAttackTarget();
+					targetsCastTarget = target.getAI().getCastTarget();
+				}
+				
+				if (!Config.RAID_DISABLE_CURSE && ((target.isRaid() && target.giveRaidCurse() && (getLevel() > (target.getLevel() + 8))) || (!skill.isBad() && (targetsAttackTarget != null) && targetsAttackTarget.isRaid() && targetsAttackTarget.giveRaidCurse() && targetsAttackTarget.getAttackByList().contains(target) && (getLevel() > (targetsAttackTarget.getLevel() + 8))) || (!skill.isBad() && (targetsCastTarget != null) && targetsCastTarget.isRaid() && targetsCastTarget.giveRaidCurse() && targetsCastTarget.getAttackByList().contains(target) && (getLevel() > (targetsCastTarget.getLevel() + 8)))))
+				{
+					final CommonSkill curse = skill.isMagic() ? CommonSkill.RAID_CURSE : CommonSkill.RAID_CURSE2;
+					Skill curseSkill = curse.getSkill();
+					if (curseSkill != null)
 					{
-						targetsAttackTarget = target.getAI().getAttackTarget();
-						targetsCastTarget = target.getAI().getCastTarget();
+						abortAttack();
+						abortCast();
+						getAI().setIntention(CtrlIntention.AI_INTENTION_IDLE);
+						curseSkill.applyEffects(target, this);
 					}
-					if (!Config.RAID_DISABLE_CURSE && ((target.isRaid() && target.giveRaidCurse() && (getLevel() > (target.getLevel() + 8))) || (!skill.isBad() && (targetsAttackTarget != null) && targetsAttackTarget.isRaid() && targetsAttackTarget.giveRaidCurse() && targetsAttackTarget.getAttackByList().contains(target) // has
-																																																																																	// attacked
-																																																																																	// raid
-					&& (getLevel() > (targetsAttackTarget.getLevel() + 8))) || (!skill.isBad() && (targetsCastTarget != null) && targetsCastTarget.isRaid() && targetsCastTarget.giveRaidCurse() && targetsCastTarget.getAttackByList().contains(target) // has attacked raid
-					&& (getLevel() > (targetsCastTarget.getLevel() + 8)))))
+					else
 					{
-						if (skill.isMagic())
-						{
-							Skill tempSkill = CommonSkill.RAID_CURSE.getSkill();
-							if (tempSkill != null)
-							{
-								abortAttack();
-								abortCast();
-								getAI().setIntention(CtrlIntention.AI_INTENTION_IDLE);
-								tempSkill.applyEffects(target, this);
-							}
-							else if (_log.isLoggable(Level.WARNING))
-							{
-								_log.log(Level.WARNING, "Skill 4215 at level 1 is missing in DP.");
-							}
-						}
-						else
-						{
-							Skill tempSkill = CommonSkill.RAID_CURSE2.getSkill();
-							if (tempSkill != null)
-							{
-								abortAttack();
-								abortCast();
-								getAI().setIntention(CtrlIntention.AI_INTENTION_IDLE);
-								tempSkill.applyEffects(target, this);
-							}
-							else if (_log.isLoggable(Level.WARNING))
-							{
-								_log.log(Level.WARNING, "Skill 4515 at level 1 is missing in DP.");
-							}
-						}
-						return;
+						_log.warning("Skill ID " + curse.getId() + " level " + curse.getLevel() + " is missing in DP!");
 					}
-					
-					// Check if over-hit is possible
-					if (skill.isOverhit())
+					return;
+				}
+				
+				// Check if over-hit is possible
+				if (skill.isOverhit())
+				{
+					if (target.isAttackable())
 					{
-						if (target.isAttackable())
+						((L2Attackable) target).overhitEnabled(true);
+					}
+				}
+				
+				// Static skills not trigger any chance skills
+				if (!skill.isStatic())
+				{
+					// Launch weapon Special ability skill effect if available
+					if ((activeWeapon != null) && !target.isDead())
+					{
+						if (activeWeapon.getSkillEffects(this, target, skill) && isPlayer())
 						{
-							((L2Attackable) target).overhitEnabled(true);
+							SystemMessage sm = SystemMessage.getSystemMessage(SystemMessageId.S1_HAS_BEEN_ACTIVATED);
+							sm.addSkillName(skill);
+							sendPacket(sm);
 						}
 					}
 					
-					// Static skills not trigger any chance skills
-					if (!skill.isStatic())
+					// Maybe launch chance skills on us
+					if (_chanceSkills != null)
 					{
-						// Launch weapon Special ability skill effect if available
-						if ((activeWeapon != null) && !target.isDead())
+						_chanceSkills.onSkillHit(target, skill, false);
+					}
+					// Maybe launch chance skills on target
+					if (target.getChanceSkills() != null)
+					{
+						target.getChanceSkills().onSkillHit(this, skill, true);
+					}
+					
+					if (_triggerSkills != null)
+					{
+						for (OptionsSkillHolder holder : _triggerSkills.values())
 						{
-							if (activeWeapon.getSkillEffects(this, target, skill) && isPlayer())
+							if ((skill.isMagic() && (holder.getSkillType() == OptionsSkillType.MAGIC)) || (skill.isPhysical() && (holder.getSkillType() == OptionsSkillType.ATTACK)))
 							{
-								SystemMessage sm = SystemMessage.getSystemMessage(SystemMessageId.S1_HAS_BEEN_ACTIVATED);
-								sm.addSkillName(skill);
-								sendPacket(sm);
-							}
-						}
-						
-						// Maybe launch chance skills on us
-						if (_chanceSkills != null)
-						{
-							_chanceSkills.onSkillHit(target, skill, false);
-						}
-						// Maybe launch chance skills on target
-						if (target.getChanceSkills() != null)
-						{
-							target.getChanceSkills().onSkillHit(this, skill, true);
-						}
-						
-						if (_triggerSkills != null)
-						{
-							for (OptionsSkillHolder holder : _triggerSkills.values())
-							{
-								if ((skill.isMagic() && (holder.getSkillType() == OptionsSkillType.MAGIC)) || (skill.isPhysical() && (holder.getSkillType() == OptionsSkillType.ATTACK)))
+								if (Rnd.get(100) < holder.getChance())
 								{
-									if (Rnd.get(100) < holder.getChance())
-									{
-										makeTriggerCast(holder.getSkill(), target);
-									}
+									makeTriggerCast(holder.getSkill(), target);
 								}
 							}
 						}
@@ -6674,24 +6663,6 @@ public abstract class L2Character extends L2Object implements ISkillsHolder, IDe
 	}
 	
 	/**
-	 * Check player max buff count
-	 * @return max buff count
-	 */
-	public int getMaxBuffCount()
-	{
-		int count = Config.BUFFS_MAX_AMOUNT;
-		if (isAffectedBySkill(CommonSkill.DIVINE_INSPIRATION.getId()))
-		{
-			final BuffInfo info = getEffectList().getBuffInfoBySkillId(CommonSkill.DIVINE_INSPIRATION.getId());
-			for (AbstractEffect effect : info.getEffects())
-			{
-				count += (int) effect.getValue();
-			}
-		}
-		return count;
-	}
-	
-	/**
 	 * Send system message about damage.
 	 * @param target
 	 * @param damage
@@ -6982,9 +6953,9 @@ public abstract class L2Character extends L2Object implements ISkillsHolder, IDe
 		return getTemplate().getBaseAttackType();
 	}
 	
-	public boolean isInCategory(CategoryType type)
+	public final boolean isInCategory(CategoryType type)
 	{
-		return false;
+		return CategoryData.getInstance().isInCategory(type, getId());
 	}
 	
 	/**

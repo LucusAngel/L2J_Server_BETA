@@ -70,7 +70,6 @@ import com.l2jserver.gameserver.communitybbs.BB.Forum;
 import com.l2jserver.gameserver.communitybbs.Manager.ForumsBBSManager;
 import com.l2jserver.gameserver.communitybbs.Manager.RegionBBSManager;
 import com.l2jserver.gameserver.datatables.AdminTable;
-import com.l2jserver.gameserver.datatables.CategoryData;
 import com.l2jserver.gameserver.datatables.CharNameTable;
 import com.l2jserver.gameserver.datatables.CharSummonTable;
 import com.l2jserver.gameserver.datatables.CharTemplateTable;
@@ -86,11 +85,11 @@ import com.l2jserver.gameserver.datatables.PetDataTable;
 import com.l2jserver.gameserver.datatables.RecipeData;
 import com.l2jserver.gameserver.datatables.SkillData;
 import com.l2jserver.gameserver.datatables.SkillTreesData;
-import com.l2jserver.gameserver.enums.CategoryType;
 import com.l2jserver.gameserver.enums.HtmlActionScope;
 import com.l2jserver.gameserver.enums.IllegalActionPunishmentType;
 import com.l2jserver.gameserver.enums.InstanceType;
 import com.l2jserver.gameserver.enums.MountType;
+import com.l2jserver.gameserver.enums.PartyDistributionType;
 import com.l2jserver.gameserver.enums.PcRace;
 import com.l2jserver.gameserver.enums.PlayerAction;
 import com.l2jserver.gameserver.enums.PrivateStoreType;
@@ -748,9 +747,8 @@ public final class L2PcInstance extends L2Playable
 	private long _activeEnchantTimestamp = 0;
 	
 	protected boolean _inventoryDisable = false;
-	
+	/** Player's cubics. */
 	private final Map<Integer, L2CubicInstance> _cubics = new ConcurrentSkipListMap<>();
-	
 	/** Active shots. */
 	protected FastSet<Integer> _activeSoulShots = new FastSet<Integer>().shared();
 	
@@ -4444,12 +4442,12 @@ public final class L2PcInstance extends L2Playable
 			sendPacket(mov);
 		}
 		
-		mov.setInvisible(getAppearance().getInvisible());
+		mov.setInvisible(isInvisible());
 		
-		Collection<L2PcInstance> plrs = getKnownList().getKnownPlayers().values();
+		final Collection<L2PcInstance> plrs = getKnownList().getKnownPlayers().values();
 		for (L2PcInstance player : plrs)
 		{
-			if (player == null)
+			if ((player == null) || !isVisibleFor(player))
 			{
 				continue;
 			}
@@ -4478,7 +4476,7 @@ public final class L2PcInstance extends L2Playable
 			sendPacket(mov);
 		}
 		
-		mov.setInvisible(getAppearance().getInvisible());
+		mov.setInvisible(isInvisible());
 		
 		Collection<L2PcInstance> plrs = getKnownList().getKnownPlayers().values();
 		for (L2PcInstance player : plrs)
@@ -4696,7 +4694,7 @@ public final class L2PcInstance extends L2Playable
 				return;
 			}
 			
-			if (((isInParty() && (getParty().getLootDistribution() == L2Party.ITEM_LOOTER)) || !isInParty()) && !_inventory.validateCapacity(target))
+			if (((isInParty() && (getParty().getDistributionType() == PartyDistributionType.FINDERS_KEEPERS)) || !isInParty()) && !_inventory.validateCapacity(target))
 			{
 				sendPacket(ActionFailed.STATIC_PACKET);
 				sendPacket(SystemMessageId.SLOTS_FULL);
@@ -7553,10 +7551,6 @@ public final class L2PcInstance extends L2Playable
 	 */
 	public synchronized void store(boolean storeActiveEffects)
 	{
-		// update client coords, if these look like true
-		// if (isInsideRadius(getClientX(), getClientY(), 1000, true))
-		// setXYZ(getClientX(), getClientY(), getClientZ());
-		
 		storeCharBase();
 		storeCharSub();
 		storeEffect(storeActiveEffects);
@@ -8934,7 +8928,7 @@ public final class L2PcInstance extends L2Playable
 				return false;
 			}
 			
-			if (!target.canBeAttacked() && !getAccessLevel().allowPeaceAttack())
+			if (!target.canBeAttacked() && !getAccessLevel().allowPeaceAttack() && !target.isDoor())
 			{
 				// If target is not attackable, send a Server->Client packet ActionFailed
 				sendPacket(ActionFailed.STATIC_PACKET);
@@ -9724,7 +9718,7 @@ public final class L2PcInstance extends L2Playable
 		setIsParalyzed(true);
 		startParalyze();
 		setIsInvul(true);
-		getAppearance().setInvisible();
+		setInvisible(true);
 		sendPacket(new ObservationMode(loc));
 		
 		teleToLocation(loc, false);
@@ -9780,7 +9774,7 @@ public final class L2PcInstance extends L2Playable
 		_observerMode = true;
 		setTarget(null);
 		setIsInvul(true);
-		getAppearance().setInvisible();
+		setInvisible(true);
 		teleToLocation(loc, false);
 		sendPacket(new ExOlympiadMode(3));
 		
@@ -9798,7 +9792,7 @@ public final class L2PcInstance extends L2Playable
 		setIsParalyzed(false);
 		if (!isGM())
 		{
-			getAppearance().setVisible();
+			setInvisible(false);
 			setIsInvul(false);
 		}
 		if (hasAI())
@@ -9826,7 +9820,7 @@ public final class L2PcInstance extends L2Playable
 		teleToLocation(_lastLoc, true);
 		if (!isGM())
 		{
-			getAppearance().setVisible();
+			setInvisible(false);
 			setIsInvul(false);
 		}
 		if (hasAI())
@@ -10714,7 +10708,7 @@ public final class L2PcInstance extends L2Playable
 			{
 				sendMessage("Entering world in Invulnerable mode.");
 			}
-			if (getAppearance().getInvisible())
+			if (isInvisible())
 			{
 				sendMessage("Entering world in Invisible mode.");
 			}
@@ -14706,15 +14700,9 @@ public final class L2PcInstance extends L2Playable
 	}
 	
 	@Override
-	public boolean isInCategory(CategoryType type)
-	{
-		return CategoryData.getInstance().isInCategory(type, getClassId().getId());
-	}
-	
-	@Override
 	public int getId()
 	{
-		return 0;
+		return getClassId().getId();
 	}
 	
 	public boolean isPartyBanned()

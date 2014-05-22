@@ -24,7 +24,6 @@ import java.util.concurrent.Future;
 
 import com.l2jserver.gameserver.ThreadPoolManager;
 import com.l2jserver.gameserver.ai.CtrlIntention;
-import com.l2jserver.gameserver.datatables.CategoryData;
 import com.l2jserver.gameserver.datatables.PetDataTable;
 import com.l2jserver.gameserver.datatables.SkillData;
 import com.l2jserver.gameserver.enums.CategoryType;
@@ -257,6 +256,7 @@ public final class L2BabyPetInstance extends L2PetInstance
 			{
 				return;
 			}
+			
 			// If the pet doesn't meet the conditions avoid casting.
 			if (_baby.isCastingNow() || _baby.isBetrayed() || _baby.isMuted() || _baby.isOutOfControl() || !_bufferMode || (_baby.getAI().getIntention() == CtrlIntention.AI_INTENTION_CAST))
 			{
@@ -270,7 +270,7 @@ public final class L2BabyPetInstance extends L2PetInstance
 				// If the owner's HP is very low, under 15% for Baby pets and under 30% for Improved Baby Pets, have 75% chances of using a strong heal.
 				// Otherwise, have 25% chances for weak heal.
 				final double hpPercent = owner.getCurrentHp() / owner.getMaxHp();
-				final boolean isImprovedBaby = CategoryData.getInstance().isInCategory(CategoryType.BABY_PET_GROUP, getId());
+				final boolean isImprovedBaby = isInCategory(CategoryType.BABY_PET_GROUP);
 				if ((isImprovedBaby && (hpPercent < 0.3)) || (!isImprovedBaby && (hpPercent < 0.15)))
 				{
 					skill = _majorHeal.getSkill();
@@ -317,12 +317,18 @@ public final class L2BabyPetInstance extends L2PetInstance
 							continue;
 						}
 						
+						// If owner already have the buff, continue.
 						final BuffInfo buffInfo = owner.getEffectList().getBuffInfoByAbnormalType(skill.getAbnormalType());
 						if ((buffInfo != null) && (skill.getAbnormalLvl() <= buffInfo.getSkill().getAbnormalLvl()))
 						{
 							continue;
 						}
 						
+						// If owner have the buff blocked, continue.
+						if ((owner.getEffectList().getAllBlockedBuffSlots() != null) && owner.getEffectList().getAllBlockedBuffSlots().contains(skill.getAbnormalType()))
+						{
+							continue;
+						}
 						_currentBuffs.add(skill);
 					}
 				}

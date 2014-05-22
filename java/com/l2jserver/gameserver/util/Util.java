@@ -720,9 +720,9 @@ public final class Util
 		final Collection<L2Object> objs = npc.getKnownList().getKnownObjects().values();
 		for (L2Object obj : objs)
 		{
-			if ((obj != null) && ((obj.isPlayable() && playable) || obj.isPet()))
+			if ((obj != null) && (playable && (obj.isPlayable() || obj.isPet())))
 			{
-				if (obj.isPlayer() && !invisible && obj.getActingPlayer().getAppearance().getInvisible())
+				if (!invisible && obj.isInvisible())
 				{
 					continue;
 				}
@@ -967,5 +967,40 @@ public final class Util
 	public static double constrain(double input, double min, double max)
 	{
 		return (input < min) ? min : (input > max) ? max : input;
+	}
+	
+	/**
+	 * @param array - the array to look into
+	 * @param obj - the object to search for
+	 * @return {@code true} if the {@code array} contains the {@code obj}, {@code false} otherwise.
+	 */
+	public static boolean startsWith(String[] array, String obj)
+	{
+		for (String element : array)
+		{
+			if (element.startsWith(obj))
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * @param array - the array to look into
+	 * @param obj - the object to search for
+	 * @param ignoreCase
+	 * @return {@code true} if the {@code array} contains the {@code obj}, {@code false} otherwise.
+	 */
+	public static boolean contains(String[] array, String obj, boolean ignoreCase)
+	{
+		for (String element : array)
+		{
+			if (element.equals(obj) || (ignoreCase && element.equalsIgnoreCase(obj)))
+			{
+				return true;
+			}
+		}
+		return false;
 	}
 }
