@@ -106,9 +106,11 @@ public class ThreadPoolManager
 	protected ScheduledThreadPoolExecutor _effectsScheduledThreadPool;
 	protected ScheduledThreadPoolExecutor _generalScheduledThreadPool;
 	protected ScheduledThreadPoolExecutor _aiScheduledThreadPool;
+	protected ScheduledThreadPoolExecutor _eventScheduledThreadPool;
 	private final ThreadPoolExecutor _generalPacketsThreadPool;
 	private final ThreadPoolExecutor _ioPacketsThreadPool;
 	private final ThreadPoolExecutor _generalThreadPool;
+	private final ThreadPoolExecutor _eventThreadPool;
 	
 	private boolean _shutdown;
 	
@@ -121,10 +123,12 @@ public class ThreadPoolManager
 	{
 		_effectsScheduledThreadPool = new ScheduledThreadPoolExecutor(Config.THREAD_P_EFFECTS, new PriorityThreadFactory("EffectsSTPool", Thread.NORM_PRIORITY));
 		_generalScheduledThreadPool = new ScheduledThreadPoolExecutor(Config.THREAD_P_GENERAL, new PriorityThreadFactory("GeneralSTPool", Thread.NORM_PRIORITY));
+		_eventScheduledThreadPool = new ScheduledThreadPoolExecutor(2, new PriorityThreadFactory("EventSTPool", Thread.NORM_PRIORITY));
 		_ioPacketsThreadPool = new ThreadPoolExecutor(Config.IO_PACKET_THREAD_CORE_SIZE, Integer.MAX_VALUE, 5L, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(), new PriorityThreadFactory("I/O Packet Pool", Thread.NORM_PRIORITY + 1));
 		_generalPacketsThreadPool = new ThreadPoolExecutor(Config.GENERAL_PACKET_THREAD_CORE_SIZE, Config.GENERAL_PACKET_THREAD_CORE_SIZE + 2, 15L, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(), new PriorityThreadFactory("Normal Packet Pool", Thread.NORM_PRIORITY + 1));
 		_generalThreadPool = new ThreadPoolExecutor(Config.GENERAL_THREAD_CORE_SIZE, Config.GENERAL_THREAD_CORE_SIZE + 2, 5L, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(), new PriorityThreadFactory("General Pool", Thread.NORM_PRIORITY));
 		_aiScheduledThreadPool = new ScheduledThreadPoolExecutor(Config.AI_MAX_THREAD, new PriorityThreadFactory("AISTPool", Thread.NORM_PRIORITY));
+		_eventThreadPool = new ThreadPoolExecutor(1, 2, 5L, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(), new PriorityThreadFactory("Event Pool", Thread.NORM_PRIORITY));
 		
 		scheduleGeneralAtFixedRate(new PurgeTask(), 10, 5, TimeUnit.MINUTES);
 	}
@@ -242,6 +246,56 @@ public class ThreadPoolManager
 	}
 	
 	/**
+	 * Schedules a event task to be executed after the given delay.
+	 * @param task the task to execute
+	 * @param delay the delay in the given time unit
+	 * @param unit the time unit of the delay parameter
+	 * @return a ScheduledFuture representing pending completion of the task, and whose get() method will throw an exception upon cancellation
+	 */
+	public ScheduledFuture<?> scheduleEvent(Runnable task, long delay, TimeUnit unit)
+	{
+		try
+		{
+			return _eventScheduledThreadPool.schedule(new RunnableWrapper(task), delay, unit);
+		}
+		catch (RejectedExecutionException e)
+		{
+			return null; /* shutdown, ignore */
+		}
+	}
+	
+	/**
+	 * Schedules a event task to be executed after the given delay.
+	 * @param task the task to execute
+	 * @param delay the delay in milliseconds
+	 * @return a ScheduledFuture representing pending completion of the task, and whose get() method will throw an exception upon cancellation
+	 */
+	public ScheduledFuture<?> scheduleEvent(Runnable task, long delay)
+	{
+		return scheduleEvent(task, delay, TimeUnit.MILLISECONDS);
+	}
+	
+	/**
+	 * Schedules a event task to be executed at fixed rate.
+	 * @param task the task to execute
+	 * @param initialDelay the initial delay in the given time unit
+	 * @param period the period between executions in the given time unit
+	 * @param unit the time unit of the initialDelay and period parameters
+	 * @return a ScheduledFuture representing pending completion of the task, and whose get() method will throw an exception upon cancellation
+	 */
+	public ScheduledFuture<?> scheduleEventAtFixedRate(Runnable task, long initialDelay, long period, TimeUnit unit)
+	{
+		try
+		{
+			return _eventScheduledThreadPool.scheduleAtFixedRate(new RunnableWrapper(task), initialDelay, period, unit);
+		}
+		catch (RejectedExecutionException e)
+		{
+			return null; /* shutdown, ignore */
+		}
+	}
+	
+	/**
 	 * Schedules a general task to be executed at fixed rate.
 	 * @param task the task to execute
 	 * @param initialDelay the initial delay in milliseconds
@@ -321,7 +375,14 @@ public class ThreadPoolManager
 	 */
 	public void executePacket(Runnable task)
 	{
-		_generalPacketsThreadPool.execute(task);
+		try
+		{
+			_generalPacketsThreadPool.execute(task);
+		}
+		catch (RejectedExecutionException e)
+		{
+			/* shutdown, ignore */
+		}
 	}
 	
 	/**
@@ -330,7 +391,14 @@ public class ThreadPoolManager
 	 */
 	public void executeIOPacket(Runnable task)
 	{
-		_ioPacketsThreadPool.execute(task);
+		try
+		{
+			_ioPacketsThreadPool.execute(task);
+		}
+		catch (RejectedExecutionException e)
+		{
+			/* shutdown, ignore */
+		}
 	}
 	
 	/**
@@ -339,7 +407,14 @@ public class ThreadPoolManager
 	 */
 	public void executeGeneral(Runnable task)
 	{
-		_generalThreadPool.execute(new RunnableWrapper(task));
+		try
+		{
+			_generalThreadPool.execute(new RunnableWrapper(task));
+		}
+		catch (RejectedExecutionException e)
+		{
+			/* shutdown, ignore */
+		}
 	}
 	
 	/**
@@ -348,7 +423,30 @@ public class ThreadPoolManager
 	 */
 	public void executeAi(Runnable task)
 	{
-		_aiScheduledThreadPool.execute(new RunnableWrapper(task));
+		try
+		{
+			_aiScheduledThreadPool.execute(new RunnableWrapper(task));
+		}
+		catch (RejectedExecutionException e)
+		{
+			/* shutdown, ignore */
+		}
+	}
+	
+	/**
+	 * Executes an Event task sometime in future in another thread.
+	 * @param task the task to execute
+	 */
+	public void executeEvent(Runnable task)
+	{
+		try
+		{
+			_eventThreadPool.execute(new RunnableWrapper(task));
+		}
+		catch (RejectedExecutionException e)
+		{
+			/* shutdown, ignore */
+		}
 	}
 	
 	public String[] getStats()
@@ -379,6 +477,14 @@ public class ThreadPoolManager
 			" |- MaximumPoolSize: " + _aiScheduledThreadPool.getMaximumPoolSize(),
 			" |- CompletedTasks:  " + _aiScheduledThreadPool.getCompletedTaskCount(),
 			" |- ScheduledTasks:  " + _aiScheduledThreadPool.getQueue().size(),
+			" | -------",
+			" + Event:",
+			" |- ActiveThreads:   " + _eventScheduledThreadPool.getActiveCount(),
+			" |- getCorePoolSize: " + _eventScheduledThreadPool.getCorePoolSize(),
+			" |- PoolSize:        " + _eventScheduledThreadPool.getPoolSize(),
+			" |- MaximumPoolSize: " + _eventScheduledThreadPool.getMaximumPoolSize(),
+			" |- CompletedTasks:  " + _eventScheduledThreadPool.getCompletedTaskCount(),
+			" |- ScheduledTasks:  " + _eventScheduledThreadPool.getQueue().size(),
 			"TP:",
 			" + Packets:",
 			" |- ActiveThreads:   " + _generalPacketsThreadPool.getActiveCount(),
@@ -406,6 +512,15 @@ public class ThreadPoolManager
 			" |- PoolSize:        " + _generalThreadPool.getPoolSize(),
 			" |- CompletedTasks:  " + _generalThreadPool.getCompletedTaskCount(),
 			" |- QueuedTasks:     " + _generalThreadPool.getQueue().size(),
+			" | -------",
+			" + Event Tasks:",
+			" |- ActiveThreads:   " + _eventThreadPool.getActiveCount(),
+			" |- getCorePoolSize: " + _eventThreadPool.getCorePoolSize(),
+			" |- MaximumPoolSize: " + _eventThreadPool.getMaximumPoolSize(),
+			" |- LargestPoolSize: " + _eventThreadPool.getLargestPoolSize(),
+			" |- PoolSize:        " + _eventThreadPool.getPoolSize(),
+			" |- CompletedTasks:  " + _eventThreadPool.getCompletedTaskCount(),
+			" |- QueuedTasks:     " + _eventThreadPool.getQueue().size(),
 			" | -------",
 			" + Javolution stats:",
 			" |- FastList:        " + FastList.report(),
@@ -453,11 +568,13 @@ public class ThreadPoolManager
 			_generalPacketsThreadPool.awaitTermination(1, TimeUnit.SECONDS);
 			_ioPacketsThreadPool.awaitTermination(1, TimeUnit.SECONDS);
 			_generalThreadPool.awaitTermination(1, TimeUnit.SECONDS);
+			_eventThreadPool.awaitTermination(1, TimeUnit.SECONDS);
 			_effectsScheduledThreadPool.shutdown();
 			_generalScheduledThreadPool.shutdown();
 			_generalPacketsThreadPool.shutdown();
 			_ioPacketsThreadPool.shutdown();
 			_generalThreadPool.shutdown();
+			_eventThreadPool.shutdown();
 			_log.info("All ThreadPools are now stopped");
 			
 		}
@@ -477,9 +594,11 @@ public class ThreadPoolManager
 		_effectsScheduledThreadPool.purge();
 		_generalScheduledThreadPool.purge();
 		_aiScheduledThreadPool.purge();
+		_eventScheduledThreadPool.purge();
 		_ioPacketsThreadPool.purge();
 		_generalPacketsThreadPool.purge();
 		_generalThreadPool.purge();
+		_eventThreadPool.purge();
 	}
 	
 	public String getPacketStats()
@@ -589,6 +708,7 @@ public class ThreadPoolManager
 			_effectsScheduledThreadPool.purge();
 			_generalScheduledThreadPool.purge();
 			_aiScheduledThreadPool.purge();
+			_eventScheduledThreadPool.purge();
 		}
 	}
 	
