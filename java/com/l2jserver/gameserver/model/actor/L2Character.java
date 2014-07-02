@@ -19,6 +19,7 @@
 package com.l2jserver.gameserver.model.actor;
 
 import static com.l2jserver.gameserver.ai.CtrlIntention.AI_INTENTION_ACTIVE;
+import static com.l2jserver.gameserver.ai.CtrlIntention.AI_INTENTION_ATTACK;
 import static com.l2jserver.gameserver.ai.CtrlIntention.AI_INTENTION_FOLLOW;
 
 import java.util.ArrayList;
@@ -91,7 +92,9 @@ import com.l2jserver.gameserver.model.entity.Instance;
 import com.l2jserver.gameserver.model.events.EventDispatcher;
 import com.l2jserver.gameserver.model.events.EventType;
 import com.l2jserver.gameserver.model.events.impl.character.OnCreatureAttack;
-import com.l2jserver.gameserver.model.events.impl.character.OnCreatureDamage;
+import com.l2jserver.gameserver.model.events.impl.character.OnCreatureAttacked;
+import com.l2jserver.gameserver.model.events.impl.character.OnCreatureDamageDealt;
+import com.l2jserver.gameserver.model.events.impl.character.OnCreatureDamageReceived;
 import com.l2jserver.gameserver.model.events.impl.character.OnCreatureKill;
 import com.l2jserver.gameserver.model.events.impl.character.OnCreatureSkillUse;
 import com.l2jserver.gameserver.model.events.impl.character.OnCreatureTeleported;
@@ -843,7 +846,22 @@ public abstract class L2Character extends L2Object implements ISkillsHolder, IDe
 			}
 			
 			// Notify to scripts
-			EventDispatcher.getInstance().notifyEventAsync(new OnCreatureAttack(this, target), this);
+			final TerminateReturn attackReturn = EventDispatcher.getInstance().notifyEvent(new OnCreatureAttack(this, target), this, TerminateReturn.class);
+			if ((attackReturn != null) && attackReturn.terminate())
+			{
+				getAI().setIntention(CtrlIntention.AI_INTENTION_ACTIVE);
+				sendPacket(ActionFailed.STATIC_PACKET);
+				return;
+			}
+			
+			// Notify to scripts
+			final TerminateReturn attackedReturn = EventDispatcher.getInstance().notifyEvent(new OnCreatureAttacked(this, target), target, TerminateReturn.class);
+			if ((attackedReturn != null) && attackedReturn.terminate())
+			{
+				getAI().setIntention(CtrlIntention.AI_INTENTION_ACTIVE);
+				sendPacket(ActionFailed.STATIC_PACKET);
+				return;
+			}
 			
 			if (!isAlikeDead())
 			{
@@ -6192,6 +6210,38 @@ public abstract class L2Character extends L2Object implements ISkillsHolder, IDe
 						if ((npcMob.isInsideRadius(player, 1000, true, true)))
 						{
 							EventDispatcher.getInstance().notifyEventAsync(new OnNpcSkillSee(npcMob, player, skill, targets, isSummon()), npcMob);
+							
+							// On Skill See logic
+							if (npcMob.isAttackable())
+							{
+								final L2Attackable attackable = (L2Attackable) npcMob;
+								
+								int skillEffectPoint = skill.getEffectPoint();
+								
+								if (player.hasSummon())
+								{
+									if ((targets.length == 1) && Util.contains(targets, player.getSummon()))
+									{
+										skillEffectPoint = 0;
+									}
+								}
+								
+								if (skillEffectPoint > 0)
+								{
+									if (attackable.hasAI() && (attackable.getAI().getIntention() == AI_INTENTION_ATTACK))
+									{
+										L2Object npcTarget = attackable.getTarget();
+										for (L2Object skillTarget : targets)
+										{
+											if ((npcTarget == skillTarget) || (npcMob == skillTarget))
+											{
+												L2Character originalCaster = isSummon() ? getSummon() : player;
+												attackable.addDamageHate(originalCaster, 0, (skillEffectPoint * 150) / (attackable.getLevel() + 7));
+											}
+										}
+									}
+								}
+							}
 						}
 					}
 				}
@@ -6952,7 +7002,8 @@ public abstract class L2Character extends L2Object implements ISkillsHolder, IDe
 	 */
 	public void notifyDamageReceived(double damage, L2Character attacker, Skill skill, boolean critical, boolean damageOverTime)
 	{
-		EventDispatcher.getInstance().notifyEventAsync(new OnCreatureDamage(attacker, this, damage, skill, critical, damageOverTime), this, attacker);
+		EventDispatcher.getInstance().notifyEventAsync(new OnCreatureDamageReceived(attacker, this, damage, skill, critical, damageOverTime), this);
+		EventDispatcher.getInstance().notifyEventAsync(new OnCreatureDamageDealt(attacker, this, damage, skill, critical, damageOverTime), attacker);
 	}
 	
 	/**
