@@ -53,6 +53,7 @@ import com.l2jserver.gameserver.datatables.ItemTable;
 import com.l2jserver.gameserver.datatables.SkillData;
 import com.l2jserver.gameserver.enums.CategoryType;
 import com.l2jserver.gameserver.enums.InstanceType;
+import com.l2jserver.gameserver.enums.Race;
 import com.l2jserver.gameserver.enums.ShotType;
 import com.l2jserver.gameserver.enums.Team;
 import com.l2jserver.gameserver.instancemanager.DimensionalRiftManager;
@@ -6912,6 +6913,15 @@ public abstract class L2Character extends L2Object implements ISkillsHolder, IDe
 					return;
 				}
 				
+				for (L2Object obj : targets)
+				{
+					if ((obj != null) && obj.isCharacter())
+					{
+						target = (L2Character) obj;
+						break;
+					}
+				}
+				
 				if (Config.ALT_VALIDATE_TRIGGER_SKILLS && isPlayable() && (target != null) && target.isPlayable())
 				{
 					final L2PcInstance player = getActingPlayer();
@@ -7151,5 +7161,10 @@ public abstract class L2Character extends L2Object implements ISkillsHolder, IDe
 		both.addAll(objectListenres);
 		both.addAll(templateListeners);
 		return both;
+	}
+	
+	public Race getRace()
+	{
+		return getTemplate().getRace();
 	}
 }

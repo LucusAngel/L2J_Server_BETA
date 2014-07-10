@@ -25,7 +25,7 @@ import com.l2jserver.gameserver.ai.L2SummonAI;
 import com.l2jserver.gameserver.datatables.ExperienceTable;
 import com.l2jserver.gameserver.datatables.ItemTable;
 import com.l2jserver.gameserver.enums.InstanceType;
-import com.l2jserver.gameserver.enums.NpcRace;
+import com.l2jserver.gameserver.enums.Race;
 import com.l2jserver.gameserver.enums.ShotType;
 import com.l2jserver.gameserver.enums.Team;
 import com.l2jserver.gameserver.handler.IItemHandler;
@@ -966,7 +966,7 @@ public abstract class L2Summon extends L2Playable
 	@Override
 	public boolean isUndead()
 	{
-		return getTemplate().getRace() == NpcRace.UNDEAD;
+		return getTemplate().getRace() == Race.UNDEAD;
 	}
 	
 	/**
@@ -1096,7 +1096,7 @@ public abstract class L2Summon extends L2Playable
 		}
 		
 		// Siege golems AI doesn't support attacking other than doors/walls at the moment.
-		if (target.isDoor() && (getTemplate().getRace() != NpcRace.SIEGE_WEAPON))
+		if (target.isDoor() && (getTemplate().getRace() != Race.SIEGE_WEAPON))
 		{
 			return false;
 		}
@@ -1211,5 +1211,42 @@ public abstract class L2Summon extends L2Playable
 	public int getAllyId()
 	{
 		return (getOwner() != null) ? getOwner().getAllyId() : 0;
+	}
+	
+	public int getFormId()
+	{
+		int formId = 0;
+		final int npcId = getId();
+		if ((npcId == 16041) || (npcId == 16042))
+		{
+			if (getLevel() > 69)
+			{
+				formId = 3;
+			}
+			else if (getLevel() > 64)
+			{
+				formId = 2;
+			}
+			else if (getLevel() > 59)
+			{
+				formId = 1;
+			}
+		}
+		else if ((npcId == 16025) || (npcId == 16037))
+		{
+			if (getLevel() > 69)
+			{
+				formId = 3;
+			}
+			else if (getLevel() > 64)
+			{
+				formId = 2;
+			}
+			else if (getLevel() > 59)
+			{
+				formId = 1;
+			}
+		}
+		return formId;
 	}
 }
