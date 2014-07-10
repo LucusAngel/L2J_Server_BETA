@@ -19,15 +19,13 @@
 package com.l2jserver.gameserver.model.actor;
 
 import com.l2jserver.Config;
-import com.l2jserver.gameserver.GameTimeController;
 import com.l2jserver.gameserver.ai.CtrlIntention;
 import com.l2jserver.gameserver.ai.L2CharacterAI;
 import com.l2jserver.gameserver.ai.L2SummonAI;
 import com.l2jserver.gameserver.datatables.ExperienceTable;
 import com.l2jserver.gameserver.datatables.ItemTable;
 import com.l2jserver.gameserver.enums.InstanceType;
-import com.l2jserver.gameserver.enums.NpcRace;
-import com.l2jserver.gameserver.enums.QuestEventType;
+import com.l2jserver.gameserver.enums.Race;
 import com.l2jserver.gameserver.enums.ShotType;
 import com.l2jserver.gameserver.enums.Team;
 import com.l2jserver.gameserver.handler.IItemHandler;
@@ -37,7 +35,6 @@ import com.l2jserver.gameserver.model.AggroInfo;
 import com.l2jserver.gameserver.model.L2Object;
 import com.l2jserver.gameserver.model.L2Party;
 import com.l2jserver.gameserver.model.L2WorldRegion;
-import com.l2jserver.gameserver.model.actor.events.SummonEvents;
 import com.l2jserver.gameserver.model.actor.instance.L2NpcInstance;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.actor.knownlist.SummonKnownList;
@@ -45,13 +42,14 @@ import com.l2jserver.gameserver.model.actor.stat.SummonStat;
 import com.l2jserver.gameserver.model.actor.status.SummonStatus;
 import com.l2jserver.gameserver.model.actor.templates.L2NpcTemplate;
 import com.l2jserver.gameserver.model.effects.L2EffectType;
+import com.l2jserver.gameserver.model.events.EventDispatcher;
+import com.l2jserver.gameserver.model.events.impl.character.player.OnPlayerSummonSpawn;
 import com.l2jserver.gameserver.model.itemcontainer.PetInventory;
 import com.l2jserver.gameserver.model.items.L2EtcItem;
 import com.l2jserver.gameserver.model.items.L2Weapon;
 import com.l2jserver.gameserver.model.items.instance.L2ItemInstance;
 import com.l2jserver.gameserver.model.items.type.ActionType;
 import com.l2jserver.gameserver.model.olympiad.OlympiadGameManager;
-import com.l2jserver.gameserver.model.quest.Quest;
 import com.l2jserver.gameserver.model.skills.Skill;
 import com.l2jserver.gameserver.model.skills.targets.L2TargetType;
 import com.l2jserver.gameserver.model.zone.ZoneId;
@@ -149,14 +147,8 @@ public abstract class L2Summon extends L2Playable
 		// if someone comes into range now, the animation shouldn't show any more
 		_restoreSummon = false;
 		
-		// Notify DP scripts.
-		if (getTemplate().getEventQuests(QuestEventType.ON_SUMMON) != null)
-		{
-			for (Quest quest : getTemplate().getEventQuests(QuestEventType.ON_SUMMON))
-			{
-				quest.onSummon(this);
-			}
-		}
+		// Notify to scripts
+		EventDispatcher.getInstance().notifyEventAsync(new OnPlayerSummonSpawn(this), this);
 	}
 	
 	@Override
@@ -193,18 +185,6 @@ public abstract class L2Summon extends L2Playable
 	public void initCharStatus()
 	{
 		setStatus(new SummonStatus(this));
-	}
-	
-	@Override
-	public void initCharEvents()
-	{
-		setCharEvents(new SummonEvents(this));
-	}
-	
-	@Override
-	public SummonEvents getEvents()
-	{
-		return (SummonEvents) super.getEvents();
 	}
 	
 	@Override
@@ -940,12 +920,6 @@ public abstract class L2Summon extends L2Playable
 		return false;
 	}
 	
-	@Override
-	public final boolean isAttackingNow()
-	{
-		return isInCombat();
-	}
-	
 	public int getWeapon()
 	{
 		return 0;
@@ -992,7 +966,7 @@ public abstract class L2Summon extends L2Playable
 	@Override
 	public boolean isUndead()
 	{
-		return getTemplate().getRace() == NpcRace.UNDEAD;
+		return getTemplate().getRace() == Race.UNDEAD;
 	}
 	
 	/**
@@ -1065,7 +1039,7 @@ public abstract class L2Summon extends L2Playable
 		
 		if (isAttackingDisabled())
 		{
-			if (getAttackEndTime() <= GameTimeController.getInstance().getGameTicks())
+			if (!isAttackingNow())
 			{
 				return false;
 			}
@@ -1122,7 +1096,7 @@ public abstract class L2Summon extends L2Playable
 		}
 		
 		// Siege golems AI doesn't support attacking other than doors/walls at the moment.
-		if (target.isDoor() && (getTemplate().getRace() != NpcRace.SIEGE_WEAPON))
+		if (target.isDoor() && (getTemplate().getRace() != Race.SIEGE_WEAPON))
 		{
 			return false;
 		}
@@ -1237,5 +1211,42 @@ public abstract class L2Summon extends L2Playable
 	public int getAllyId()
 	{
 		return (getOwner() != null) ? getOwner().getAllyId() : 0;
+	}
+	
+	public int getFormId()
+	{
+		int formId = 0;
+		final int npcId = getId();
+		if ((npcId == 16041) || (npcId == 16042))
+		{
+			if (getLevel() > 69)
+			{
+				formId = 3;
+			}
+			else if (getLevel() > 64)
+			{
+				formId = 2;
+			}
+			else if (getLevel() > 59)
+			{
+				formId = 1;
+			}
+		}
+		else if ((npcId == 16025) || (npcId == 16037))
+		{
+			if (getLevel() > 69)
+			{
+				formId = 3;
+			}
+			else if (getLevel() > 64)
+			{
+				formId = 2;
+			}
+			else if (getLevel() > 59)
+			{
+				formId = 1;
+			}
+		}
+		return formId;
 	}
 }

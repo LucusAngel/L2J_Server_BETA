@@ -36,7 +36,6 @@ import com.l2jserver.gameserver.datatables.NpcData;
 import com.l2jserver.gameserver.datatables.TerritoryTable;
 import com.l2jserver.gameserver.enums.AISkillScope;
 import com.l2jserver.gameserver.enums.AIType;
-import com.l2jserver.gameserver.enums.QuestEventType;
 import com.l2jserver.gameserver.instancemanager.DimensionalRiftManager;
 import com.l2jserver.gameserver.model.L2Object;
 import com.l2jserver.gameserver.model.Location;
@@ -57,7 +56,10 @@ import com.l2jserver.gameserver.model.actor.instance.L2RiftInvaderInstance;
 import com.l2jserver.gameserver.model.actor.instance.L2StaticObjectInstance;
 import com.l2jserver.gameserver.model.actor.templates.L2NpcTemplate;
 import com.l2jserver.gameserver.model.effects.L2EffectType;
-import com.l2jserver.gameserver.model.quest.Quest;
+import com.l2jserver.gameserver.model.events.EventDispatcher;
+import com.l2jserver.gameserver.model.events.impl.character.npc.attackable.OnAttackableFactionCall;
+import com.l2jserver.gameserver.model.events.impl.character.npc.attackable.OnAttackableHate;
+import com.l2jserver.gameserver.model.events.returns.TerminateReturn;
 import com.l2jserver.gameserver.model.skills.Skill;
 import com.l2jserver.gameserver.model.skills.targets.L2TargetType;
 import com.l2jserver.gameserver.model.zone.ZoneId;
@@ -481,28 +483,15 @@ public class L2AttackableAI extends L2CharacterAI implements Runnable
 					}
 				}
 				
-				// TODO: The AI Script ought to handle aggro behaviors in onSee. Once implemented, aggro behaviors ought
-				// to be removed from here. (Fulminus)
 				// For each L2Character check if the target is autoattackable
 				if (autoAttackCondition(target)) // check aggression
 				{
 					if (target.isPlayable())
 					{
-						final List<Quest> quests = getActiveChar().getTemplate().getEventQuests(QuestEventType.ON_NPC_HATE);
-						if (quests != null)
+						final TerminateReturn term = EventDispatcher.getInstance().notifyEvent(new OnAttackableHate(getActiveChar(), target.getActingPlayer(), target.isSummon()), getActiveChar(), TerminateReturn.class);
+						if ((term != null) && term.terminate())
 						{
-							boolean breaking = false;
-							for (Quest q : quests)
-							{
-								if (!q.onNpcHate(getActiveChar(), (L2Playable) target))
-								{
-									breaking = true;
-								}
-							}
-							if (breaking)
-							{
-								continue;
-							}
+							continue;
 						}
 					}
 					
@@ -777,7 +766,7 @@ public class L2AttackableAI extends L2CharacterAI implements Runnable
 							sevenSignFaction = true;
 						}
 						
-						if (!sevenSignFaction)
+						if (!getActiveChar().getTemplate().isClan(called.getTemplate().getClans()) && !sevenSignFaction)
 						{
 							continue;
 						}
@@ -786,20 +775,24 @@ public class L2AttackableAI extends L2CharacterAI implements Runnable
 						if (npc.isInsideRadius(called, factionRange, true, false) && called.hasAI())
 						{
 							if ((Math.abs(originalAttackTarget.getZ() - called.getZ()) < 600) && npc.getAttackByList().contains(originalAttackTarget) && ((called.getAI()._intention == CtrlIntention.AI_INTENTION_IDLE) || (called.getAI()._intention == CtrlIntention.AI_INTENTION_ACTIVE)) && (called.getInstanceId() == npc.getInstanceId()))
-							// && GeoData.getInstance().canSeeTarget(called, npc))
 							{
 								if (originalAttackTarget.isPlayable())
 								{
-									List<Quest> quests = called.getTemplate().getEventQuests(QuestEventType.ON_FACTION_CALL);
-									if ((quests != null) && !quests.isEmpty())
+									if (originalAttackTarget.isInParty() && originalAttackTarget.getParty().isInDimensionalRift())
 									{
-										L2PcInstance player = originalAttackTarget.getActingPlayer();
-										boolean isSummon = originalAttackTarget.isSummon();
-										for (Quest quest : quests)
+										byte riftType = originalAttackTarget.getParty().getDimensionalRift().getType();
+										byte riftRoom = originalAttackTarget.getParty().getDimensionalRift().getCurrentRoom();
+										
+										if ((npc instanceof L2RiftInvaderInstance) && !DimensionalRiftManager.getInstance().getRoom(riftType, riftRoom).checkIfInZone(npc.getX(), npc.getY(), npc.getZ()))
 										{
-											quest.notifyFactionCall(called, getActiveChar(), player, isSummon);
+											continue;
 										}
 									}
+									
+									// By default, when a faction member calls for help, attack the caller's attacker.
+									// Notify the AI with EVT_AGGRESSION
+									npc.getAI().notifyEvent(CtrlEvent.EVT_AGGRESSION, originalAttackTarget, 1);
+									EventDispatcher.getInstance().notifyEventAsync(new OnAttackableFactionCall(called, getActiveChar(), originalAttackTarget.getActingPlayer(), originalAttackTarget.isSummon()), called);
 								}
 								else if ((called instanceof L2Attackable) && (getAttackTarget() != null) && (called.getAI()._intention != CtrlIntention.AI_INTENTION_ATTACK))
 								{
@@ -1487,7 +1480,7 @@ public class L2AttackableAI extends L2CharacterAI implements Runnable
 			}
 		}
 		
-		if (sk.hasEffectType(L2EffectType.HEAL, L2EffectType.HEAL_PERCENT))
+		if (sk.hasEffectType(L2EffectType.HEAL))
 		{
 			double percentage = (caster.getCurrentHp() / caster.getMaxHp()) * 100;
 			if (caster.isMinion() && (sk.getTargetType() != L2TargetType.SELF))
@@ -1567,7 +1560,7 @@ public class L2AttackableAI extends L2CharacterAI implements Runnable
 			}
 		}
 		
-		if (sk.hasEffectType(L2EffectType.PHYSICAL_ATTACK, L2EffectType.PHYSICAL_ATTACK_HP_LINK, L2EffectType.FATAL_BLOW, L2EffectType.ENERGY_ATTACK, L2EffectType.MAGICAL_ATTACK_MP, L2EffectType.MAGICAL_ATTACK, L2EffectType.DEATH_LINK, L2EffectType.HP_DRAIN))
+		if (sk.hasEffectType(L2EffectType.PHYSICAL_ATTACK, L2EffectType.PHYSICAL_ATTACK_HP_LINK, L2EffectType.MAGICAL_ATTACK, L2EffectType.DEATH_LINK, L2EffectType.HP_DRAIN))
 		{
 			if (!canAura(sk))
 			{

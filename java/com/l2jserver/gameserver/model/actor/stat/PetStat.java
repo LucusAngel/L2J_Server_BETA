@@ -38,7 +38,7 @@ public class PetStat extends SummonStat
 	
 	public boolean addExp(int value)
 	{
-		if (!super.addExp(value))
+		if (getActiveChar().isUncontrollable() || !super.addExp(value))
 		{
 			return false;
 		}
@@ -50,10 +50,9 @@ public class PetStat extends SummonStat
 		return true;
 	}
 	
-	@Override
 	public boolean addExpAndSp(long addToExp, int addToSp)
 	{
-		if (!super.addExpAndSp(addToExp, addToSp))
+		if (getActiveChar().isUncontrollable() || !addExp(addToExp))
 		{
 			return false;
 		}
@@ -62,7 +61,6 @@ public class PetStat extends SummonStat
 		sm.addLong(addToExp);
 		getActiveChar().updateAndBroadcastStatus(1);
 		getActiveChar().sendPacket(sm);
-		
 		return true;
 	}
 	
@@ -218,5 +216,12 @@ public class PetStat extends SummonStat
 	public int getMaxLevel()
 	{
 		return ExperienceTable.getInstance().getMaxPetLevel();
+	}
+	
+	@Override
+	public float getMovementSpeedMultiplier()
+	{
+		// If the pet is starving, the moving speed is drastically reduced.
+		return super.getMovementSpeedMultiplier() * (getActiveChar().isUncontrollable() ? 0.5f : 1f);
 	}
 }

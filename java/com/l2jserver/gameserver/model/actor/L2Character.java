@@ -19,15 +19,18 @@
 package com.l2jserver.gameserver.model.actor;
 
 import static com.l2jserver.gameserver.ai.CtrlIntention.AI_INTENTION_ACTIVE;
+import static com.l2jserver.gameserver.ai.CtrlIntention.AI_INTENTION_ATTACK;
 import static com.l2jserver.gameserver.ai.CtrlIntention.AI_INTENTION_FOLLOW;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Future;
+import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -50,7 +53,7 @@ import com.l2jserver.gameserver.datatables.ItemTable;
 import com.l2jserver.gameserver.datatables.SkillData;
 import com.l2jserver.gameserver.enums.CategoryType;
 import com.l2jserver.gameserver.enums.InstanceType;
-import com.l2jserver.gameserver.enums.QuestEventType;
+import com.l2jserver.gameserver.enums.Race;
 import com.l2jserver.gameserver.enums.ShotType;
 import com.l2jserver.gameserver.enums.Team;
 import com.l2jserver.gameserver.instancemanager.DimensionalRiftManager;
@@ -69,7 +72,6 @@ import com.l2jserver.gameserver.model.Location;
 import com.l2jserver.gameserver.model.PcCondOverride;
 import com.l2jserver.gameserver.model.TeleportWhereType;
 import com.l2jserver.gameserver.model.TimeStamp;
-import com.l2jserver.gameserver.model.actor.events.CharEvents;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.actor.instance.L2PetInstance;
 import com.l2jserver.gameserver.model.actor.instance.L2RiftInvaderInstance;
@@ -88,6 +90,18 @@ import com.l2jserver.gameserver.model.actor.transform.TransformTemplate;
 import com.l2jserver.gameserver.model.effects.EffectFlag;
 import com.l2jserver.gameserver.model.effects.L2EffectType;
 import com.l2jserver.gameserver.model.entity.Instance;
+import com.l2jserver.gameserver.model.events.EventDispatcher;
+import com.l2jserver.gameserver.model.events.EventType;
+import com.l2jserver.gameserver.model.events.impl.character.OnCreatureAttack;
+import com.l2jserver.gameserver.model.events.impl.character.OnCreatureAttacked;
+import com.l2jserver.gameserver.model.events.impl.character.OnCreatureDamageDealt;
+import com.l2jserver.gameserver.model.events.impl.character.OnCreatureDamageReceived;
+import com.l2jserver.gameserver.model.events.impl.character.OnCreatureKill;
+import com.l2jserver.gameserver.model.events.impl.character.OnCreatureSkillUse;
+import com.l2jserver.gameserver.model.events.impl.character.OnCreatureTeleported;
+import com.l2jserver.gameserver.model.events.impl.character.npc.OnNpcSkillSee;
+import com.l2jserver.gameserver.model.events.listeners.AbstractEventListener;
+import com.l2jserver.gameserver.model.events.returns.TerminateReturn;
 import com.l2jserver.gameserver.model.holders.InvulSkillHolder;
 import com.l2jserver.gameserver.model.holders.SkillHolder;
 import com.l2jserver.gameserver.model.holders.SkillUseHolder;
@@ -102,7 +116,6 @@ import com.l2jserver.gameserver.model.items.instance.L2ItemInstance;
 import com.l2jserver.gameserver.model.items.type.WeaponType;
 import com.l2jserver.gameserver.model.options.OptionsSkillHolder;
 import com.l2jserver.gameserver.model.options.OptionsSkillType;
-import com.l2jserver.gameserver.model.quest.Quest;
 import com.l2jserver.gameserver.model.skills.AbnormalType;
 import com.l2jserver.gameserver.model.skills.AbnormalVisualEffect;
 import com.l2jserver.gameserver.model.skills.BuffInfo;
@@ -190,7 +203,6 @@ public abstract class L2Character extends L2Object implements ISkillsHolder, IDe
 	
 	private CharStat _stat;
 	private CharStatus _status;
-	private CharEvents _events;
 	private L2CharTemplate _template; // The link on the L2CharTemplate object containing generic and static properties of this L2Character type (ex : Max HP, Speed...)
 	private String _title;
 	
@@ -219,7 +231,8 @@ public abstract class L2Character extends L2Object implements ISkillsHolder, IDe
 	
 	private L2Character _debugger = null;
 	
-	private final ReentrantLock _teleportLock;
+	private final ReentrantLock _teleportLock = new ReentrantLock();
+	private final ReentrantLock _attackLock = new ReentrantLock();
 	
 	private Team _team = Team.NONE;
 	
@@ -253,7 +266,7 @@ public abstract class L2Character extends L2Object implements ISkillsHolder, IDe
 	private L2Object _target;
 	
 	// set by the start of attack, in game ticks
-	private int _attackEndTime;
+	private volatile long _attackEndTime;
 	private int _disableBowAttackEndTime;
 	private int _disableCrossBowAttackEndTime;
 	
@@ -457,7 +470,6 @@ public abstract class L2Character extends L2Object implements ISkillsHolder, IDe
 		setInstanceType(InstanceType.L2Character);
 		initCharStat();
 		initCharStatus();
-		initCharEvents();
 		
 		// Set its template to the new L2Character
 		_template = template;
@@ -499,7 +511,6 @@ public abstract class L2Character extends L2Object implements ISkillsHolder, IDe
 		}
 		
 		setIsInvul(true);
-		_teleportLock = new ReentrantLock();
 	}
 	
 	protected void initCharStatusUpdateValues()
@@ -545,7 +556,7 @@ public abstract class L2Character extends L2Object implements ISkillsHolder, IDe
 			}
 			spawnMe(getX(), getY(), getZ());
 			setIsTeleporting(false);
-			getEvents().onTeleported();
+			EventDispatcher.getInstance().notifyEventAsync(new OnCreatureTeleported(this), this);
 		}
 		finally
 		{
@@ -824,361 +835,390 @@ public abstract class L2Character extends L2Object implements ISkillsHolder, IDe
 	 */
 	protected void doAttack(L2Character target)
 	{
-		if ((target == null) || isAttackingDisabled() || !getEvents().onAttack(target))
+		if (!_attackLock.tryLock())
 		{
 			return;
 		}
-		
-		if (!isAlikeDead())
+		try
 		{
-			if ((isNpc() && target.isAlikeDead()) || !getKnownList().knowsObject(target))
+			if ((target == null) || isAttackingDisabled())
+			{
+				return;
+			}
+			
+			// Notify to scripts
+			final TerminateReturn attackReturn = EventDispatcher.getInstance().notifyEvent(new OnCreatureAttack(this, target), this, TerminateReturn.class);
+			if ((attackReturn != null) && attackReturn.terminate())
 			{
 				getAI().setIntention(CtrlIntention.AI_INTENTION_ACTIVE);
 				sendPacket(ActionFailed.STATIC_PACKET);
 				return;
 			}
-			else if (isPlayer())
+			
+			// Notify to scripts
+			final TerminateReturn attackedReturn = EventDispatcher.getInstance().notifyEvent(new OnCreatureAttacked(this, target), target, TerminateReturn.class);
+			if ((attackedReturn != null) && attackedReturn.terminate())
 			{
-				if (target.isDead())
+				getAI().setIntention(CtrlIntention.AI_INTENTION_ACTIVE);
+				sendPacket(ActionFailed.STATIC_PACKET);
+				return;
+			}
+			
+			if (!isAlikeDead())
+			{
+				if ((isNpc() && target.isAlikeDead()) || !getKnownList().knowsObject(target))
 				{
 					getAI().setIntention(CtrlIntention.AI_INTENTION_ACTIVE);
 					sendPacket(ActionFailed.STATIC_PACKET);
 					return;
 				}
-				
-				final L2PcInstance actor = getActingPlayer();
-				if (actor.isTransformed() && !actor.getTransformation().canAttack())
+				else if (isPlayer())
 				{
+					if (target.isDead())
+					{
+						getAI().setIntention(CtrlIntention.AI_INTENTION_ACTIVE);
+						sendPacket(ActionFailed.STATIC_PACKET);
+						return;
+					}
+					
+					final L2PcInstance actor = getActingPlayer();
+					if (actor.isTransformed() && !actor.getTransformation().canAttack())
+					{
+						sendPacket(ActionFailed.STATIC_PACKET);
+						return;
+					}
+				}
+			}
+			
+			// Check if attacker's weapon can attack
+			if (getActiveWeaponItem() != null)
+			{
+				L2Weapon wpn = getActiveWeaponItem();
+				if (!wpn.isAttackWeapon() && !isGM())
+				{
+					if (wpn.getItemType() == WeaponType.FISHINGROD)
+					{
+						sendPacket(SystemMessageId.CANNOT_ATTACK_WITH_FISHING_POLE);
+					}
+					else
+					{
+						sendPacket(SystemMessageId.THAT_WEAPON_CANT_ATTACK);
+					}
 					sendPacket(ActionFailed.STATIC_PACKET);
 					return;
 				}
 			}
-		}
-		
-		// Check if attacker's weapon can attack
-		if (getActiveWeaponItem() != null)
-		{
-			L2Weapon wpn = getActiveWeaponItem();
-			if (!wpn.isAttackWeapon() && !isGM())
-			{
-				if (wpn.getItemType() == WeaponType.FISHINGROD)
-				{
-					sendPacket(SystemMessageId.CANNOT_ATTACK_WITH_FISHING_POLE);
-				}
-				else
-				{
-					sendPacket(SystemMessageId.THAT_WEAPON_CANT_ATTACK);
-				}
-				sendPacket(ActionFailed.STATIC_PACKET);
-				return;
-			}
-		}
-		
-		if (getActingPlayer() != null)
-		{
-			if (getActingPlayer().inObserverMode())
-			{
-				sendPacket(SystemMessageId.OBSERVERS_CANNOT_PARTICIPATE);
-				sendPacket(ActionFailed.STATIC_PACKET);
-				return;
-			}
 			
-			else if ((target.getActingPlayer() != null) && (getActingPlayer().getSiegeState() > 0) && isInsideZone(ZoneId.SIEGE) && (target.getActingPlayer().getSiegeState() == getActingPlayer().getSiegeState()) && (target.getActingPlayer() != this) && (target.getActingPlayer().getSiegeSide() == getActingPlayer().getSiegeSide()))
+			if (getActingPlayer() != null)
 			{
-				if (TerritoryWarManager.getInstance().isTWInProgress())
+				if (getActingPlayer().inObserverMode())
 				{
-					sendPacket(SystemMessageId.YOU_CANNOT_ATTACK_A_MEMBER_OF_THE_SAME_TERRITORY);
+					sendPacket(SystemMessageId.OBSERVERS_CANNOT_PARTICIPATE);
+					sendPacket(ActionFailed.STATIC_PACKET);
+					return;
 				}
-				else
+				
+				else if ((target.getActingPlayer() != null) && (getActingPlayer().getSiegeState() > 0) && isInsideZone(ZoneId.SIEGE) && (target.getActingPlayer().getSiegeState() == getActingPlayer().getSiegeState()) && (target.getActingPlayer() != this) && (target.getActingPlayer().getSiegeSide() == getActingPlayer().getSiegeSide()))
 				{
-					sendPacket(SystemMessageId.FORCED_ATTACK_IS_IMPOSSIBLE_AGAINST_SIEGE_SIDE_TEMPORARY_ALLIED_MEMBERS);
+					if (TerritoryWarManager.getInstance().isTWInProgress())
+					{
+						sendPacket(SystemMessageId.YOU_CANNOT_ATTACK_A_MEMBER_OF_THE_SAME_TERRITORY);
+					}
+					else
+					{
+						sendPacket(SystemMessageId.FORCED_ATTACK_IS_IMPOSSIBLE_AGAINST_SIEGE_SIDE_TEMPORARY_ALLIED_MEMBERS);
+					}
+					sendPacket(ActionFailed.STATIC_PACKET);
+					return;
 				}
-				sendPacket(ActionFailed.STATIC_PACKET);
-				return;
+				
+				// Checking if target has moved to peace zone
+				else if (target.isInsidePeaceZone(getActingPlayer()))
+				{
+					getAI().setIntention(CtrlIntention.AI_INTENTION_ACTIVE);
+					sendPacket(ActionFailed.STATIC_PACKET);
+					return;
+				}
 			}
-			
-			// Checking if target has moved to peace zone
-			else if (target.isInsidePeaceZone(getActingPlayer()))
+			else if (isInsidePeaceZone(this, target))
 			{
 				getAI().setIntention(CtrlIntention.AI_INTENTION_ACTIVE);
 				sendPacket(ActionFailed.STATIC_PACKET);
 				return;
 			}
-		}
-		else if (isInsidePeaceZone(this, target))
-		{
-			getAI().setIntention(CtrlIntention.AI_INTENTION_ACTIVE);
-			sendPacket(ActionFailed.STATIC_PACKET);
-			return;
-		}
-		
-		stopEffectsOnAction();
-		
-		// Get the active weapon item corresponding to the active weapon instance (always equipped in the right hand)
-		L2Weapon weaponItem = getActiveWeaponItem();
-		
-		// GeoData Los Check here (or dz > 1000)
-		if (!GeoData.getInstance().canSeeTarget(this, target))
-		{
-			sendPacket(SystemMessageId.CANT_SEE_TARGET);
-			getAI().setIntention(CtrlIntention.AI_INTENTION_ACTIVE);
-			sendPacket(ActionFailed.STATIC_PACKET);
-			return;
-		}
-		
-		// BOW and CROSSBOW checks
-		if ((weaponItem != null) && !isTransformed())
-		{
-			if (weaponItem.getItemType() == WeaponType.BOW)
+			
+			stopEffectsOnAction();
+			
+			// Get the active weapon item corresponding to the active weapon instance (always equipped in the right hand)
+			L2Weapon weaponItem = getActiveWeaponItem();
+			
+			// GeoData Los Check here (or dz > 1000)
+			if (!GeoData.getInstance().canSeeTarget(this, target))
 			{
-				// Check for arrows and MP
-				if (isPlayer())
+				sendPacket(SystemMessageId.CANT_SEE_TARGET);
+				getAI().setIntention(CtrlIntention.AI_INTENTION_ACTIVE);
+				sendPacket(ActionFailed.STATIC_PACKET);
+				return;
+			}
+			
+			// BOW and CROSSBOW checks
+			if ((weaponItem != null) && !isTransformed())
+			{
+				if (weaponItem.getItemType() == WeaponType.BOW)
 				{
-					// Checking if target has moved to peace zone - only for player-bow attacks at the moment
-					// Other melee is checked in movement code and for offensive spells a check is done every time
-					if (target.isInsidePeaceZone(getActingPlayer()))
+					// Check for arrows and MP
+					if (isPlayer())
 					{
-						getAI().setIntention(CtrlIntention.AI_INTENTION_ACTIVE);
-						sendPacket(ActionFailed.STATIC_PACKET);
-						return;
-					}
-					
-					// Equip arrows needed in left hand and send a Server->Client packet ItemList to the L2PcInstance then return True
-					if (!checkAndEquipArrows())
-					{
-						// Cancel the action because the L2PcInstance have no arrow
-						getAI().setIntention(CtrlIntention.AI_INTENTION_IDLE);
-						sendPacket(ActionFailed.STATIC_PACKET);
-						sendPacket(SystemMessageId.NOT_ENOUGH_ARROWS);
-						return;
-					}
-					
-					// Verify if the bow can be use
-					if (_disableBowAttackEndTime <= GameTimeController.getInstance().getGameTicks())
-					{
-						// Verify if L2PcInstance owns enough MP
-						int mpConsume = weaponItem.getMpConsume();
-						if ((weaponItem.getReducedMpConsume() > 0) && (Rnd.get(100) < weaponItem.getReducedMpConsumeChance()))
+						// Checking if target has moved to peace zone - only for player-bow attacks at the moment
+						// Other melee is checked in movement code and for offensive spells a check is done every time
+						if (target.isInsidePeaceZone(getActingPlayer()))
 						{
-							mpConsume = weaponItem.getReducedMpConsume();
-						}
-						mpConsume = (int) calcStat(Stats.BOW_MP_CONSUME_RATE, mpConsume, null, null);
-						
-						if (getCurrentMp() < mpConsume)
-						{
-							// If L2PcInstance doesn't have enough MP, stop the attack
-							ThreadPoolManager.getInstance().scheduleAi(new NotifyAITask(this, CtrlEvent.EVT_READY_TO_ACT), 1000);
-							sendPacket(SystemMessageId.NOT_ENOUGH_MP);
+							getAI().setIntention(CtrlIntention.AI_INTENTION_ACTIVE);
 							sendPacket(ActionFailed.STATIC_PACKET);
 							return;
 						}
 						
-						// If L2PcInstance have enough MP, the bow consumes it
-						if (mpConsume > 0)
+						// Equip arrows needed in left hand and send a Server->Client packet ItemList to the L2PcInstance then return True
+						if (!checkAndEquipArrows())
 						{
-							getStatus().reduceMp(mpConsume);
+							// Cancel the action because the L2PcInstance have no arrow
+							getAI().setIntention(CtrlIntention.AI_INTENTION_IDLE);
+							sendPacket(ActionFailed.STATIC_PACKET);
+							sendPacket(SystemMessageId.NOT_ENOUGH_ARROWS);
+							return;
 						}
 						
-						// Set the period of bow no re-use
-						_disableBowAttackEndTime = (5 * GameTimeController.TICKS_PER_SECOND) + GameTimeController.getInstance().getGameTicks();
-					}
-					else
-					{
-						// Cancel the action because the bow can't be re-use at this moment
-						ThreadPoolManager.getInstance().scheduleAi(new NotifyAITask(this, CtrlEvent.EVT_READY_TO_ACT), 1000);
-						sendPacket(ActionFailed.STATIC_PACKET);
-						return;
+						// Verify if the bow can be use
+						if (_disableBowAttackEndTime <= GameTimeController.getInstance().getGameTicks())
+						{
+							// Verify if L2PcInstance owns enough MP
+							int mpConsume = weaponItem.getMpConsume();
+							if ((weaponItem.getReducedMpConsume() > 0) && (Rnd.get(100) < weaponItem.getReducedMpConsumeChance()))
+							{
+								mpConsume = weaponItem.getReducedMpConsume();
+							}
+							mpConsume = (int) calcStat(Stats.BOW_MP_CONSUME_RATE, mpConsume, null, null);
+							
+							if (getCurrentMp() < mpConsume)
+							{
+								// If L2PcInstance doesn't have enough MP, stop the attack
+								ThreadPoolManager.getInstance().scheduleAi(new NotifyAITask(this, CtrlEvent.EVT_READY_TO_ACT), 1000);
+								sendPacket(SystemMessageId.NOT_ENOUGH_MP);
+								sendPacket(ActionFailed.STATIC_PACKET);
+								return;
+							}
+							
+							// If L2PcInstance have enough MP, the bow consumes it
+							if (mpConsume > 0)
+							{
+								getStatus().reduceMp(mpConsume);
+							}
+							
+							// Set the period of bow no re-use
+							_disableBowAttackEndTime = (5 * GameTimeController.TICKS_PER_SECOND) + GameTimeController.getInstance().getGameTicks();
+						}
+						else
+						{
+							// Cancel the action because the bow can't be re-use at this moment
+							ThreadPoolManager.getInstance().scheduleAi(new NotifyAITask(this, CtrlEvent.EVT_READY_TO_ACT), 1000);
+							sendPacket(ActionFailed.STATIC_PACKET);
+							return;
+						}
 					}
 				}
-			}
-			if (weaponItem.getItemType() == WeaponType.CROSSBOW)
-			{
-				// Check for bolts
-				if (isPlayer())
+				if (weaponItem.getItemType() == WeaponType.CROSSBOW)
 				{
-					// Checking if target has moved to peace zone - only for player-crossbow attacks at the moment
-					// Other melee is checked in movement code and for offensive spells a check is done every time
-					if (target.isInsidePeaceZone(getActingPlayer()))
+					// Check for bolts
+					if (isPlayer())
 					{
-						getAI().setIntention(CtrlIntention.AI_INTENTION_ACTIVE);
-						sendPacket(ActionFailed.STATIC_PACKET);
-						return;
-					}
-					
-					// Equip bolts needed in left hand and send a Server->Client packet ItemList to the L2PcINstance then return True
-					if (!checkAndEquipBolts())
-					{
-						// Cancel the action because the L2PcInstance have no arrow
-						getAI().setIntention(CtrlIntention.AI_INTENTION_IDLE);
-						sendPacket(ActionFailed.STATIC_PACKET);
-						sendPacket(SystemMessageId.NOT_ENOUGH_BOLTS);
-						return;
-					}
-					
-					// Verify if the crossbow can be use
-					if (_disableCrossBowAttackEndTime <= GameTimeController.getInstance().getGameTicks())
-					{
-						// Verify if L2PcInstance owns enough MP
-						int mpConsume = weaponItem.getMpConsume();
-						if ((weaponItem.getReducedMpConsume() > 0) && (Rnd.get(100) < weaponItem.getReducedMpConsumeChance()))
+						// Checking if target has moved to peace zone - only for player-crossbow attacks at the moment
+						// Other melee is checked in movement code and for offensive spells a check is done every time
+						if (target.isInsidePeaceZone(getActingPlayer()))
 						{
-							mpConsume = weaponItem.getReducedMpConsume();
-						}
-						mpConsume = (int) calcStat(Stats.BOW_MP_CONSUME_RATE, mpConsume, null, null);
-						
-						if (getCurrentMp() < mpConsume)
-						{
-							// If L2PcInstance doesn't have enough MP, stop the attack
-							ThreadPoolManager.getInstance().scheduleAi(new NotifyAITask(this, CtrlEvent.EVT_READY_TO_ACT), 1000);
-							sendPacket(SystemMessageId.NOT_ENOUGH_MP);
+							getAI().setIntention(CtrlIntention.AI_INTENTION_ACTIVE);
 							sendPacket(ActionFailed.STATIC_PACKET);
 							return;
 						}
 						
-						// If L2PcInstance have enough MP, the bow consumes it
-						if (mpConsume > 0)
+						// Equip bolts needed in left hand and send a Server->Client packet ItemList to the L2PcINstance then return True
+						if (!checkAndEquipBolts())
 						{
-							getStatus().reduceMp(mpConsume);
+							// Cancel the action because the L2PcInstance have no arrow
+							getAI().setIntention(CtrlIntention.AI_INTENTION_IDLE);
+							sendPacket(ActionFailed.STATIC_PACKET);
+							sendPacket(SystemMessageId.NOT_ENOUGH_BOLTS);
+							return;
 						}
 						
-						// Set the period of crossbow no re-use
-						_disableCrossBowAttackEndTime = (5 * GameTimeController.TICKS_PER_SECOND) + GameTimeController.getInstance().getGameTicks();
+						// Verify if the crossbow can be use
+						if (_disableCrossBowAttackEndTime <= GameTimeController.getInstance().getGameTicks())
+						{
+							// Verify if L2PcInstance owns enough MP
+							int mpConsume = weaponItem.getMpConsume();
+							if ((weaponItem.getReducedMpConsume() > 0) && (Rnd.get(100) < weaponItem.getReducedMpConsumeChance()))
+							{
+								mpConsume = weaponItem.getReducedMpConsume();
+							}
+							mpConsume = (int) calcStat(Stats.BOW_MP_CONSUME_RATE, mpConsume, null, null);
+							
+							if (getCurrentMp() < mpConsume)
+							{
+								// If L2PcInstance doesn't have enough MP, stop the attack
+								ThreadPoolManager.getInstance().scheduleAi(new NotifyAITask(this, CtrlEvent.EVT_READY_TO_ACT), 1000);
+								sendPacket(SystemMessageId.NOT_ENOUGH_MP);
+								sendPacket(ActionFailed.STATIC_PACKET);
+								return;
+							}
+							
+							// If L2PcInstance have enough MP, the bow consumes it
+							if (mpConsume > 0)
+							{
+								getStatus().reduceMp(mpConsume);
+							}
+							
+							// Set the period of crossbow no re-use
+							_disableCrossBowAttackEndTime = (5 * GameTimeController.TICKS_PER_SECOND) + GameTimeController.getInstance().getGameTicks();
+						}
+						else
+						{
+							// Cancel the action because the crossbow can't be re-use at this moment
+							ThreadPoolManager.getInstance().scheduleAi(new NotifyAITask(this, CtrlEvent.EVT_READY_TO_ACT), 1000);
+							sendPacket(ActionFailed.STATIC_PACKET);
+							return;
+						}
 					}
-					else
+					else if (isNpc())
 					{
-						// Cancel the action because the crossbow can't be re-use at this moment
-						ThreadPoolManager.getInstance().scheduleAi(new NotifyAITask(this, CtrlEvent.EVT_READY_TO_ACT), 1000);
-						sendPacket(ActionFailed.STATIC_PACKET);
-						return;
+						if (_disableCrossBowAttackEndTime > GameTimeController.getInstance().getGameTicks())
+						{
+							return;
+						}
 					}
 				}
-				else if (isNpc())
+			}
+			
+			// Add the L2PcInstance to _knownObjects and _knownPlayer of the target
+			target.getKnownList().addKnownObject(this);
+			
+			// Reduce the current CP if TIREDNESS configuration is activated
+			if (Config.ALT_GAME_TIREDNESS)
+			{
+				setCurrentCp(getCurrentCp() - 10);
+			}
+			
+			// Verify if soulshots are charged.
+			final boolean wasSSCharged = isChargedShot(ShotType.SOULSHOTS);
+			// Get the Attack Speed of the L2Character (delay (in milliseconds) before next attack)
+			final int timeAtk = calculateTimeBetweenAttacks(target, weaponItem);
+			// the hit is calculated to happen halfway to the animation - might need further tuning e.g. in bow case
+			final int timeToHit = timeAtk / 2;
+			_attackEndTime = System.currentTimeMillis() + timeAtk;
+			final int ssGrade = (weaponItem != null) ? weaponItem.getItemGradeSPlus().getId() : 0;
+			// Create a Server->Client packet Attack
+			Attack attack = new Attack(this, target, wasSSCharged, ssGrade);
+			
+			// Make sure that char is facing selected target
+			// also works: setHeading(Util.convertDegreeToClientHeading(Util.calculateAngleFrom(this, target)));
+			setHeading(Util.calculateHeadingFrom(this, target));
+			
+			// Get the Attack Reuse Delay of the L2Weapon
+			int reuse = calculateReuseTime(target, weaponItem);
+			
+			boolean hitted = false;
+			switch (getAttackType())
+			{
+				case BOW:
 				{
-					if (_disableCrossBowAttackEndTime > GameTimeController.getInstance().getGameTicks())
+					hitted = doAttackHitByBow(attack, target, timeAtk, reuse);
+					break;
+				}
+				case CROSSBOW:
+				{
+					hitted = doAttackHitByCrossBow(attack, target, timeAtk, reuse);
+					break;
+				}
+				case POLE:
+				{
+					hitted = doAttackHitByPole(attack, target, timeToHit);
+					break;
+				}
+				case FIST:
+				{
+					if (!isPlayer())
 					{
-						return;
+						hitted = doAttackHitSimple(attack, target, timeToHit);
+						break;
 					}
 				}
-			}
-		}
-		
-		// Add the L2PcInstance to _knownObjects and _knownPlayer of the target
-		target.getKnownList().addKnownObject(this);
-		
-		// Reduce the current CP if TIREDNESS configuration is activated
-		if (Config.ALT_GAME_TIREDNESS)
-		{
-			setCurrentCp(getCurrentCp() - 10);
-		}
-		
-		// Verify if soulshots are charged.
-		final boolean wasSSCharged = isChargedShot(ShotType.SOULSHOTS);
-		// Get the Attack Speed of the L2Character (delay (in milliseconds) before next attack)
-		final int timeAtk = calculateTimeBetweenAttacks(target, weaponItem);
-		// the hit is calculated to happen halfway to the animation - might need further tuning e.g. in bow case
-		final int timeToHit = timeAtk / 2;
-		_attackEndTime = (GameTimeController.getInstance().getGameTicks() + (timeAtk / GameTimeController.MILLIS_IN_TICK)) - 1;
-		final int ssGrade = (weaponItem != null) ? weaponItem.getItemGradeSPlus().getId() : 0;
-		// Create a Server->Client packet Attack
-		Attack attack = new Attack(this, target, wasSSCharged, ssGrade);
-		
-		// Make sure that char is facing selected target
-		// also works: setHeading(Util.convertDegreeToClientHeading(Util.calculateAngleFrom(this, target)));
-		setHeading(Util.calculateHeadingFrom(this, target));
-		
-		// Get the Attack Reuse Delay of the L2Weapon
-		int reuse = calculateReuseTime(target, weaponItem);
-		
-		boolean hitted = false;
-		switch (getAttackType())
-		{
-			case BOW:
-			{
-				hitted = doAttackHitByBow(attack, target, timeAtk, reuse);
-				break;
-			}
-			case CROSSBOW:
-			{
-				hitted = doAttackHitByCrossBow(attack, target, timeAtk, reuse);
-				break;
-			}
-			case POLE:
-			{
-				hitted = doAttackHitByPole(attack, target, timeToHit);
-				break;
-			}
-			case FIST:
-			{
-				if (!isPlayer())
+				case DUAL:
+				case DUALFIST:
+				case DUALDAGGER:
+				{
+					hitted = doAttackHitByDual(attack, target, timeToHit);
+					break;
+				}
+				default:
 				{
 					hitted = doAttackHitSimple(attack, target, timeToHit);
 					break;
 				}
 			}
-			case DUAL:
-			case DUALFIST:
-			case DUALDAGGER:
-			{
-				hitted = doAttackHitByDual(attack, target, timeToHit);
-				break;
-			}
-			default:
-			{
-				hitted = doAttackHitSimple(attack, target, timeToHit);
-				break;
-			}
-		}
-		
-		// Flag the attacker if it's a L2PcInstance outside a PvP area
-		final L2PcInstance player = getActingPlayer();
-		if (player != null)
-		{
-			AttackStanceTaskManager.getInstance().addAttackStanceTask(player);
-			if (player.getSummon() != target)
-			{
-				player.updatePvPStatus(target);
-			}
-		}
-		// Check if hit isn't missed
-		if (!hitted)
-		{
-			abortAttack(); // Abort the attack of the L2Character and send Server->Client ActionFailed packet
-		}
-		else
-		{
-			// If we didn't miss the hit, discharge the shoulshots, if any
-			setChargedShot(ShotType.SOULSHOTS, false);
 			
+			// Flag the attacker if it's a L2PcInstance outside a PvP area
+			final L2PcInstance player = getActingPlayer();
 			if (player != null)
 			{
-				if (player.isCursedWeaponEquipped())
+				AttackStanceTaskManager.getInstance().addAttackStanceTask(player);
+				if (player.getSummon() != target)
 				{
-					// If hit by a cursed weapon, CP is reduced to 0
-					if (!target.isInvul())
-					{
-						target.setCurrentCp(0);
-					}
+					player.updatePvPStatus(target);
 				}
-				else if (player.isHero())
+			}
+			// Check if hit isn't missed
+			if (!hitted)
+			{
+				abortAttack(); // Abort the attack of the L2Character and send Server->Client ActionFailed packet
+			}
+			else
+			{
+				// If we didn't miss the hit, discharge the shoulshots, if any
+				setChargedShot(ShotType.SOULSHOTS, false);
+				
+				if (player != null)
 				{
-					// If a cursed weapon is hit by a Hero, CP is reduced to 0
-					if (target.isPlayer() && target.getActingPlayer().isCursedWeaponEquipped())
+					if (player.isCursedWeaponEquipped())
 					{
-						target.setCurrentCp(0);
+						// If hit by a cursed weapon, CP is reduced to 0
+						if (!target.isInvul())
+						{
+							target.setCurrentCp(0);
+						}
+					}
+					else if (player.isHero())
+					{
+						// If a cursed weapon is hit by a Hero, CP is reduced to 0
+						if (target.isPlayer() && target.getActingPlayer().isCursedWeaponEquipped())
+						{
+							target.setCurrentCp(0);
+						}
 					}
 				}
 			}
+			
+			// If the Server->Client packet Attack contains at least 1 hit, send the Server->Client packet Attack
+			// to the L2Character AND to all L2PcInstance in the _KnownPlayers of the L2Character
+			if (attack.hasHits())
+			{
+				broadcastPacket(attack);
+			}
+			
+			// Notify AI with EVT_READY_TO_ACT
+			ThreadPoolManager.getInstance().scheduleAi(new NotifyAITask(this, CtrlEvent.EVT_READY_TO_ACT), timeAtk + reuse);
 		}
-		
-		// If the Server->Client packet Attack contains at least 1 hit, send the Server->Client packet Attack
-		// to the L2Character AND to all L2PcInstance in the _KnownPlayers of the L2Character
-		if (attack.hasHits())
+		finally
 		{
-			broadcastPacket(attack);
+			_attackLock.unlock();
 		}
-		
-		// Notify AI with EVT_READY_TO_ACT
-		ThreadPoolManager.getInstance().scheduleAi(new NotifyAITask(this, CtrlEvent.EVT_READY_TO_ACT), timeAtk + reuse);
 	}
 	
 	/**
@@ -1723,7 +1763,26 @@ public abstract class L2Character extends L2Object implements ISkillsHolder, IDe
 	
 	private void beginCast(Skill skill, boolean simultaneously, L2Character target, L2Object[] targets)
 	{
-		if ((target == null) || !getEvents().onMagic(skill, simultaneously, target, targets))
+		if (target == null)
+		{
+			if (simultaneously)
+			{
+				setIsCastingSimultaneouslyNow(false);
+			}
+			else
+			{
+				setIsCastingNow(false);
+			}
+			if (isPlayer())
+			{
+				sendPacket(ActionFailed.STATIC_PACKET);
+				getAI().setIntention(AI_INTENTION_ACTIVE);
+			}
+			return;
+		}
+		
+		final TerminateReturn term = EventDispatcher.getInstance().notifyEvent(new OnCreatureSkillUse(this, skill, simultaneously, target, targets), this, TerminateReturn.class);
+		if ((term != null) && term.terminate())
 		{
 			if (simultaneously)
 			{
@@ -2457,6 +2516,12 @@ public abstract class L2Character extends L2Object implements ISkillsHolder, IDe
 	 */
 	public boolean doDie(L2Character killer)
 	{
+		final TerminateReturn returnBack = EventDispatcher.getInstance().notifyEvent(new OnCreatureKill(killer, this), this, TerminateReturn.class);
+		if ((returnBack != null) && returnBack.terminate())
+		{
+			return false;
+		}
+		
 		// killing is only possible one time
 		synchronized (this)
 		{
@@ -2464,13 +2529,10 @@ public abstract class L2Character extends L2Object implements ISkillsHolder, IDe
 			{
 				return false;
 			}
+			
 			// now reset currentHp to zero
 			setCurrentHp(0);
 			setIsDead(true);
-		}
-		if (!getEvents().onDeath(killer))
-		{
-			return false;
 		}
 		
 		// Set target to null and cancel Attack or Cast
@@ -2775,7 +2837,7 @@ public abstract class L2Character extends L2Object implements ISkillsHolder, IDe
 	 */
 	public boolean isAttackingDisabled()
 	{
-		return isFlying() || isStunned() || isSleeping() || (_attackEndTime > GameTimeController.getInstance().getGameTicks()) || isAlikeDead() || isParalyzed() || isPhysicalAttackMuted() || isCoreAIDisabled();
+		return isFlying() || isStunned() || isSleeping() || isAttackingNow() || isAlikeDead() || isParalyzed() || isPhysicalAttackMuted() || isCoreAIDisabled();
 	}
 	
 	public final Calculator[] getCalculators()
@@ -3093,21 +3155,6 @@ public abstract class L2Character extends L2Object implements ISkillsHolder, IDe
 	public final void setStatus(CharStatus value)
 	{
 		_status = value;
-	}
-	
-	public void initCharEvents()
-	{
-		_events = new CharEvents(this);
-	}
-	
-	public void setCharEvents(CharEvents events)
-	{
-		_events = events;
-	}
-	
-	public CharEvents getEvents()
-	{
-		return _events;
 	}
 	
 	public L2CharTemplate getTemplate()
@@ -4066,9 +4113,9 @@ public abstract class L2Character extends L2Object implements ISkillsHolder, IDe
 	/**
 	 * @return True if the L2Character is attacking.
 	 */
-	public boolean isAttackingNow()
+	public final boolean isAttackingNow()
 	{
-		return _attackEndTime > GameTimeController.getInstance().getGameTicks();
+		return _attackEndTime > System.currentTimeMillis();
 	}
 	
 	/**
@@ -5927,7 +5974,7 @@ public abstract class L2Character extends L2Object implements ISkillsHolder, IDe
 		// Attack target after skill use
 		if ((skill.nextActionIsAttack()) && (getTarget() instanceof L2Character) && (getTarget() != this) && (target != null) && (getTarget() == target) && target.canBeAttacked())
 		{
-			if ((getAI() == null) || (getAI().getNextIntention() == null) || (getAI().getNextIntention().getCtrlIntention() != CtrlIntention.AI_INTENTION_MOVE_TO))
+			if ((getAI().getNextIntention() == null) || (getAI().getNextIntention().getCtrlIntention() != CtrlIntention.AI_INTENTION_MOVE_TO))
 			{
 				getAI().setIntention(CtrlIntention.AI_INTENTION_ATTACK, target);
 			}
@@ -6160,13 +6207,41 @@ public abstract class L2Character extends L2Object implements ISkillsHolder, IDe
 				{
 					if ((spMob != null) && spMob.isNpc())
 					{
-						L2Npc npcMob = (L2Npc) spMob;
-						
-						if ((npcMob.isInsideRadius(player, 1000, true, true)) && (npcMob.getTemplate().getEventQuests(QuestEventType.ON_SKILL_SEE) != null))
+						final L2Npc npcMob = (L2Npc) spMob;
+						if ((npcMob.isInsideRadius(player, 1000, true, true)))
 						{
-							for (Quest quest : npcMob.getTemplate().getEventQuests(QuestEventType.ON_SKILL_SEE))
+							EventDispatcher.getInstance().notifyEventAsync(new OnNpcSkillSee(npcMob, player, skill, targets, isSummon()), npcMob);
+							
+							// On Skill See logic
+							if (npcMob.isAttackable())
 							{
-								quest.notifySkillSee(npcMob, player, skill, targets, isSummon());
+								final L2Attackable attackable = (L2Attackable) npcMob;
+								
+								int skillEffectPoint = skill.getEffectPoint();
+								
+								if (player.hasSummon())
+								{
+									if ((targets.length == 1) && Util.contains(targets, player.getSummon()))
+									{
+										skillEffectPoint = 0;
+									}
+								}
+								
+								if (skillEffectPoint > 0)
+								{
+									if (attackable.hasAI() && (attackable.getAI().getIntention() == AI_INTENTION_ATTACK))
+									{
+										L2Object npcTarget = attackable.getTarget();
+										for (L2Object skillTarget : targets)
+										{
+											if ((npcTarget == skillTarget) || (npcMob == skillTarget))
+											{
+												L2Character originalCaster = isSummon() ? getSummon() : player;
+												attackable.addDamageHate(originalCaster, 0, (skillEffectPoint * 150) / (attackable.getLevel() + 7));
+											}
+										}
+									}
+								}
 							}
 						}
 					}
@@ -6345,7 +6420,7 @@ public abstract class L2Character extends L2Object implements ISkillsHolder, IDe
 		return (1 + ((double) Rnd.get(0 - random, random) / 100));
 	}
 	
-	public int getAttackEndTime()
+	public final long getAttackEndTime()
 	{
 		return _attackEndTime;
 	}
@@ -6838,6 +6913,15 @@ public abstract class L2Character extends L2Object implements ISkillsHolder, IDe
 					return;
 				}
 				
+				for (L2Object obj : targets)
+				{
+					if ((obj != null) && obj.isCharacter())
+					{
+						target = (L2Character) obj;
+						break;
+					}
+				}
+				
 				if (Config.ALT_VALIDATE_TRIGGER_SKILLS && isPlayable() && (target != null) && target.isPlayable())
 				{
 					final L2PcInstance player = getActingPlayer();
@@ -6928,8 +7012,8 @@ public abstract class L2Character extends L2Object implements ISkillsHolder, IDe
 	 */
 	public void notifyDamageReceived(double damage, L2Character attacker, Skill skill, boolean critical, boolean damageOverTime)
 	{
-		getEvents().onDamageReceived(damage, attacker, skill, critical, damageOverTime);
-		attacker.getEvents().onDamageDealt(damage, this, skill, critical, damageOverTime);
+		EventDispatcher.getInstance().notifyEventAsync(new OnCreatureDamageReceived(attacker, this, damage, skill, critical, damageOverTime), this);
+		EventDispatcher.getInstance().notifyEventAsync(new OnCreatureDamageDealt(attacker, this, damage, skill, critical, damageOverTime), attacker);
 	}
 	
 	/**
@@ -7057,5 +7141,30 @@ public abstract class L2Character extends L2Object implements ISkillsHolder, IDe
 			}
 		}
 		return _invulAgainst;
+	}
+	
+	@Override
+	public Queue<AbstractEventListener> getListeners(EventType type)
+	{
+		final Queue<AbstractEventListener> objectListenres = super.getListeners(type);
+		final Queue<AbstractEventListener> templateListeners = getTemplate().getListeners(type);
+		if (objectListenres.isEmpty())
+		{
+			return templateListeners;
+		}
+		else if (templateListeners.isEmpty())
+		{
+			return objectListenres;
+		}
+		
+		final Queue<AbstractEventListener> both = new LinkedBlockingDeque<>(objectListenres.size() + templateListeners.size());
+		both.addAll(objectListenres);
+		both.addAll(templateListeners);
+		return both;
+	}
+	
+	public Race getRace()
+	{
+		return getTemplate().getRace();
 	}
 }

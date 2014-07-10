@@ -464,10 +464,12 @@ public final class Config
 	public static boolean ALT_DEV_SHOW_SCRIPTS_LOAD_IN_LOGS;
 	public static int THREAD_P_EFFECTS;
 	public static int THREAD_P_GENERAL;
+	public static int THREAD_E_EVENTS;
 	public static int GENERAL_PACKET_THREAD_CORE_SIZE;
 	public static int IO_PACKET_THREAD_CORE_SIZE;
 	public static int GENERAL_THREAD_CORE_SIZE;
 	public static int AI_MAX_THREAD;
+	public static int EVENT_MAX_THREAD;
 	public static int CLIENT_PACKET_QUEUE_SIZE;
 	public static int CLIENT_PACKET_QUEUE_MAX_BURST_SIZE;
 	public static int CLIENT_PACKET_QUEUE_MAX_PACKETS_PER_SECOND;
@@ -952,7 +954,6 @@ public final class Config
 	public static int REQUEST_ID;
 	public static boolean RESERVE_HOST_ON_LOGIN = false;
 	public static List<Integer> PROTOCOL_LIST;
-	public static boolean LOG_LOGIN_CONTROLLER;
 	public static boolean LOGIN_SERVER_SCHEDULE_RESTART;
 	public static long LOGIN_SERVER_SCHEDULE_RESTART_TIME;
 	
@@ -1791,10 +1792,12 @@ public final class Config
 			ALT_DEV_SHOW_SCRIPTS_LOAD_IN_LOGS = General.getBoolean("AltDevShowScriptsLoadInLogs", false);
 			THREAD_P_EFFECTS = General.getInt("ThreadPoolSizeEffects", 10);
 			THREAD_P_GENERAL = General.getInt("ThreadPoolSizeGeneral", 13);
+			THREAD_E_EVENTS = General.getInt("ThreadPoolSizeEvents", 2);
 			IO_PACKET_THREAD_CORE_SIZE = General.getInt("UrgentPacketThreadCoreSize", 2);
 			GENERAL_PACKET_THREAD_CORE_SIZE = General.getInt("GeneralPacketThreadCoreSize", 4);
 			GENERAL_THREAD_CORE_SIZE = General.getInt("GeneralThreadCoreSize", 4);
 			AI_MAX_THREAD = General.getInt("AiMaxThread", 6);
+			EVENT_MAX_THREAD = General.getInt("EventsMaxThread", 5);
 			CLIENT_PACKET_QUEUE_SIZE = General.getInt("ClientPacketQueueSize", 0);
 			if (CLIENT_PACKET_QUEUE_SIZE == 0)
 			{
@@ -2798,8 +2801,6 @@ public final class Config
 			
 			LOGIN_TRY_BEFORE_BAN = ServerSettings.getInt("LoginTryBeforeBan", 5);
 			LOGIN_BLOCK_AFTER_BAN = ServerSettings.getInt("LoginBlockAfterBan", 900);
-			
-			LOG_LOGIN_CONTROLLER = ServerSettings.getBoolean("LogLoginController", true);
 			
 			LOGIN_SERVER_SCHEDULE_RESTART = ServerSettings.getBoolean("LoginRestartSchedule", false);
 			LOGIN_SERVER_SCHEDULE_RESTART_TIME = ServerSettings.getLong("LoginRestartTime", 24);

@@ -18,7 +18,6 @@
  */
 package com.l2jserver.gameserver.model.actor.instance;
 
-import java.util.List;
 import java.util.concurrent.Future;
 
 import com.l2jserver.Config;
@@ -26,14 +25,14 @@ import com.l2jserver.gameserver.ThreadPoolManager;
 import com.l2jserver.gameserver.ai.CtrlIntention;
 import com.l2jserver.gameserver.datatables.DoorTable;
 import com.l2jserver.gameserver.enums.InstanceType;
-import com.l2jserver.gameserver.enums.QuestEventType;
 import com.l2jserver.gameserver.instancemanager.FourSepulchersManager;
 import com.l2jserver.gameserver.model.L2World;
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.templates.L2NpcTemplate;
-import com.l2jserver.gameserver.model.interfaces.IProcedure;
+import com.l2jserver.gameserver.model.events.EventDispatcher;
+import com.l2jserver.gameserver.model.events.EventType;
+import com.l2jserver.gameserver.model.events.impl.character.npc.OnNpcFirstTalk;
 import com.l2jserver.gameserver.model.items.instance.L2ItemInstance;
-import com.l2jserver.gameserver.model.quest.Quest;
 import com.l2jserver.gameserver.network.NpcStringId;
 import com.l2jserver.gameserver.network.clientpackets.Say2;
 import com.l2jserver.gameserver.network.serverpackets.ActionFailed;
@@ -237,17 +236,14 @@ public class L2SepulcherNpcInstance extends L2Npc
 			
 			default:
 			{
-				List<Quest> qlsa = getTemplate().getEventQuests(QuestEventType.QUEST_START);
-				List<Quest> qlst = getTemplate().getEventQuests(QuestEventType.ON_FIRST_TALK);
-				
-				if ((qlsa != null) && !qlsa.isEmpty())
+				if (hasListener(EventType.ON_NPC_QUEST_START))
 				{
 					player.setLastQuestNpcObject(getObjectId());
 				}
 				
-				if ((qlst != null) && (qlst.size() == 1))
+				if (hasListener(EventType.ON_NPC_FIRST_TALK))
 				{
-					qlst.get(0).notifyFirstTalk(this, player);
+					EventDispatcher.getInstance().notifyEventAsync(new OnNpcFirstTalk(this, player), this);
 				}
 				else
 				{
@@ -437,31 +433,13 @@ public class L2SepulcherNpcInstance extends L2Npc
 			return;// wrong usage
 		}
 		
-		L2World.getInstance().forEachPlayer(new SayInShout(this, new CreatureSay(0, Say2.NPC_SHOUT, getName(), msg)));
-	}
-	
-	private final class SayInShout implements IProcedure<L2PcInstance, Boolean>
-	{
-		L2SepulcherNpcInstance _npc;
-		CreatureSay _sm;
-		
-		protected SayInShout(L2SepulcherNpcInstance npc, CreatureSay sm)
+		final CreatureSay creatureSay = new CreatureSay(0, Say2.NPC_SHOUT, getName(), msg);
+		for (L2PcInstance player : L2World.getInstance().getPlayers())
 		{
-			_npc = npc;
-			_sm = sm;
-		}
-		
-		@Override
-		public final Boolean execute(final L2PcInstance player)
-		{
-			if (player != null)
+			if (Util.checkIfInRange(15000, player, this, true))
 			{
-				if (Util.checkIfInRange(15000, player, _npc, true))
-				{
-					player.sendPacket(_sm);
-				}
+				player.sendPacket(creatureSay);
 			}
-			return true;
 		}
 	}
 	

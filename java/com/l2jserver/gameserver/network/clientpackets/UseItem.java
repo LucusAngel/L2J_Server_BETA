@@ -21,13 +21,11 @@ package com.l2jserver.gameserver.network.clientpackets;
 import java.util.logging.Level;
 
 import com.l2jserver.Config;
-import com.l2jserver.gameserver.GameTimeController;
 import com.l2jserver.gameserver.ThreadPoolManager;
 import com.l2jserver.gameserver.ai.CtrlEvent;
 import com.l2jserver.gameserver.ai.CtrlIntention;
 import com.l2jserver.gameserver.ai.NextAction;
-import com.l2jserver.gameserver.ai.NextAction.NextActionCallback;
-import com.l2jserver.gameserver.enums.PcRace;
+import com.l2jserver.gameserver.enums.Race;
 import com.l2jserver.gameserver.enums.PrivateStoreType;
 import com.l2jserver.gameserver.handler.IItemHandler;
 import com.l2jserver.gameserver.handler.ItemHandler;
@@ -258,7 +256,7 @@ public final class UseItem extends L2GameClientPacket
 						
 						switch (activeChar.getRace())
 						{
-							case Kamael:
+							case KAMAEL:
 							{
 								switch (wpn.getItemType())
 								{
@@ -268,11 +266,11 @@ public final class UseItem extends L2GameClientPacket
 								}
 								break;
 							}
-							case Human:
-							case Dwarf:
-							case Elf:
-							case DarkElf:
-							case Orc:
+							case HUMAN:
+							case DWARF:
+							case ELF:
+							case DARK_ELF:
+							case ORC:
 							{
 								switch (wpn.getItemType())
 								{
@@ -296,7 +294,7 @@ public final class UseItem extends L2GameClientPacket
 				case L2Item.SLOT_FULL_ARMOR:
 				case L2Item.SLOT_LEGS:
 				{
-					if ((activeChar.getRace() == PcRace.Kamael) && ((item.getItem().getItemType() == ArmorType.HEAVY) || (item.getItem().getItemType() == ArmorType.MAGIC)))
+					if ((activeChar.getRace() == Race.KAMAEL) && ((item.getItem().getItemType() == ArmorType.HEAVY) || (item.getItem().getItemType() == ArmorType.MAGIC)))
 					{
 						activeChar.sendPacket(SystemMessageId.CANNOT_EQUIP_ITEM_DUE_TO_BAD_CONDITION);
 						return;
@@ -316,21 +314,14 @@ public final class UseItem extends L2GameClientPacket
 			if (activeChar.isCastingNow() || activeChar.isCastingSimultaneouslyNow())
 			{
 				// Creating next action class.
-				final NextAction nextAction = new NextAction(CtrlEvent.EVT_FINISH_CASTING, CtrlIntention.AI_INTENTION_CAST, new NextActionCallback()
-				{
-					@Override
-					public void doWork()
-					{
-						activeChar.useEquippableItem(item, true);
-					}
-				});
+				final NextAction nextAction = new NextAction(CtrlEvent.EVT_FINISH_CASTING, CtrlIntention.AI_INTENTION_CAST, () -> activeChar.useEquippableItem(item, true));
 				
 				// Binding next action to AI.
 				activeChar.getAI().setNextAction(nextAction);
 			}
 			else if (activeChar.isAttackingNow())
 			{
-				ThreadPoolManager.getInstance().scheduleGeneral(new WeaponEquipTask(item, activeChar), (activeChar.getAttackEndTime() - GameTimeController.getInstance().getGameTicks()) * GameTimeController.MILLIS_IN_TICK);
+				ThreadPoolManager.getInstance().scheduleGeneral(new WeaponEquipTask(item, activeChar), activeChar.getAttackEndTime() - System.currentTimeMillis());
 			}
 			else
 			{

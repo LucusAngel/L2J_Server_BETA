@@ -1,18 +1,18 @@
 /*
  * Copyright (C) 2004-2014 L2J Server
- * 
+ *
  * This file is part of L2J Server.
- * 
+ *
  * L2J Server is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * L2J Server is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -29,12 +29,11 @@ public final class LinePointIterator
 	private final int _dstX;
 	private final int _dstY;
 	
-	private final int _dx;
-	private final int _dy;
-	private final int _sx;
-	private final int _sy;
-	private int _err;
-	private int _e2;
+	private final long _dx;
+	private final long _dy;
+	private final long _sx;
+	private final long _sy;
+	private long _error;
 	
 	private boolean _first;
 	
@@ -44,13 +43,19 @@ public final class LinePointIterator
 		_srcY = srcY;
 		_dstX = dstX;
 		_dstY = dstY;
-		
-		_dx = Math.abs(dstX - srcX);
+		_dx = Math.abs((long) dstX - srcX);
+		_dy = Math.abs((long) dstY - srcY);
 		_sx = srcX < dstX ? 1 : -1;
-		_dy = -Math.abs(dstY - srcY);
 		_sy = srcY < dstY ? 1 : -1;
-		_err = _dx + _dy;
-		_e2 = 0;
+		
+		if (_dx >= _dy)
+		{
+			_error = _dx / 2;
+		}
+		else
+		{
+			_error = _dy / 2;
+		}
 		
 		_first = true;
 	}
@@ -62,21 +67,37 @@ public final class LinePointIterator
 			_first = false;
 			return true;
 		}
-		else if ((_srcX != _dstX) || (_srcY != _dstY))
+		else if (_dx >= _dy)
 		{
-			_e2 = 2 * _err;
-			if (_e2 > _dy)
+			if (_srcX != _dstX)
 			{
-				_err += _dy;
 				_srcX += _sx;
+				
+				_error += _dy;
+				if (_error >= _dx)
+				{
+					_srcY += _sy;
+					_error -= _dx;
+				}
+				
+				return true;
 			}
-			
-			if (_e2 < _dx)
+		}
+		else
+		{
+			if (_srcY != _dstY)
 			{
-				_err += _dx;
 				_srcY += _sy;
+				
+				_error += _dx;
+				if (_error >= _dy)
+				{
+					_srcX += _sx;
+					_error -= _dy;
+				}
+				
+				return true;
 			}
-			return true;
 		}
 		
 		return false;
