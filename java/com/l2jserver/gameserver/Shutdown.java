@@ -143,7 +143,7 @@ public class Shutdown extends Thread
 		{
 			_counterInstance._abort();
 			Announcements _an = Announcements.getInstance();
-			/*
+			/* MessageTable
 			_an.announceToAll("Server aborts " + MODE_TEXT[_shutdownMode] + " and continues normal operation!");
 			 */
 			_an.announceToAll(MessageTable.Messages[44].getExtra(1) + MODE_TEXT[_shutdownMode] + MessageTable.Messages[44].getExtra(2));
@@ -396,7 +396,7 @@ public class Shutdown extends Thread
 		{
 			_counterInstance._abort();
 			Announcements _an = Announcements.getInstance();
-			/*
+			/* MessageTable
 			_an.announceToAll("Server aborts " + MODE_TEXT[_shutdownMode] + " and continues normal operation!");
 			 */
 			_an.announceToAll(MessageTable.Messages[44].getExtra(1) + MODE_TEXT[_shutdownMode] + MessageTable.Messages[44].getExtra(2));

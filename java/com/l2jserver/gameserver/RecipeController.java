@@ -150,7 +150,7 @@ public class RecipeController
 		{
 			SystemMessage sm = SystemMessage.getSystemMessage(SystemMessageId.S2_S1);
 			sm.addItemName(recipeList.getItemId());
-			/*
+			/* MessageTable
 			sm.addString("You are busy creating.");
 			 */
 			sm.addString(MessageTable.Messages[4].getMessage());
@@ -521,7 +521,7 @@ public class RecipeController
 				}
 				else
 				{
-					/*
+					/* MessageTable
 					_target.sendMessage("Manufacturer " + _player.getName() + " used " + count + " " + item.getItemName());
 					 */
 					_target.sendMessage(MessageTable.Messages[8].getExtra(1) + _player.getName() + MessageTable.Messages[8].getExtra(2) + count + MessageTable.Messages[8].getExtra(3) + item.getItemName() + MessageTable.Messages[8].getExtra(4));

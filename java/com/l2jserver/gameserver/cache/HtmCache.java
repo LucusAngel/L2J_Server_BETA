@@ -147,7 +147,7 @@ public class HtmCache
 		String content = getHtm(prefix, path);
 		if (content == null)
 		{
-			/*
+			/* MessageTable
 			content = "<html><body>My text is missing:<br>" + path + "</body></html>";
 			 */
 			content = "<html><body>" + MessageTable.Messages[47].getMessage() + "<br>" + path + "</body></html>";
