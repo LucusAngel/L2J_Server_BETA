@@ -581,7 +581,10 @@ public abstract class L2Object extends ListenersContainer implements IIdentifiab
 		else if (isPlayer())
 		{
 			((L2Character) this).teleToLocation(new Location(0, 0, 0), false);
+			/* MessageTable.Messages[525]
 			((L2Character) this).sendMessage("Error with your coords, Please ask a GM for help!");
+			 */
+			((L2Character) this).sendMessage(525);
 		}
 	}
 	
