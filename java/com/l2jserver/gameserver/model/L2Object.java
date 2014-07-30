@@ -28,6 +28,7 @@ import com.l2jserver.gameserver.enums.ShotType;
 import com.l2jserver.gameserver.handler.ActionHandler;
 import com.l2jserver.gameserver.handler.ActionShiftHandler;
 import com.l2jserver.gameserver.handler.IActionHandler;
+import com.l2jserver.gameserver.handler.IActionShiftHandler;
 import com.l2jserver.gameserver.idfactory.IdFactory;
 import com.l2jserver.gameserver.instancemanager.InstanceManager;
 import com.l2jserver.gameserver.model.actor.L2Character;
@@ -133,7 +134,7 @@ public abstract class L2Object extends ListenersContainer implements IIdentifiab
 	
 	public void onActionShift(L2PcInstance player)
 	{
-		IActionHandler handler = ActionShiftHandler.getInstance().getHandler(getInstanceType());
+		IActionShiftHandler handler = ActionShiftHandler.getInstance().getHandler(getInstanceType());
 		if (handler != null)
 		{
 			handler.action(player, this, true);
@@ -452,9 +453,19 @@ public abstract class L2Object extends ListenersContainer implements IIdentifiab
 	}
 	
 	/**
-	 * @return {@code true} if object Npc Walker or Vehicle
+	 * Verifies if the object is a walker NPC.
+	 * @return {@code true} if object is a walker NPC, {@code false} otherwise
 	 */
 	public boolean isWalker()
+	{
+		return false;
+	}
+	
+	/**
+	 * Verifies if this object is a vehicle.
+	 * @return {@code true} if object is Vehicle, {@code false} otherwise
+	 */
+	public boolean isVehicle()
 	{
 		return false;
 	}

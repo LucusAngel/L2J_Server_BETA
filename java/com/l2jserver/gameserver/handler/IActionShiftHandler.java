@@ -16,38 +16,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.l2jserver.gameserver.model.actor.stat;
+package com.l2jserver.gameserver.handler;
 
-import com.l2jserver.gameserver.model.actor.L2Vehicle;
+import java.util.logging.Logger;
 
-public class VehicleStat extends CharStat
+import com.l2jserver.gameserver.enums.InstanceType;
+import com.l2jserver.gameserver.model.L2Object;
+import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
+
+public interface IActionShiftHandler
 {
-	private float _moveSpeed = 0;
-	private int _rotationSpeed = 0;
+	public static Logger _log = Logger.getLogger(IActionShiftHandler.class.getName());
 	
-	public VehicleStat(L2Vehicle activeChar)
-	{
-		super(activeChar);
-	}
+	public boolean action(L2PcInstance activeChar, L2Object target, boolean interact);
 	
-	@Override
-	public double getMoveSpeed()
-	{
-		return _moveSpeed;
-	}
-	
-	public final void setMoveSpeed(float speed)
-	{
-		_moveSpeed = speed;
-	}
-	
-	public final double getRotationSpeed()
-	{
-		return _rotationSpeed;
-	}
-	
-	public final void setRotationSpeed(int speed)
-	{
-		_rotationSpeed = speed;
-	}
+	public InstanceType getInstanceType();
 }

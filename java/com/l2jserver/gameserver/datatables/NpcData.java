@@ -104,7 +104,7 @@ public class NpcData extends DocumentParser
 						Map<String, Object> parameters = null;
 						Map<Integer, Skill> skills = null;
 						Set<Integer> clans = null;
-						Set<Integer> enemyClans = null;
+						Set<Integer> ignoreClanNpcIds = null;
 						Map<DropListScope, List<IDropItem>> dropLists = null;
 						set.set("id", npcId);
 						set.set("displayId", parseInteger(attrs, "displayId"));
@@ -271,16 +271,16 @@ public class NpcData extends DocumentParser
 													{
 														case "walk":
 														{
-															set.set("baseWalkSpd", parseFloat(attrs, "ground"));
-															set.set("baseSwimWalkSpd", parseFloat(attrs, "swim"));
-															set.set("baseFlyWalkSpd", parseFloat(attrs, "fly"));
+															set.set("baseWalkSpd", parseDouble(attrs, "ground"));
+															set.set("baseSwimWalkSpd", parseDouble(attrs, "swim"));
+															set.set("baseFlyWalkSpd", parseDouble(attrs, "fly"));
 															break;
 														}
 														case "run":
 														{
-															set.set("baseRunSpd", parseFloat(attrs, "ground"));
-															set.set("baseSwimRunSpd", parseFloat(attrs, "swim"));
-															set.set("baseFlyRunSpd", parseFloat(attrs, "fly"));
+															set.set("baseRunSpd", parseDouble(attrs, "ground"));
+															set.set("baseSwimRunSpd", parseDouble(attrs, "swim"));
+															set.set("baseFlyRunSpd", parseDouble(attrs, "fly"));
 															break;
 														}
 													}
@@ -389,13 +389,13 @@ public class NpcData extends DocumentParser
 															clans.add(getOrCreateClanId(clan_list_node.getTextContent()));
 															break;
 														}
-														case "enemy_clan":
+														case "ignore_npc_id":
 														{
-															if (enemyClans == null)
+															if (ignoreClanNpcIds == null)
 															{
-																enemyClans = new HashSet<>(1);
+																ignoreClanNpcIds = new HashSet<>(1);
 															}
-															enemyClans.add(getOrCreateClanId(clan_list_node.getTextContent()));
+															ignoreClanNpcIds.add(Integer.parseInt(clan_list_node.getTextContent()));
 															break;
 														}
 													}
@@ -591,7 +591,7 @@ public class NpcData extends DocumentParser
 						}
 						
 						template.setClans(clans);
-						template.setEnemyClans(enemyClans);
+						template.setIgnoreClanNpcIds(ignoreClanNpcIds);
 						
 						template.setDropLists(dropLists);
 					}
@@ -749,12 +749,12 @@ public class NpcData extends DocumentParser
 	
 	/**
 	 * Gets the all npc starting with.
-	 * @param letters of all the NPC templates which its name start with.
+	 * @param text of all the NPC templates which its name start with.
 	 * @return the template list for the given letter.
 	 */
-	public List<L2NpcTemplate> getAllNpcStartingWith(String... letters)
+	public List<L2NpcTemplate> getAllNpcStartingWith(String text)
 	{
-		return getTemplates(template -> Util.startsWith(letters, template.getName()) && template.isType("L2Npc"));
+		return getTemplates(template -> template.isType("L2Npc") && template.getName().startsWith(text));
 	}
 	
 	/**
