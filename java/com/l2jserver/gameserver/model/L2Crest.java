@@ -20,7 +20,7 @@ package com.l2jserver.gameserver.model;
 
 import com.l2jserver.Config;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
-import com.l2jserver.gameserver.model.L2Clan; // 488 Test
+import com.l2jserver.gameserver.model.L2Clan; // 603
 import com.l2jserver.gameserver.model.interfaces.IIdentifiable;
 import com.l2jserver.gameserver.network.serverpackets.AllyCrest;
 import com.l2jserver.gameserver.network.serverpackets.ExPledgeCrestLarge;
@@ -107,14 +107,14 @@ public final class L2Crest implements IIdentifiable
 			}
 			case PLEDGE_LARGE:
 			{
-				/* 488 Test-Start
+				/* 603-Start
 				activeChar.sendPacket(new ExPledgeCrestLarge(getId(), getData()));
 				 */
 				L2Clan clan = activeChar.getClan();
 				if (clan == null)
 					break;
-				activeChar.sendPacket(new ExPledgeCrestLarge(clan, getId(), getData())); // 488 Test
-				// 488 Test-End
+				activeChar.sendPacket(new ExPledgeCrestLarge(clan, getId(), getData())); // 603
+				// 603-End
 				path = "Crest.crest_" + Config.SERVER_ID + "_" + getId() + "_l";
 				break;
 			}

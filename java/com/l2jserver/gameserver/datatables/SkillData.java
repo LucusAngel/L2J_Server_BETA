@@ -36,7 +36,10 @@ public final class SkillData
 {
 	private static Logger _log = Logger.getLogger(SkillData.class.getName());
 	
-	/* private */ final Map<Integer, Skill> _skills = new HashMap<>(); // By ShanSoft
+	/* By ShanSoft
+	private final Map<Integer, Skill> _skills = new HashMap<>();
+	 */
+	final Map<Integer, Skill> _skills = new HashMap<>();
 	private final Map<Integer, Integer> _skillMaxLevel = new HashMap<>();
 	private final Set<Integer> _enchantable = new HashSet<>();
 	

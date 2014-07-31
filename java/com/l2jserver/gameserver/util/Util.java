@@ -47,6 +47,7 @@ import com.l2jserver.gameserver.network.serverpackets.AbstractHtmlPacket;
 import com.l2jserver.gameserver.network.serverpackets.NpcHtmlMessage;
 import com.l2jserver.gameserver.network.serverpackets.ShowBoard;
 import com.l2jserver.util.file.filter.ExtFilter;
+import com.l2jserver.gameserver.datatables.MessageTable;
 
 /**
  * General Utility functions related to game server.
@@ -670,7 +671,10 @@ public final class Util
 			}
 			else
 			{
+				/* MessageTable
 				activeChar.sendPacket(new ShowBoard("<html><body><br><center>Error: HTML was too long!</center></body></html>", "101"));
+				 */
+				activeChar.sendPacket(new ShowBoard("<html><body><br><center>" + MessageTable.Messages[217].getMessage() + "</center></body></html>", "101"));
 				activeChar.sendPacket(new ShowBoard(null, "102"));
 				activeChar.sendPacket(new ShowBoard(null, "103"));
 			}

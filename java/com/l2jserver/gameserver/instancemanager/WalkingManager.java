@@ -270,7 +270,7 @@ public final class WalkingManager extends DocumentParser
 						npc.sendDebugMessage("Route '" + routeName + "': spawn point is same with first waypoint, adjusted to next");
 					}
 					
-					/* rocknow-God
+					/* 603
 					if (!npc.isInsideRadius(node, 3000, true, false))
 					 */
 					if (!npc.isInsideRadius(node, 4000, true, false))

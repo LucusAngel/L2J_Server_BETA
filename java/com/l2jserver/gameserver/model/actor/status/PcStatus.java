@@ -248,7 +248,7 @@ public class PcStatus extends PlayableStatus
 				smsg.addString(getActiveChar().getName());
 				smsg.addCharName(attacker);
 				smsg.addInt(fullValue);
-				smsg.addDamage(getActiveChar().getObjectId(), attacker.getObjectId(), fullValue * -1); // rocknow-God (by otfnir)
+				smsg.addDamage(getActiveChar().getObjectId(), attacker.getObjectId(), fullValue * -1); // 603 (by otfnir)
 				getActiveChar().sendPacket(smsg);
 				
 				if (tDmg > 0)
@@ -257,7 +257,7 @@ public class PcStatus extends PlayableStatus
 					smsg.addString(getActiveChar().getSummon().getName());
 					smsg.addCharName(attacker);
 					smsg.addInt(tDmg);
-					smsg.addDamage(getActiveChar().getObjectId(), attacker.getObjectId(), tDmg * -1); // rocknow-God (by otfnir)
+					smsg.addDamage(getActiveChar().getObjectId(), attacker.getObjectId(), tDmg * -1); // 603 (by otfnir)
 					getActiveChar().sendPacket(smsg);
 					
 					if (attackerPlayer != null)

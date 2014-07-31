@@ -85,7 +85,7 @@ public final class Elementals
 		192, // Level 11
 		210, // Level 12
 		240, // Level 13
-		300, // Level 14 // rocknow-God
+		300, // Level 14 // 603
 		Integer.MAX_VALUE
 	// TODO: Higher stones
 	};

@@ -60,7 +60,10 @@ import com.l2jserver.gameserver.util.Util;
  */
 public class NpcData extends DocumentParser
 {
-	/* private */ final Map<Integer, L2NpcTemplate> _npcs = new ConcurrentHashMap<>(); // l2jtw add
+	/* l2jtw add
+	private final Map<Integer, L2NpcTemplate> _npcs = new ConcurrentHashMap<>();
+	 */
+	final Map<Integer, L2NpcTemplate> _npcs = new ConcurrentHashMap<>();
 	private final Map<String, Integer> _clans = new ConcurrentHashMap<>();
 	// SQL Queries
 	private static final String SELECT_MINION_ALL = "SELECT * FROM minions ORDER BY boss_id";

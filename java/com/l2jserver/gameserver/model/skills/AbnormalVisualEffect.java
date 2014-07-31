@@ -91,7 +91,7 @@ public enum AbnormalVisualEffect
 	BR_VESPER3(0x000080, 2),
 	BR_SOUL_AVATAR(0x000100, 2); // High Five
 	 */
-	// rocknow-God-Start
+	// 603-Start
 	NONE(0x0000000, 0, 0),
 	DOT_BLEEDING(0x00000001, 0, 1),
 	DOT_POISON(0x00000002, 0, 2),
@@ -171,7 +171,7 @@ public enum AbnormalVisualEffect
 	BR_VESPER2(0x000040, 2, 0),
 	BR_VESPER3(0x000080, 2, 0),
 	BR_SOUL_AVATAR(0x000100, 2, 0); // High Five
-	// rocknow-God-End
+	// 603-End
 	
 	private static final Logger _log = Logger.getLogger(AbnormalVisualEffect.class.getName()); // l2jtw add
 	/** Int mask. */

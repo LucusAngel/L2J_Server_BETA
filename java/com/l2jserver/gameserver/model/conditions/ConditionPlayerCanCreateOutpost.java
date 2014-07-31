@@ -61,17 +61,26 @@ public class ConditionPlayerCanCreateOutpost extends Condition
 		L2PcInstance player = env.getPlayer().getActingPlayer();
 		if (((fort != null) && (fort.getResidenceId() == 0)) || ((castle != null) && (castle.getResidenceId() == 0)))
 		{
+			/* MessageTable.Messages[143]
 			player.sendMessage("You must be on fort or castle ground to construct an outpost or flag.");
+			 */
+			player.sendMessage(143);
 			canCreateOutpost = false;
 		}
 		else if (((fort != null) && !fort.getZone().isActive()) || ((castle != null) && !castle.getZone().isActive()))
 		{
+			/* MessageTable.Messages[144]
 			player.sendMessage("You can only construct an outpost or flag on siege field.");
+			 */
+			player.sendMessage(144);
 			canCreateOutpost = false;
 		}
 		else if (!player.isClanLeader())
 		{
+			/* MessageTable.Messages[145]
 			player.sendMessage("You must be a clan leader to construct an outpost or flag.");
+			 */
+			player.sendMessage(145);
 			canCreateOutpost = false;
 		}
 		else if (TerritoryWarManager.getInstance().getHQForClan(player.getClan()) != null)

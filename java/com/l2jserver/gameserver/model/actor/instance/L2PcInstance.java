@@ -102,7 +102,7 @@ import com.l2jserver.gameserver.handler.IItemHandler;
 import com.l2jserver.gameserver.handler.ItemHandler;
 import com.l2jserver.gameserver.idfactory.IdFactory;
 import com.l2jserver.gameserver.instancemanager.AntiFeedManager;
-import com.l2jserver.gameserver.instancemanager.AwakingManager; // rocknow-God-Awaking
+import com.l2jserver.gameserver.instancemanager.AwakingManager; // 603
 import com.l2jserver.gameserver.instancemanager.CastleManager;
 import com.l2jserver.gameserver.instancemanager.CoupleManager;
 import com.l2jserver.gameserver.instancemanager.CursedWeaponsManager;
@@ -271,7 +271,7 @@ import com.l2jserver.gameserver.network.serverpackets.ChangeWaitType;
 import com.l2jserver.gameserver.network.serverpackets.CharInfo;
 import com.l2jserver.gameserver.network.serverpackets.ConfirmDlg;
 import com.l2jserver.gameserver.network.serverpackets.EtcStatusUpdate;
-import com.l2jserver.gameserver.network.serverpackets.ExAcquirableSkillListByClass; // rocknow-God-Awaking
+import com.l2jserver.gameserver.network.serverpackets.ExAcquirableSkillListByClass; // 603
 import com.l2jserver.gameserver.network.serverpackets.ExAutoSoulShot;
 import com.l2jserver.gameserver.network.serverpackets.ExBrExtraUserInfo;
 import com.l2jserver.gameserver.network.serverpackets.ExDominionWarStart;
@@ -2434,7 +2434,7 @@ public final class L2PcInstance extends L2Playable
 				{
 					_clan.addReputationScore(Config.JOIN_ACADEMY_MAX_REP_SCORE, true);
 				}
-				/* rocknow-God-Awaking
+				/* 603
 				else if (getLvlJoinedAcademy() >= 39)
 				 */
 				else if (getLvlJoinedAcademy() >= 76)
@@ -2486,7 +2486,7 @@ public final class L2PcInstance extends L2Playable
 			}
 			
 			// Add AutoGet skills and normal skills and/or learnByFS depending on configurations.
-			AwakingManager.getInstance().AwakingRemoveSkills(this); // rocknow-God-Awaking
+			AwakingManager.getInstance().AwakingRemoveSkills(this); // 603
 			rewardSkills();
 			
 			if (!canOverrideCond(PcCondOverride.SKILL_CONDITIONS) && Config.DECREASE_SKILL_LEVEL)
@@ -2960,12 +2960,12 @@ public final class L2PcInstance extends L2Playable
 		_onlineTime = time;
 		_onlineBeginTime = System.currentTimeMillis();
 	}
-	// rocknow-God-Awaking-Start
+	// 603-Start
 	public long getOnlineTime()
 	{
 		return _onlineTime;
 	}
-	// rocknow-God-Awaking-End
+	// 603-End
 	
 	/**
 	 * Return the PcInventory Inventory of the L2PcInstance contained in _inventory.
@@ -6336,7 +6336,7 @@ public final class L2PcInstance extends L2Playable
 		}
 		
 		// Adjust item quantity
-		/* rocknow-God-Awaking-Start
+		/* 603-Start
 		if (arrows.getCount() > 1)
 		 */
 		if (arrows.getItem().getId() >= 32249 && arrows.getItem().getId() <= 32262)
@@ -6344,7 +6344,7 @@ public final class L2PcInstance extends L2Playable
 			return;
 		}
 		else if (arrows.getCount() > 1)
-		// rocknow-God-Awaking-End
+		// 603-End
 		{
 			synchronized (arrows)
 			{
@@ -8025,7 +8025,10 @@ public final class L2PcInstance extends L2Playable
 					
 					if (skill == null)
 					{
+						/* MessageTable
 						_log.warning("Skipped null skill Id: " + id + " Level: " + level + " while restoring player skills for playerObjId: " + getObjectId());
+						 */
+						_log.warning(MessageTable.Messages[2002].getExtra(1) + id + MessageTable.Messages[2002].getExtra(2) + level + MessageTable.Messages[2002].getExtra(3) + getObjectId());
 						continue;
 					}
 					
@@ -10257,14 +10260,14 @@ public final class L2PcInstance extends L2Playable
 		}
 		
 		sendPacket(sl);
-		sendPacket(new ExAcquirableSkillListByClass(this)); // rocknow-God-Awaking
+		sendPacket(new ExAcquirableSkillListByClass(this)); // 603
 	}
-	// rocknow-God-Awaking-Start
+	// 603-Start
 	public void sendExAcquirableSkillListByClass(L2PcInstance player)
 	{
 		player.sendPacket(new ExAcquirableSkillListByClass(player));
 	}
-	// rocknow-God-Awaking-End
+	// 603-End
 	
 	/**
 	 * 1. Add the specified class ID as a subclass (up to the maximum number of <b>three</b>) for this character.<BR>
@@ -12792,7 +12795,7 @@ public final class L2PcInstance extends L2Playable
 			sm.addPcName(this);
 			sm.addCharName(target);
 			sm.addInt(damage);
-			sm.addDamage(target.getObjectId(), this.getObjectId(), damage * -1); // rocknow-God (by otfnir)
+			sm.addDamage(target.getObjectId(), this.getObjectId(), damage * -1); // 603 (by otfnir)
 		}
 		sendPacket(sm);
 	}
@@ -13456,7 +13459,7 @@ public final class L2PcInstance extends L2Playable
 					sendPacket(new RelationChanged(activeChar.getSummon(), relation2, activeChar.isAutoAttackable(this)));
 				}
 			}
-			activeChar.sendPacket(new CharInfo(this)); // rocknow-God
+			activeChar.sendPacket(new CharInfo(this)); // 603
 		}
 		
 		switch (getPrivateStoreType())
@@ -13474,7 +13477,7 @@ public final class L2PcInstance extends L2Playable
 				activeChar.sendPacket(new RecipeShopMsg(this));
 				break;
 		}
-		activeChar.sendPacket(new CharInfo(this)); // rocknow-God
+		activeChar.sendPacket(new CharInfo(this)); // 603
 	}
 	
 	public void showQuestMovie(int id)
@@ -13609,7 +13612,7 @@ public final class L2PcInstance extends L2Playable
 			if (friend != null)
 			{
 				friend.sendPacket(pkt);
-				friend.sendPacket(new FriendList(friend)); // rocknow-God
+				friend.sendPacket(new FriendList(friend)); // 603
 			}
 		}
 	}
@@ -14602,7 +14605,7 @@ public final class L2PcInstance extends L2Playable
 	{
 		return (_actionMask & act.getMask()) == act.getMask();
 	}
-	// rocknow-God-Awaking-Start
+	// 603-Start
 	public boolean isAwaken()
 	{
 		if (getActiveClass() > 138)
@@ -14620,7 +14623,7 @@ public final class L2PcInstance extends L2Playable
 		}
 		return countOfSubClassAwaking;
 	}
-	// rocknow-God-Awaking-End
+	// 603-End
 	// l2jtw add start
 	public boolean hasFeather()
 	{

@@ -488,7 +488,13 @@ public class L2Attackable extends L2Npc
 							// mob = 24, atk = 10, diff = -14 (full xp)
 							// mob = 24, atk = 28, diff = 4 (some xp)
 							// mob = 24, atk = 50, diff = 26 (no xp)
-							final int levelDiff = attacker.getLevel() - getLevel();
+							/* GS-comment-022 - temp fix final */ int levelDiff = attacker.getLevel() - getLevel();
+							// GS-comment-022 - temp fix start (when have LV85 up monsters, delete me)
+							if ((getLevel() > 84) && (levelDiff > 8))
+							{
+								levelDiff = 8;
+							}
+							// GS-comment-022 - temp fix end
 							
 							final int[] expSp = calculateExpAndSp(levelDiff, damage, totalDamage);
 							long exp = expSp[0];
@@ -596,7 +602,13 @@ public class L2Attackable extends L2Npc
 						}
 						
 						// Calculate the level difference between Party and L2Attackable
-						final int levelDiff = partyLvl - getLevel();
+						/* GS-comment-022 - temp fix final */ int levelDiff = partyLvl - getLevel();
+							// GS-comment-022 - temp fix start (when have LV85 up monsters, delete me)
+							if ((getLevel() > 84) && (levelDiff > 8))
+							{
+								levelDiff = 8;
+							}
+							// GS-comment-022 - temp fix end
 						
 						// Calculate Exp and SP rewards
 						final int[] expSp = calculateExpAndSp(levelDiff, partyDmg, totalDamage);
@@ -1372,7 +1384,16 @@ public class L2Attackable extends L2Npc
 		
 		if ((Config.ALT_GAME_EXPONENT_XP == 0) && (Config.ALT_GAME_EXPONENT_SP == 0))
 		{
+			/* l2jtw add start : GS-comment-022
 			if (diff > 5) // formula revised May 07
+			 */
+			if (diff > 8)
+			{
+				xp = 0;
+				sp = 0;
+			}
+			else if (diff > 5) // formula revised May 07
+			// l2jtw add end
 			{
 				double pow = Math.pow((double) 5 / 6, diff - 5);
 				xp = xp * pow;

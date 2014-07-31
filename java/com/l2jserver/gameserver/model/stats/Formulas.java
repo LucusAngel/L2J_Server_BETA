@@ -197,7 +197,7 @@ public final class Formulas
 		if (cha.isPlayer())
 		{
 			cha.addStatFunc(FuncMaxHpMul.getInstance());
-			// rocknow-God cha.addStatFunc(FuncMaxCpMul.getInstance());
+			//603 cha.addStatFunc(FuncMaxCpMul.getInstance());
 			cha.addStatFunc(FuncMaxMpMul.getInstance());
 			cha.addStatFunc(FuncPAtkMod.getInstance());
 			cha.addStatFunc(FuncMAtkMod.getInstance());
@@ -209,7 +209,7 @@ public final class Formulas
 			cha.addStatFunc(FuncAtkEvasion.getInstance());
 			cha.addStatFunc(FuncPAtkSpeed.getInstance());
 			cha.addStatFunc(FuncMAtkSpeed.getInstance());
-			// rocknow-God cha.addStatFunc(FuncMoveSpeed.getInstance());
+			//603 cha.addStatFunc(FuncMoveSpeed.getInstance());
 			
 			cha.addStatFunc(FuncHenna.getInstance(Stats.STAT_STR));
 			cha.addStatFunc(FuncHenna.getInstance(Stats.STAT_DEX));

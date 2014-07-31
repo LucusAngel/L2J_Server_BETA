@@ -98,7 +98,7 @@ public class Duel
 			broadcastToTeam2(sm);
 		}
 		// Schedule duel start
-		savePlayerConditions(); // rocknow-God
+		savePlayerConditions(); // 603
 		ThreadPoolManager.getInstance().scheduleGeneral(new ScheduleStartDuelTask(this), 3000);
 	}
 	
@@ -244,7 +244,7 @@ public class Duel
 					// players need to be teleportet first
 					// TODO: stadia manager needs a function to return an unused stadium for duels
 					// currently only teleports to the same stadium
-					/* rocknow-God
+					/* 603
 					_duel.teleportPlayers(-83760, -238825, -3331);
 					 */
 					_duel.teleportPlayers(149478, 46718, -3412);
@@ -363,7 +363,7 @@ public class Duel
 	public void startDuel()
 	{
 		// Save player Conditions
-		/* rocknow-God
+		/* 603
 		savePlayerConditions();
 		 */
 		
@@ -378,7 +378,7 @@ public class Duel
 		
 		if (_partyDuel)
 		{
-			// rocknow-God-Start
+			// 603-Start
 			// Send duel Start packets
 			ExDuelReady ready = new ExDuelReady(1);
 			ExDuelStart start = new ExDuelStart(1);
@@ -387,7 +387,7 @@ public class Duel
 			broadcastToTeam2(ready);
 			broadcastToTeam1(start);
 			broadcastToTeam2(start);
-			// rocknow-God-End
+			// 603-End
 			// set isInDuel() state
 			// cancel all active trades, just in case? xD
 			for (L2PcInstance temp : _playerA.getParty().getMembers())
@@ -407,7 +407,7 @@ public class Duel
 				broadcastToTeam1(new ExDuelUpdateUserInfo(temp));
 			}
 			
-			/* rocknow-God Close
+			/* 603 Close
 			// Send duel Start packets
 			ExDuelReady ready = new ExDuelReady(1);
 			ExDuelStart start = new ExDuelStart(1);
@@ -420,7 +420,7 @@ public class Duel
 		}
 		else
 		{
-			/* rocknow-God Close
+			/* 603 Close
 			// set isInDuel() state
 			_playerA.setIsInDuel(_duelId);
 			_playerA.setTeam(Team.BLUE);
@@ -436,13 +436,13 @@ public class Duel
 			broadcastToTeam2(ready);
 			broadcastToTeam1(start);
 			broadcastToTeam2(start);
-			// rocknow-God-Start
+			// 603-Start
 			// set isInDuel() state
 			_playerA.setIsInDuel(_duelId);
 			_playerA.setTeam(Team.BLUE);
 			_playerB.setIsInDuel(_duelId);
 			_playerB.setTeam(Team.RED);
-			// rocknow-God-End
+			// 603-End
 			
 			broadcastToTeam1(new ExDuelUpdateUserInfo(_playerB));
 			broadcastToTeam2(new ExDuelUpdateUserInfo(_playerA));

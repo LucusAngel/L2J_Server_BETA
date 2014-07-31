@@ -149,7 +149,7 @@ public abstract class DocumentBase
 	/* l2jtw add : GS-comment-008
 	private final File _file;
 	 */
-	private File _file; // l2jtw add : GS-comment-008
+	private File _file;
 	protected Map<String, String[]> _tables;
 	
 	protected DocumentBase(File pFile)

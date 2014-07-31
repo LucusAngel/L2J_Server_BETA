@@ -83,7 +83,7 @@ public final class ClassInfo
 		{
 			classClientId += 1438;
 		}
-		// rocknow-God-Awaking-Start
+		// 603-Start
 		else if ((classClientId >= 139) && (classClientId <= 146))
 		{
 			classClientId += 2338;
@@ -92,7 +92,7 @@ public final class ClassInfo
 		{
 			classClientId += 2884;
 		}
-		// rocknow-God-Awaking-End
+		// 603-End
 		return classClientId;
 	}
 	

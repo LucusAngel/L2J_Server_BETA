@@ -152,7 +152,7 @@ import com.l2jserver.gameserver.network.serverpackets.StatusUpdate;
 import com.l2jserver.gameserver.network.serverpackets.StopMove;
 import com.l2jserver.gameserver.network.serverpackets.SystemMessage;
 import com.l2jserver.gameserver.network.serverpackets.TeleportToLocation;
-import com.l2jserver.gameserver.network.serverpackets.ExTeleportToLocation; // 488
+import com.l2jserver.gameserver.network.serverpackets.ExTeleportToLocation; // 603
 import com.l2jserver.gameserver.pathfinding.AbstractNodeLoc;
 import com.l2jserver.gameserver.pathfinding.PathFinding;
 import com.l2jserver.gameserver.taskmanager.AttackStanceTaskManager;
@@ -593,7 +593,7 @@ public abstract class L2Character extends L2Object implements ISkillsHolder, IDe
 			}
 		}
 	}
-	// rocknow-God-Awaking-Start
+	// 603-Start
 	public void broadcastPacket(L2GameServerPacket mov, boolean sendToSelf)
 	{
 		Collection<L2PcInstance> plrs = getKnownList().getKnownPlayers().values();
@@ -608,7 +608,7 @@ public abstract class L2Character extends L2Object implements ISkillsHolder, IDe
 			}
 		}
 	}
-	// rocknow-God-Awaking-End
+	// 603-End
 	
 	/**
 	 * Send a packet to the L2Character AND to all L2PcInstance in the radius (max knownlist radius) from the L2Character.<br>
@@ -798,7 +798,7 @@ public abstract class L2Character extends L2Object implements ISkillsHolder, IDe
 		
 		// remove the object from its old location
 		decayMe();
-		broadcastPacket(new ExTeleportToLocation(this, x, y, z, heading)); // 488
+		broadcastPacket(new ExTeleportToLocation(this, x, y, z, heading)); // 603
 		
 		// Set the x,y,z position of the L2Object and if necessary modify its _worldRegion
 		setXYZ(x, y, z);
@@ -2085,7 +2085,7 @@ public abstract class L2Character extends L2Object implements ISkillsHolder, IDe
 			// Send a Server->Client packet SetupGauge with the color of the gauge and the casting time
 			if (isPlayer() && !simultaneously)
 			{
-				/* rocknow-God-Awaking
+				/* 603
 				sendPacket(new SetupGauge(SetupGauge.BLUE, skillTime));
 				 */
 				sendPacket(new SetupGauge(0, skillTime));

@@ -23,7 +23,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import com.l2jserver.Config;
 import com.l2jserver.gameserver.datatables.ExperienceTable;
 import com.l2jserver.gameserver.datatables.PetDataTable;
-import com.l2jserver.gameserver.instancemanager.AwakingManager; // rocknow-God-Awaking
+import com.l2jserver.gameserver.instancemanager.AwakingManager; // 603
 import com.l2jserver.gameserver.model.L2PetLevelData;
 import com.l2jserver.gameserver.model.PcCondOverride;
 import com.l2jserver.gameserver.model.actor.instance.L2ClassMasterInstance;
@@ -65,7 +65,7 @@ public class PcStat extends PlayableStat
 	
 	public static final int VITALITY_LEVELS[] =
 	{
-		/* rocknow-God
+		/* 603
 		240,
 		2000,
 		13000,
@@ -278,12 +278,12 @@ public class PcStat extends PlayableStat
 			getActiveChar().sendPacket(SystemMessageId.YOU_INCREASED_YOUR_LEVEL);
 			
 			L2ClassMasterInstance.showQuestionMark(getActiveChar());
-			// rocknow-God-Awaking-Start
+			// 603-Start
 			if (Config.Auto_Awaking && getLevel() > 84 && !getActiveChar().isAwaken() && !getActiveChar().isSubClassActive())
 				AwakingManager.getInstance().SendReqAwaking(getActiveChar());
 			else if (Config.Auto_Awaking && getLevel() > 84 && !getActiveChar().isAwaken() && getActiveChar().isSubClassActive() && getActiveChar().getAwakenSubClassCount() < 1)
 				AwakingManager.getInstance().SendReqAwaking(getActiveChar());
-			// rocknow-God-Awaking-End
+			// 603-End
 		}
 		
 		// Give AutoGet skills and all normal skills if Auto-Learn is activated.

@@ -84,11 +84,11 @@ public class FuncEnchant extends Func
 		{
 			switch (item.getItem().getItemGradeSPlus())
 			{
-				// rocknow-God-Start
+				// 603-Start
 				case R:
 					env.addValue((5 * enchant) + (10 * overenchant));
 					break;
-				// rocknow-God-End
+				// 603-End
 				case S:
 					// M. Atk. increases by 4 for all weapons.
 					// Starting at +4, M. Atk. bonus double.
@@ -116,7 +116,7 @@ public class FuncEnchant extends Func
 			final WeaponType type = (WeaponType) item.getItemType();
 			switch (item.getItem().getItemGradeSPlus())
 			{
-				// rocknow-God-Start
+				// 603-Start
 				case R:
 					if (item.getWeaponItem().getBodyPart() == L2Item.SLOT_LR_HAND)
 					{
@@ -140,7 +140,7 @@ public class FuncEnchant extends Func
 						env.addValue((6 * enchant) + (12 * overenchant));
 					}
 					break;
-				// rocknow-God-End
+				// 603-End
 				case S:
 					if (item.getWeaponItem().getBodyPart() == L2Item.SLOT_LR_HAND)
 					{

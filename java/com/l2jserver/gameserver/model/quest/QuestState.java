@@ -371,7 +371,7 @@ public final class QuestState
 		final Quest q = getQuest();
 		if (!q.isCustomQuest() && (cond > 0))
 		{
-			/* 488
+			/* 603
 			_player.sendPacket(new ExShowQuestMark(q.getId()));
 			 */
 			_player.sendPacket(new ExShowQuestMark(q.getId(), cond));

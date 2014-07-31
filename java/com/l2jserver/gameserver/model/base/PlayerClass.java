@@ -18,7 +18,7 @@
  */
 package com.l2jserver.gameserver.model.base;
 
-import static com.l2jserver.gameserver.model.base.ClassLevel.Awaken; // rocknow-God-Awaking
+import static com.l2jserver.gameserver.model.base.ClassLevel.Awaken; // 603
 import static com.l2jserver.gameserver.model.base.ClassLevel.First;
 import static com.l2jserver.gameserver.model.base.ClassLevel.Fourth;
 import static com.l2jserver.gameserver.model.base.ClassLevel.Second;

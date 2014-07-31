@@ -225,7 +225,7 @@ public final class MapRegionManager extends DocumentParser
 	 * @param activeChar
 	 * @return
 	 */
-	// rocknow-God-Awaking-Start
+	// 603-Start
 	public int getClosestTownId(L2Character activeChar)
 	{
 		L2MapRegion region = getMapRegion(activeChar);
@@ -235,7 +235,7 @@ public final class MapRegionManager extends DocumentParser
 		
 		return 0;
 	}
-	// rocknow-God-Awaking-End
+	// 603-End
 	public int getAreaCastle(L2Character activeChar)
 	{
 		L2MapRegion region = getMapRegion(activeChar);

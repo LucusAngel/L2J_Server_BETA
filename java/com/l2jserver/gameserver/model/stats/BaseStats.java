@@ -110,11 +110,10 @@ public enum BaseStats
 		@Override
 		public final double calcBonus(L2Character actor)
 		{
-			/* l2jtw start
+			/* l2jtw add
 			return STRbonus[actor.getSTR()];
 			 */
 			return STRbonus[getSafeStat(actor.getSTR())];
-			// l2jtw end
 		}
 	}
 	
@@ -123,11 +122,10 @@ public enum BaseStats
 		@Override
 		public final double calcBonus(L2Character actor)
 		{
-			/* l2jtw start
+			/* l2jtw add
 			return INTbonus[actor.getINT()];
 			 */
 			return INTbonus[getSafeStat(actor.getINT())];
-			// l2jtw end
 		}
 	}
 	
@@ -136,11 +134,10 @@ public enum BaseStats
 		@Override
 		public final double calcBonus(L2Character actor)
 		{
-			/* l2jtw start
+			/* l2jtw add
 			return DEXbonus[actor.getDEX()];
 			 */
 			return DEXbonus[getSafeStat(actor.getDEX())];
-			// l2jtw end
 		}
 	}
 	
@@ -149,11 +146,10 @@ public enum BaseStats
 		@Override
 		public final double calcBonus(L2Character actor)
 		{
-			/* l2jtw start
+			/* l2jtw add
 			return WITbonus[actor.getWIT()];
 			 */
 			return WITbonus[getSafeStat(actor.getWIT())];
-			// l2jtw end
 		}
 	}
 	
@@ -162,11 +158,10 @@ public enum BaseStats
 		@Override
 		public final double calcBonus(L2Character actor)
 		{
-			/* l2jtw start
+			/* l2jtw add
 			return CONbonus[actor.getCON()];
 			 */
 			return CONbonus[getSafeStat(actor.getCON())];
-			// l2jtw end
 		}
 	}
 	
@@ -175,11 +170,10 @@ public enum BaseStats
 		@Override
 		public final double calcBonus(L2Character actor)
 		{
-			/* l2jtw start
+			/* l2jtw add
 			return MENbonus[actor.getMEN()];
 			 */
 			return MENbonus[getSafeStat(actor.getMEN())];
-			// l2jtw end
 		}
 	}
 	

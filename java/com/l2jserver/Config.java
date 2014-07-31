@@ -1378,7 +1378,7 @@ public final class Config
 			KNIGHT_UNIT_COST = Feature.getInt("CreateKnightUnitCost", 10000);
 			KNIGHT_REINFORCE_COST = Feature.getInt("ReinforceKnightUnitCost", 5000);
 			BALLISTA_POINTS = Feature.getInt("KillBallistaPoints", 30);
-			BLOODALLIANCE_POINTS = Feature.getInt("BloodAlliancePoints", 800); // rocknow-God
+			BLOODALLIANCE_POINTS = Feature.getInt("BloodAlliancePoints", 800); // 603
 			BLOODOATH_POINTS = Feature.getInt("BloodOathPoints", 200);
 			KNIGHTSEPAULETTE_POINTS = Feature.getInt("KnightsEpaulettePoints", 20);
 			REPUTATION_SCORE_PER_KILL = Feature.getInt("ReputationScorePerKill", 1);
@@ -1526,7 +1526,7 @@ public final class Config
 			FEE_DELETE_SUBCLASS_SKILLS = Character.getInt("FeeDeleteSubClassSkills", 10000000);
 			ENABLE_VITALITY = Character.getBoolean("EnableVitality", true);
 			RECOVER_VITALITY_ON_RECONNECT = Character.getBoolean("RecoverVitalityOnReconnect", true);
-			STARTING_VITALITY_POINTS = Character.getInt("StartingVitalityPoints", 140000); // rocknow-God
+			STARTING_VITALITY_POINTS = Character.getInt("StartingVitalityPoints", 140000); // 603
 			MAX_BONUS_EXP = Character.getDouble("MaxExpBonus", 3.5);
 			MAX_BONUS_SP = Character.getDouble("MaxSpBonus", 3.5);
 			MAX_RUN_SPEED = Character.getInt("MaxRunSpeed", 250);

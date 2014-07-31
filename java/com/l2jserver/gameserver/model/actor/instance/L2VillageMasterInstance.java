@@ -578,13 +578,13 @@ public class L2VillageMasterInstance extends L2NpcInstance
 						
 						html.setFile(player.getHtmlPrefix(), "data/html/villagemaster/SubClass_AddOk.htm");
 						
-						/* rocknow-God-Start
+						/* 603-Start
 						player.sendPacket(SystemMessageId.ADD_NEW_SUBCLASS); // Subclass added.
 						 */
 						SystemMessage sm = SystemMessage.getSystemMessage(SystemMessageId.ADD_NEW_SUBCLASS_S1);
 						sm.addString(ClassListData.getInstance().getClass(paramOne).getClassName());
 						player.sendPacket(sm); // Subclass added.
-						// rocknow-God-End
+						// 603-End
 					}
 					else
 					{
@@ -716,13 +716,13 @@ public class L2VillageMasterInstance extends L2NpcInstance
 						html.setFile(player.getHtmlPrefix(), "data/html/villagemaster/SubClass_ModifyOk.htm");
 						html.replace("%name%", ClassListData.getInstance().getClass(paramTwo).getClientCode());
 						
-						/* rocknow-God-Start
+						/* 603-Start
 						player.sendPacket(SystemMessageId.ADD_NEW_SUBCLASS); // Subclass added.
 						 */
 						SystemMessage sm = SystemMessage.getSystemMessage(SystemMessageId.ADD_NEW_SUBCLASS_S1);
 						sm.addString(ClassListData.getInstance().getClass(paramTwo).getClassName());
 						player.sendPacket(sm); // Subclass added.
-						// rocknow-God-End
+						// 603-End
 					}
 					else
 					{
@@ -795,7 +795,7 @@ public class L2VillageMasterInstance extends L2NpcInstance
 	{
 		// get player base class
 		final int currentBaseId = player.getBaseClass();
-		/* rocknow-God
+		/* 603
 		final ClassId baseCID = ClassId.getClassId(currentBaseId);
 		
 		// we need 2nd occupation ID
@@ -894,7 +894,7 @@ public class L2VillageMasterInstance extends L2NpcInstance
 		
 		// get player base class
 		final int currentBaseId = player.getBaseClass();
-		/* rocknow-God
+		/* 603
 		final ClassId baseCID = ClassId.getClassId(currentBaseId);
 		
 		// we need 2nd occupation ID

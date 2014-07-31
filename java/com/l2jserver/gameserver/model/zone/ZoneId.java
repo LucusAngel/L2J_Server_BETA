@@ -47,7 +47,7 @@ public enum ZoneId
 	NO_BOOKMARK(20),
 	NO_ITEM_DROP(21),
 	NO_RESTART(22),
-	JUMP(23); // rocknow-God-Awaking
+	JUMP(23); // 603
 	
 	private final int _id;
 	

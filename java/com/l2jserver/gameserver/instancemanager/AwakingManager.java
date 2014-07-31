@@ -76,7 +76,7 @@ public class AwakingManager
 	
 	public void load()
 	{
-		//_log.info(getClass().getSimpleName()+": Initializing");
+		//_log.info(getClass().getSimpleName() + ": Initializing");
 		_CA.clear();
 		
 		
@@ -99,7 +99,7 @@ public class AwakingManager
 		_CA.put(96, 176);	_CA.put(104, 177);	_CA.put(111, 178);
 		_CA.put(97, 179);	_CA.put(105, 180);	_CA.put(112, 181);
 		
-		//_log.info(getClass().getSimpleName()+": Loaded 8 Awaking class for " + _CA.size() + " normal class.");
+		//_log.info(getClass().getSimpleName() + ": Loaded 8 Awaking class for " + _CA.size() + " normal class.");
 	}
 	
 	public void SetAwakingId(L2PcInstance player)
@@ -174,12 +174,13 @@ public class AwakingManager
 				player.broadcastPacket(new SocialAction(player.getObjectId(), 27));
 				break;
 		}
-		// 580-TEST AwakingRemoveSkills(player);
+		AwakingRemoveSkills(player);
 		// l2jtw add end
 	}
 	// l2jtw add start
 	public void AwakingRemoveSkills(L2PcInstance player)
 	{
+		/* 603 need add new removeSkills 
 		int _classId = player.getClassId().getId();
 		if (_classId == 139)
 			RemoveSkills = autoRemoveSkills_Knight;
@@ -205,7 +206,7 @@ public class AwakingManager
 			if (level > 0)
 			{
 				Skill skill = SkillData.getInstance().getSkill(i, level);
-				//_log.info(getClass().getSimpleName() + ":" + player.getName() + ":remove skill:" + skill.getName() + " " + skill.getId()); 
+				// _log.info(getClass().getSimpleName() + ":" + player.getName() + ":remove skill:" + skill.getName() + " " + skill.getId()); 
 				player.removeSkill(skill);
 			}
 		}
@@ -261,7 +262,8 @@ public class AwakingManager
 				}
 			}
 		}
-		//player.sendSkillList();
+		// player.sendSkillList();
+		 */
 	}
 	// l2jtw add end
 	public void SendReqAwaking(L2PcInstance player)
@@ -285,7 +287,7 @@ public class AwakingManager
 	
 	public void ClassChange(L2PcInstance player, int paramOne)
 	{
-		// l2jtw temp fix start
+		// l2jtw temp fix start + MessageTable.Messages[763]
 		if (!player.isSubClassActive() && player.getAwakenSubClassCount() > 1)
 		{
 			player.sendMessage(763);

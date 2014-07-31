@@ -52,7 +52,10 @@ public final class IllegalPlayerActionTask implements Runnable
 		{
 			case KICK:
 			{
+				/* MessageTable.Messages[159]
 				_actor.sendMessage("You will be kicked for illegal action, GM informed.");
+				 */
+				_actor.sendMessage(159);
 				break;
 			}
 			case KICKBAN:
@@ -62,13 +65,21 @@ public final class IllegalPlayerActionTask implements Runnable
 					_actor.setAccessLevel(-1);
 					_actor.setAccountAccesslevel(-1);
 				}
+				/* MessageTable.Messages[160]
 				_actor.sendMessage("You are banned for illegal action, GM informed.");
+				 */
+				_actor.sendMessage(160);
 				break;
 			}
 			case JAIL:
 			{
+				/* MessageTable.Messages[161]
+				 * MessageTable.Messages[162]
 				_actor.sendMessage("Illegal action performed!");
 				_actor.sendMessage("You will be teleported to GM Consultation Service area and jailed.");
+				 */
+				_actor.sendMessage(161);
+				_actor.sendMessage(162);
 				break;
 			}
 		}
