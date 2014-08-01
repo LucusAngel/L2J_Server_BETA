@@ -50,7 +50,7 @@ public final class TradeOtherAdd extends AbstractItemPacket
 		writeC(_item.getEnchant()); // 603 // enchant level
 		writeH(0x00);
 		writeC(_item.getCustomType2()); // 603
-		writeD(0x00); // 603-Weapon Appearance
+		writeD(0x00); // 603-Appearance
 		
 		// T1
 		writeItemElementalAndEnchant(new ItemInfo(_item));

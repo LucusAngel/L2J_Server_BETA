@@ -2804,7 +2804,7 @@ public final class L2PcInstance extends L2Playable
 			}
 			else
 			{
-				/* l2jtw start
+				/* l2jtw start + MessageTable
 				_log.warning("Skipping null auto-get skill for player: " + toString());
 				 */
 				_log.warning(MessageTable.Messages[2003].getExtra(1) + s.getSkillId() + MessageTable.Messages[2003].getExtra(2) + s.getSkillLevel() + MessageTable.Messages[2003].getExtra(3) + toString());
@@ -10652,10 +10652,10 @@ public final class L2PcInstance extends L2Playable
 	{
 		if (_taskWarnUserTakeBreak == null)
 		{
-			/*
+			/* Update by rocknow
 			_taskWarnUserTakeBreak = ThreadPoolManager.getInstance().scheduleGeneralAtFixedRate(new WarnUserTakeBreakTask(this), 7200000, 7200000);
 			 */
-			_taskWarnUserTakeBreak = ThreadPoolManager.getInstance().scheduleGeneralAtFixedRate(new WarnUserTakeBreakTask(this), 3600000, 3600000); // Update by rocknow
+			_taskWarnUserTakeBreak = ThreadPoolManager.getInstance().scheduleGeneralAtFixedRate(new WarnUserTakeBreakTask(this), 3600000, 3600000);
 		}
 	}
 	
