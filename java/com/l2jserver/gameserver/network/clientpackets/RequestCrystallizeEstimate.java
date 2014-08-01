@@ -77,7 +77,10 @@ public class RequestCrystallizeEstimate extends L2GameClientPacket
 		
 		if (!getClient().getFloodProtectors().getTransaction().tryPerformAction("crystallize"))
 		{
+			/* MessageTable.Messages[436]
 			activeChar.sendMessage("You crystallizing too fast.");
+			 */
+			activeChar.sendMessage(436);
 			return;
 		}
 		
@@ -134,7 +137,10 @@ public class RequestCrystallizeEstimate extends L2GameClientPacket
 		
 		if (!activeChar.getInventory().canManipulateWithItemId(itemToRemove.getId()))
 		{
+			/* MessageTable.Messages[437]
 			activeChar.sendMessage("Cannot use this item.");
+			 */
+			activeChar.sendMessage(437);
 			return;
 		}
 		
