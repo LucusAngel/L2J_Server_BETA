@@ -42,6 +42,7 @@ import com.l2jserver.gameserver.model.entity.Instance;
 import com.l2jserver.gameserver.model.entity.clanhall.SiegableHall;
 import com.l2jserver.gameserver.model.zone.type.L2ClanHallZone;
 import com.l2jserver.gameserver.model.zone.type.L2RespawnZone;
+import com.l2jserver.gameserver.datatables.MessageTable;
 
 /**
  * @author Nyaran
@@ -85,6 +86,122 @@ public final class MapRegionManager extends DocumentParser
 						attrs = d.getAttributes();
 						name = attrs.getNamedItem("name").getNodeValue();
 						town = attrs.getNamedItem("town").getNodeValue();
+						// MessageTable
+						switch (town)
+						{
+							case "Aden Castle Town":
+								town = MessageTable.Messages[700].getExtra(1);
+								break;
+							case "Aerial Cleft":
+								town = MessageTable.Messages[700].getExtra(2);
+								break;
+							case "Border of Nightmare":
+								town = MessageTable.Messages[700].getExtra(3);
+								break;
+							case "Coliseum":
+								town = MessageTable.Messages[700].getExtra(4);
+								break;
+							case "Darkelven Town":
+								town = MessageTable.Messages[700].getExtra(5);
+								break;
+							case "Dimensional Rift":
+								town = MessageTable.Messages[700].getExtra(6);
+								break;
+							case "Dion Castle Town":
+								town = MessageTable.Messages[701].getExtra(1);
+								break;
+							case "Dwarven Town":
+								town = MessageTable.Messages[701].getExtra(2);
+								break;
+							case "Elven Town":
+								town = MessageTable.Messages[701].getExtra(3);
+								break;
+							case "Fantasy Island":
+								town = MessageTable.Messages[701].getExtra(4);
+								break;
+							case "Floran Town":
+								town = MessageTable.Messages[701].getExtra(5);
+								break;
+							case "Giran Castle Town":
+								town = MessageTable.Messages[701].getExtra(6);
+								break;
+							case "Giran Habor":
+								town = MessageTable.Messages[702].getExtra(1);
+								break;
+							case "Gludin Castle Town":
+								town = MessageTable.Messages[702].getExtra(2);
+								break;
+							case "Gludio Castle Town":
+								town = MessageTable.Messages[702].getExtra(3);
+								break;
+							case "GM Consultation Service":
+								town = MessageTable.Messages[702].getExtra(4);
+								break;
+							case "Goddard Town":
+								town = MessageTable.Messages[702].getExtra(5);
+								break;
+							case "Heine Town":
+								town = MessageTable.Messages[702].getExtra(6);
+								break;
+							case "Hunters Village":
+								town = MessageTable.Messages[703].getExtra(1);
+								break;
+							case "Ironcastle Inner Oasis":
+								town = MessageTable.Messages[703].getExtra(2);
+								break;
+							case "Kamaloka":
+								town = MessageTable.Messages[703].getExtra(3);
+								break;
+							case "Neutral Zone":
+								town = MessageTable.Messages[703].getExtra(4);
+								break;
+							case "Nia Kamaloka":
+								town = MessageTable.Messages[703].getExtra(5);
+								break;
+							case "Orc Town":
+								town = MessageTable.Messages[703].getExtra(6);
+								break;
+							case "Oren Castle Town":
+								town = MessageTable.Messages[704].getExtra(1);
+								break;
+							case "Primeval Island":
+								town = MessageTable.Messages[704].getExtra(2);
+								break;
+							case "Rim Kamaroka":
+								town = MessageTable.Messages[704].getExtra(3);
+								break;
+							case "Rune Town":
+								town = MessageTable.Messages[704].getExtra(4);
+								break;
+							case "Seed of Annihilation":
+								town = MessageTable.Messages[704].getExtra(5);
+								break;
+							case "Seed of Destruction":
+								town = MessageTable.Messages[704].getExtra(6);
+								break;
+							case "Seed of Infinity":
+								town = MessageTable.Messages[705].getExtra(1);
+								break;
+							case "Soul Island":
+								town = MessageTable.Messages[705].getExtra(2);
+								break;
+							case "Southern Wasteland":
+								town = MessageTable.Messages[705].getExtra(3);
+								break;
+							case "Talking Island Town":
+								town = MessageTable.Messages[705].getExtra(4);
+								break;
+							case "The Royal Family's Catacomb":
+								town = MessageTable.Messages[705].getExtra(5);
+								break;
+							case "Town of Schuttgart":
+								town = MessageTable.Messages[706].getExtra(1);
+								break;
+							case "Union Base Of Kserth":
+								town = MessageTable.Messages[706].getExtra(2);
+								break;
+						}
+						// end
 						locId = parseInteger(attrs, "locId");
 						castle = parseInteger(attrs, "castle");
 						bbs = parseInteger(attrs, "bbs");
@@ -215,7 +332,10 @@ public final class MapRegionManager extends DocumentParser
 		
 		if (region == null)
 		{
+			/* MessageTable
 			return "Aden Castle Town";
+			 */
+			return MessageTable.Messages[700].getExtra(1);
 		}
 		
 		return region.getTown();
