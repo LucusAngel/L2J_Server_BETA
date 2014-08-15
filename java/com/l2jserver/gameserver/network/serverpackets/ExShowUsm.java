@@ -46,6 +46,8 @@ public class ExShowUsm extends L2GameServerPacket
 	public static int AWAKE_6 = 0x90;
 	public static int AWAKE_7 = 0x91;
 	public static int AWAKE_8 = 0x92;
+	public static int ERTHEIA = 0x93;
+	public static int INTRO_2 = 0x94;
 	
 	public ExShowUsm(int usmVideo)
 	{

@@ -16,35 +16,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.l2jserver.gameserver.model.events.returns;
+package com.l2jserver.gameserver.handler;
 
-/**
- * @author UnAfraid
- */
-public abstract class AbstractEventReturn
+import java.util.logging.Logger;
+
+import com.l2jserver.gameserver.enums.InstanceType;
+import com.l2jserver.gameserver.model.L2Object;
+import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
+
+public interface IActionShiftHandler
 {
-	private final boolean _override;
-	private final boolean _abort;
+	public static Logger _log = Logger.getLogger(IActionShiftHandler.class.getName());
 	
-	public AbstractEventReturn(boolean override, boolean abort)
-	{
-		_override = override;
-		_abort = abort;
-	}
+	public boolean action(L2PcInstance activeChar, L2Object target, boolean interact);
 	
-	/**
-	 * @return {@code true} if return back object must be overridden by this object, {@code false} otherwise.
-	 */
-	public boolean override()
-	{
-		return _override;
-	}
-	
-	/**
-	 * @return {@code true} if notification has to be terminated, {@code false} otherwise.
-	 */
-	public boolean abort()
-	{
-		return _abort;
-	}
+	public InstanceType getInstanceType();
 }

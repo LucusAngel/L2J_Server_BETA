@@ -185,13 +185,6 @@ public final class Say2 extends L2GameClientPacket
 			return;
 		}
 		
-		// 603-Start
-		if (_text.equalsIgnoreCase("q"))
-		{
-			activeChar.broadcastPacket(new ExShowUsm(ExShowUsm.GD1_INTRO));
-			return;
-		}
-		// 603-End
 		// Even though the client can handle more characters than it's current limit allows, an overflow (critical error) happens if you pass a huge (1000+) message.
 		// July 11, 2011 - Verified on High Five 4 official client as 105.
 		// Allow higher limit if player shift some item (text is longer then).

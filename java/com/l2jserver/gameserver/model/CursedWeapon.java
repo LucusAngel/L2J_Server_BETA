@@ -358,14 +358,7 @@ public class CursedWeapon implements INamable
 		{
 			_player.stopTransformation(true);
 			
-			ThreadPoolManager.getInstance().scheduleGeneral(new Runnable()
-			{
-				@Override
-				public void run()
-				{
-					TransformData.getInstance().transformPlayer(transformationId, _player);
-				}
-			}, 500);
+			ThreadPoolManager.getInstance().scheduleGeneral(() -> TransformData.getInstance().transformPlayer(transformationId, _player), 500);
 		}
 		else
 		{

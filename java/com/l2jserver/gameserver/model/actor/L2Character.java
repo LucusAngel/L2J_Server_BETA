@@ -1572,7 +1572,7 @@ public abstract class L2Character extends L2Object implements ISkillsHolder, IDe
 					continue;
 				}
 				
-				if (isAttackable() && obj.isAttackable() && !((L2Attackable) this).isInEnemyClan(((L2Attackable) obj)) && !((L2Attackable) this).isChaos())
+				if (isAttackable() && obj.isAttackable() && !((L2Attackable) this).isChaos())
 				{
 					continue;
 				}
@@ -2004,7 +2004,7 @@ public abstract class L2Character extends L2Object implements ISkillsHolder, IDe
 		{
 			if (skill.getItemConsumeId() > 0)
 			{
-				if (!destroyItemByItemId("Consume", skill.getItemConsumeId(), skill.getItemConsume(), null, true))
+				if (!destroyItemByItemId("Consume", skill.getItemConsumeId(), skill.getItemConsumeCount(), null, true))
 				{
 					/* Update by rocknow
 					getActingPlayer().sendPacket(SystemMessageId.NOT_ENOUGH_ITEMS);
@@ -2255,14 +2255,14 @@ public abstract class L2Character extends L2Object implements ISkillsHolder, IDe
 			L2ItemInstance requiredItems = getInventory().getItemByItemId(skill.getItemConsumeId());
 			
 			// Check if the caster owns enough consumed Item to cast
-			if ((requiredItems == null) || (requiredItems.getCount() < skill.getItemConsume()))
+			if ((requiredItems == null) || (requiredItems.getCount() < skill.getItemConsumeCount()))
 			{
 				// Checked: when a summon skill failed, server show required consume item count
 				if (skill.hasEffectType(L2EffectType.SUMMON))
 				{
 					SystemMessage sm = SystemMessage.getSystemMessage(SystemMessageId.SUMMONING_SERVITOR_COSTS_S2_S1);
 					sm.addItemName(skill.getItemConsumeId());
-					sm.addInt(skill.getItemConsume());
+					sm.addInt(skill.getItemConsumeCount());
 					sendPacket(sm);
 				}
 				else
@@ -6747,11 +6747,6 @@ public abstract class L2Character extends L2Object implements ISkillsHolder, IDe
 		return getStatus().getCurrentCp();
 	}
 	
-	public final void setCurrentCp(Double newCp)
-	{
-		setCurrentCp((double) newCp);
-	}
-	
 	public final void setCurrentCp(double newCp)
 	{
 		getStatus().setCurrentCp(newCp);
@@ -6775,11 +6770,6 @@ public abstract class L2Character extends L2Object implements ISkillsHolder, IDe
 	public final double getCurrentMp()
 	{
 		return getStatus().getCurrentMp();
-	}
-	
-	public final void setCurrentMp(Double newMp)
-	{
-		setCurrentMp((double) newMp);
 	}
 	
 	public final void setCurrentMp(double newMp)

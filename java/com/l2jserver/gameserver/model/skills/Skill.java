@@ -724,15 +724,15 @@ public final class Skill implements IChanceSkillTrigger, IIdentifiable
 	}
 	
 	/**
-	 * @return Returns the itemConsume.
+	 * @return Returns the how much items will be consumed.
 	 */
-	public int getItemConsume()
+	public int getItemConsumeCount()
 	{
 		return _itemConsumeCount;
 	}
 	
 	/**
-	 * @return Returns the itemConsumeId.
+	 * @return Returns the ID of item for consume.
 	 */
 	public int getItemConsumeId()
 	{
@@ -1212,10 +1212,7 @@ public final class Skill implements IChanceSkillTrigger, IIdentifiable
 			// target is mob
 			if ((targetPlayer == null) && (target instanceof L2Attackable) && (caster instanceof L2Attackable))
 			{
-				if (!((L2Attackable) caster).isInEnemyClan((L2Attackable) target))
-				{
-					return false;
-				}
+				return false;
 			}
 		}
 		

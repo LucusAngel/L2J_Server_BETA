@@ -98,6 +98,7 @@ public class AwakingManager
 		_CA.put(98, 171);	_CA.put(100, 172);	_CA.put(107, 173);	_CA.put(115, 174);	_CA.put(116, 175);	_CA.put(136, 144);
 		_CA.put(96, 176);	_CA.put(104, 177);	_CA.put(111, 178);
 		_CA.put(97, 179);	_CA.put(105, 180);	_CA.put(112, 181);
+		_CA.put(186, 188);	_CA.put(187, 189);
 		
 		//_log.info(getClass().getSimpleName() + ": Loaded 8 Awaking class for " + _CA.size() + " normal class.");
 	}
@@ -127,6 +128,7 @@ public class AwakingManager
 			case 150:
 			case 151:
 				player.broadcastPacket(new SocialAction(player.getObjectId(), 20));
+				player.addItem("Quest", 30310, 1, player, true);
 				break;
 			case 152:
 			case 153:
@@ -135,18 +137,21 @@ public class AwakingManager
 			case 156:
 			case 157:
 				player.broadcastPacket(new SocialAction(player.getObjectId(), 21));
+				player.addItem("Quest", 30311, 1, player, true);
 				break;
 			case 158:
 			case 159:
 			case 160:
 			case 161:
 				player.broadcastPacket(new SocialAction(player.getObjectId(), 22));
+				player.addItem("Quest", 30312, 1, player, true);
 				break;
 			case 162:
 			case 163:
 			case 164:
 			case 165:
 				player.broadcastPacket(new SocialAction(player.getObjectId(), 23));
+				player.addItem("Quest", 30313, 1, player, true);
 				break;
 			case 166:
 			case 167:
@@ -154,6 +159,7 @@ public class AwakingManager
 			case 169:
 			case 170:
 				player.broadcastPacket(new SocialAction(player.getObjectId(), 24));
+				player.addItem("Quest", 30314, 1, player, true);
 				break;
 			case 171:
 			case 172:
@@ -162,16 +168,27 @@ public class AwakingManager
 			case 175:
 			case 144:
 				player.broadcastPacket(new SocialAction(player.getObjectId(), 25));
+				player.addItem("Quest", 30316, 1, player, true);
 				break;
 			case 176:
 			case 177:
 			case 178:
 				player.broadcastPacket(new SocialAction(player.getObjectId(), 26));
+				player.addItem("Quest", 30315, 1, player, true);
 				break;
 			case 179:
 			case 180:
 			case 181:
 				player.broadcastPacket(new SocialAction(player.getObjectId(), 27));
+				player.addItem("Quest", 30317, 1, player, true);
+				break;
+			case 188:
+				player.broadcastPacket(new SocialAction(player.getObjectId(), 21));
+				player.addItem("Quest", 40200, 1, player, true);
+				break;
+			case 189:
+				player.broadcastPacket(new SocialAction(player.getObjectId(), 24));
+				player.addItem("Quest", 40201, 1, player, true);
 				break;
 		}
 		AwakingRemoveSkills(player);

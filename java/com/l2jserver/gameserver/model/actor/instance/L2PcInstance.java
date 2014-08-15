@@ -530,7 +530,8 @@ public final class L2PcInstance extends L2Playable
 	private boolean _OlympiadStart = false;
 	private int _olympiadGameId = -1;
 	private int _olympiadSide = -1;
-	public int olyBuff = 0;
+	/** Olympiad buff count. */
+	private int _olyBuffsCount = 0;
 	
 	/** Duel */
 	private boolean _isInDuel = false;
@@ -9892,6 +9893,24 @@ public final class L2PcInstance extends L2Playable
 		return _olympiadGameId;
 	}
 	
+	/**
+	 * Gets the player's olympiad buff count.
+	 * @return the olympiad's buff count
+	 */
+	public int getOlympiadBuffCount()
+	{
+		return _olyBuffsCount;
+	}
+	
+	/**
+	 * Sets the player's olympiad buff count.
+	 * @param buffs the olympiad's buff count
+	 */
+	public void setOlympiadBuffCount(int buffs)
+	{
+		_olyBuffsCount = buffs;
+	}
+	
 	public Location getLastLocation()
 	{
 		return _lastLoc;
@@ -14608,7 +14627,7 @@ public final class L2PcInstance extends L2Playable
 	// 603-Start
 	public boolean isAwaken()
 	{
-		if (getActiveClass() > 138)
+		if ((getActiveClass() >= 139 && getActiveClass() <= 181) || (getActiveClass() >= 188))
 			return true;
 		return false;
 	}

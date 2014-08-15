@@ -76,7 +76,17 @@ public class ExEnchantSkillInfoDetail extends L2GameServerPacket
 		{
 			multi = EnchantSkillGroupsData.SAFE_ENCHANT_COST_MULTIPLIER;
 		}
+		/* 603 add start
 		_chance = esd.getRate(ply);
+		 */
+		else if (type == 4)
+		{
+			multi = 0;
+			bookId = 37044;
+			reqCount = 1;
+		}
+		_chance = type != 4 ? esd.getRate(ply) : 100;
+		// 603 add ned
 		_sp = esd.getSpCost();
 		if (type == TYPE_UNTRAIN_ENCHANT)
 		{

@@ -60,7 +60,10 @@ public final class RequestExEnchantSkillInfoDetail extends L2GameClientPacket
 		
 		int reqSkillLvl = -2;
 		
+		/* 603 add
 		if ((_type == 0) || (_type == 1))
+		 */
+		if ((_type == 0) || (_type == 1) || (_type == 4))
 		{
 			reqSkillLvl = _skillLvl - 1; // enchant
 		}

@@ -265,14 +265,6 @@ public class L2AttackableAI extends L2CharacterAI implements Runnable
 					return false;
 				}
 				
-				if (me.isInEnemyClan((L2Attackable) target))
-				{
-					if (me.isInsideRadius(target, me.getAggroRange(), false, false))
-					{
-						return GeoData.getInstance().canSeeTarget(me, target);
-					}
-					return false;
-				}
 				if (me.isChaos() && me.isInsideRadius(target, me.getAggroRange(), false, false))
 				{
 					if (((L2Attackable) target).isInMyClan(me))
@@ -2123,19 +2115,7 @@ public class L2AttackableAI extends L2CharacterAI implements Runnable
 					{
 						continue;
 					}
-					if (obj instanceof L2Attackable)
-					{
-						if (actor.isInEnemyClan((L2Attackable) obj))
-						{
-							if (dist2 <= range)
-							{
-								if (!getAttackTarget().isAffectedBySkill(sk.getId()))
-								{
-									return obj;
-								}
-							}
-						}
-					}
+					
 					if ((obj instanceof L2PcInstance) || (obj instanceof L2Summon))
 					{
 						if (dist2 <= range)
@@ -2218,19 +2198,7 @@ public class L2AttackableAI extends L2CharacterAI implements Runnable
 				{
 					continue;
 				}
-				if (obj instanceof L2Attackable)
-				{
-					if (actor.isInEnemyClan((L2Attackable) obj))
-					{
-						if (dist2 <= range)
-						{
-							if (getAttackTarget().getEffectList().getFirstEffect(L2EffectType.BUFF) != null)
-							{
-								return obj;
-							}
-						}
-					}
-				}
+				
 				if ((obj instanceof L2PcInstance) || (obj instanceof L2Summon))
 				{
 					
@@ -2315,10 +2283,6 @@ public class L2AttackableAI extends L2CharacterAI implements Runnable
 				}
 				if (obj instanceof L2Attackable)
 				{
-					if (actor.isInEnemyClan((L2Attackable) obj))
-					{
-						return obj;
-					}
 					if (actor.isChaos())
 					{
 						if (((L2Attackable) obj).isInMyClan(actor))
@@ -2415,11 +2379,6 @@ public class L2AttackableAI extends L2CharacterAI implements Runnable
 				}
 				else if (obj instanceof L2Attackable)
 				{
-					if (actor.isInEnemyClan((L2Attackable) obj))
-					{
-						actor.addDamageHate(obj, 0, actor.getHating(MostHate));
-						actor.setTarget(obj);
-					}
 					if (actor.isChaos())
 					{
 						if (((L2Attackable) obj).isInMyClan(actor))
@@ -2534,18 +2493,6 @@ public class L2AttackableAI extends L2CharacterAI implements Runnable
 				}
 				else if (obj instanceof L2Attackable)
 				{
-					if (actor.isInEnemyClan((L2Attackable) obj))
-					{
-						if (MostHate != null)
-						{
-							actor.addDamageHate(obj, 0, actor.getHating(MostHate));
-						}
-						else
-						{
-							actor.addDamageHate(obj, 0, 2000);
-						}
-						actor.setTarget(obj);
-					}
 					if (actor.isChaos())
 					{
 						if (((L2Attackable) obj).isInMyClan(actor))
@@ -2718,7 +2665,11 @@ public class L2AttackableAI extends L2CharacterAI implements Runnable
 	@Override
 	protected void onEvtAggression(L2Character target, int aggro)
 	{
-		L2Attackable me = getActiveChar();
+		final L2Attackable me = getActiveChar();
+		if (me.isDead())
+		{
+			return;
+		}
 		
 		if (target != null)
 		{

@@ -28,6 +28,7 @@ import com.l2jserver.gameserver.cache.HtmCache;
 import com.l2jserver.gameserver.communitybbs.Manager.RegionBBSManager;
 import com.l2jserver.gameserver.datatables.AdminTable;
 import com.l2jserver.gameserver.datatables.SkillTreesData;
+import com.l2jserver.gameserver.enums.Race; // 603
 import com.l2jserver.gameserver.instancemanager.AwakingManager; // 603
 import com.l2jserver.gameserver.instancemanager.CHSiegeManager;
 import com.l2jserver.gameserver.instancemanager.CastleManager;
@@ -494,7 +495,10 @@ public class EnterWorld extends L2GameClientPacket
 		// 603-Start
 		if (activeChar.getOnlineTime() == 0)
 		{
-			activeChar.sendPacket(new ExShowUsm(ExShowUsm.GD1_INTRO));
+			if (activeChar.getRace() == Race.ERTHEIA)
+				activeChar.sendPacket(new ExShowUsm(ExShowUsm.ERTHEIA));
+			else
+				activeChar.sendPacket(new ExShowUsm(ExShowUsm.INTRO_2));
 		}
 		// 603-End
 		

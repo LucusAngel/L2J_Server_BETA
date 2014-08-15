@@ -92,6 +92,10 @@ public final class ClassInfo
 		{
 			classClientId += 2884;
 		}
+		else if ((classClientId >= 182) && (classClientId <= 189))
+		{
+			classClientId += 3121;
+		}
 		// 603-End
 		return classClientId;
 	}

@@ -30,6 +30,7 @@ public enum Race
 	ORC,
 	DWARF,
 	KAMAEL,
+	ERTHEIA,
 	ANIMAL,
 	BEAST,
 	BUG,

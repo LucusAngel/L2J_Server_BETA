@@ -795,27 +795,27 @@ public class L2VillageMasterInstance extends L2NpcInstance
 	{
 		// get player base class
 		final int currentBaseId = player.getBaseClass();
-		/* 603
 		final ClassId baseCID = ClassId.getClassId(currentBaseId);
 		
 		// we need 2nd occupation ID
 		final int baseClassId;
 		if (baseCID.level() > 2)
-		 */
-		ClassId baseCID = ClassId.getClassId(currentBaseId);
-		
-		// we need 2nd occupation ID
-		int baseClassId;
-		if (baseCID.level() > 3)
 		{
+			/* 603 start
 			baseClassId = baseCID.getParent().ordinal();
-			baseCID = ClassId.getClassId(baseClassId);
-			baseClassId = baseCID.getParent().ordinal();
-		}
-		else if (baseCID.level() > 2)
-		// l2jtw add end
-		{
-			baseClassId = baseCID.getParent().ordinal();
+			 */
+			if (baseCID.level() > 3)
+			{
+				int baseClassId3 = 0;
+				baseClassId3 = baseCID.getParent().ordinal();
+				ClassId baseCID3 = ClassId.getClassId(baseClassId3);
+				baseClassId = baseCID3.getParent().ordinal();
+			}
+			else
+			{
+				baseClassId = baseCID.getParent().ordinal();
+			}
+			// 603 end
 		}
 		else
 		{
@@ -894,27 +894,27 @@ public class L2VillageMasterInstance extends L2NpcInstance
 		
 		// get player base class
 		final int currentBaseId = player.getBaseClass();
-		/* 603
 		final ClassId baseCID = ClassId.getClassId(currentBaseId);
 		
 		// we need 2nd occupation ID
 		final int baseClassId;
 		if (baseCID.level() > 2)
-		 */
-		ClassId baseCID = ClassId.getClassId(currentBaseId);
-		
-		// we need 2nd occupation ID
-		int baseClassId;
-		if (baseCID.level() > 3)
 		{
+			/* 603 start
 			baseClassId = baseCID.getParent().ordinal();
-			baseCID = ClassId.getClassId(baseClassId);
-			baseClassId = baseCID.getParent().ordinal();
-		}
-		else if (baseCID.level() > 2)
-		// l2jtw add end
-		{
-			baseClassId = baseCID.getParent().ordinal();
+			 */
+			if (baseCID.level() > 3)
+			{
+				int baseClassId3 = 0;
+				baseClassId3 = baseCID.getParent().ordinal();
+				ClassId baseCID3 = ClassId.getClassId(baseClassId3);
+				baseClassId = baseCID3.getParent().ordinal();
+			}
+			else
+			{
+				baseClassId = baseCID.getParent().ordinal();
+			}
+			// 603 end
 		}
 		else
 		{

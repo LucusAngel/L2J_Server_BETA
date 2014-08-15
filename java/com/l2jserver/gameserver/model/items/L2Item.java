@@ -683,6 +683,11 @@ public abstract class L2Item extends ListenersContainer implements IIdentifiable
 		return (getItemType() == EtcItemType.ELIXIR);
 	}
 	
+	public boolean isScroll()
+	{
+		return (getItemType() == EtcItemType.SCROLL);
+	}
+	
 	/**
 	 * Get the functions used by this item.
 	 * @param item : L2ItemInstance pointing out the item

@@ -61,7 +61,10 @@ public class PcStat extends PlayableStat
 	private int _maxCubicCount = 1;
 	/** Player's maximum talisman count. */
 	private final AtomicInteger _talismanSlots = new AtomicInteger();
+	/* 603
 	private boolean _cloakSlot = false;
+	 */
+	private boolean _cloakSlot = true;
 	
 	public static final int VITALITY_LEVELS[] =
 	{
@@ -447,6 +450,7 @@ public class PcStat extends PlayableStat
 	public void setCloakSlotStatus(boolean cloakSlot)
 	{
 		_cloakSlot = cloakSlot;
+		_cloakSlot = true; // 603 add
 	}
 	
 	@Override

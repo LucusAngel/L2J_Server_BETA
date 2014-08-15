@@ -246,7 +246,15 @@ public enum ClassId implements IIdentifiable
 	WynnSpectralMaster(178, true, true, Race.DARK_ELF, spectralMaster),
 	AeoreCardinal(179, true, Race.HUMAN, cardinal),
 	AeoreEvaSaint(180, true, Race.ELF, evaSaint),
-	AeoreShillienSaint(181, true, Race.DARK_ELF, shillienSaint);
+	AeoreShillienSaint(181, true, Race.DARK_ELF, shillienSaint),
+	ErtheiaFighter(182, false, Race.ERTHEIA, null),
+	ErtheiaWizard(183, true, Race.ERTHEIA, null),
+	Marauder(184, false, Race.ERTHEIA, ErtheiaFighter),
+	CloudBreaker(185, true, Race.ERTHEIA, ErtheiaWizard),
+	Ripper(186, false, Race.ERTHEIA, Marauder),
+	Stratomancer(187, true, Race.ERTHEIA, CloudBreaker),
+	Eviscerator(188, false, Race.ERTHEIA, Ripper),
+	SayhaSeer(189, true, Race.ERTHEIA, Stratomancer);
 	
 	/** The Identifier of the Class */
 	private final int _id;
@@ -368,6 +376,12 @@ public enum ClassId implements IIdentifiable
 		{
 			return 0;
 		}
+		// 603 temp fix start
+		else if (_parent == ErtheiaFighter || _parent == ErtheiaWizard)
+		{
+			return 2;
+		}
+		// 603 temp fix end
 		
 		return 1 + _parent.level();
 	}

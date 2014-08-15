@@ -68,8 +68,8 @@ import com.l2jserver.gameserver.network.serverpackets.RelationChanged;
 import com.l2jserver.gameserver.network.serverpackets.SiegeInfo;
 import com.l2jserver.gameserver.network.serverpackets.SystemMessage;
 import com.l2jserver.gameserver.network.serverpackets.UserInfo;
-import com.l2jserver.gameserver.datatables.MessageTable;
 import com.l2jserver.gameserver.util.Broadcast;
+import com.l2jserver.gameserver.datatables.MessageTable;
 
 public class Siege implements Siegable
 {
