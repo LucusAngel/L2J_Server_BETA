@@ -29,10 +29,6 @@ set java_param=-cp "%iii%libs\*";"%LLL%l2jlogin.jar" %java_param%
 set java_param=-Xms%javaheap_Xms% -Xmx%javaheap_Xmx% %java_param%
 :: set java_param=-XX:PermSize=50m %java_param%
 :: set java_param=-XX:MaxPermSize=100m %java_param%
-set java_param=-XX:+CMSIncrementalMode %java_param%
-set java_param=-XX:+UseCMSCompactAtFullCollection %java_param%
-set java_param=-XX:+UseParNewGC %java_param%
-set java_param=-XX:+CMSParallelRemarkEnabled %java_param%
 set java_param=-XX:+UseParNewGC %java_param%
 set java_param=-XX:+CMSParallelRemarkEnabled %java_param%
 set java_param=-XX:+UseConcMarkSweepGC %java_param%
