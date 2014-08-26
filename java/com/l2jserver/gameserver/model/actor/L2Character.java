@@ -1809,6 +1809,12 @@ public abstract class L2Character extends L2Object implements ISkillsHolder, IDe
 					target = (L2Character) getTarget();
 				}
 		}
+		// l2jtw add start : GS-comment-042
+		if ((isMonster()) && (target.isPlayer()) && (skill.getEffectPoint() >= 0))
+		{
+			return;
+		}
+		// l2jtw add end 
 		beginCast(skill, simultaneously, target, targets);
 	}
 	
