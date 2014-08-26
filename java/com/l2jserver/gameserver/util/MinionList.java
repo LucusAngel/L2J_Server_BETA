@@ -207,7 +207,10 @@ public class MinionList
 	 */
 	public void onAssist(L2Character caller, L2Character attacker)
 	{
+		/* GS-comment-041
 		if (attacker == null)
+		 */
+		if ((attacker == null) || (!attacker.isPlayer()))
 		{
 			return;
 		}

@@ -666,7 +666,10 @@ public class L2Attackable extends L2Npc
 	 */
 	public void addDamage(L2Character attacker, int damage, Skill skill)
 	{
+		/* GS-comment-041
 		if (attacker == null)
+		 */
+		if ((attacker == null) || (!attacker.isPlayer()))
 		{
 			return;
 		}
