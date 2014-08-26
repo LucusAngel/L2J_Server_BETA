@@ -61,6 +61,7 @@ if not exist %1 goto :eof
 set found=1
 set PATH=%~dp1
 echo 使用 java 位置 %path%
+echo.
 goto :eof
 
 :set_java
@@ -68,6 +69,21 @@ echo 搜尋 java 位置
 call :check_java "%ProgramW6432%\Java\jre8\bin\java.exe"
 call :check_java "%ProgramFiles%\Java\jre8\bin\java.exe"
 call :check_java "%ProgramFiles(x86)%\Java\jre8\bin\java.exe"
+if not exist "%ProgramW6432%\Java\j*1.8.*" goto _next_set_x64
+dir "%ProgramW6432%\Java\j*1.8.*" /A:D /B /O > %temp%\check.txt
+FOR /F %%j IN (%temp%\check.txt) DO set ver=%%j
+call :check_java "%ProgramFiles%\Java\%ver%\bin\java.exe"
+:_next_set_x64
+if not exist "%ProgramFiles%\Java\j*1.8.*" goto _next_set_x86
+dir "%ProgramFiles%\Java\j*1.8.*" /A:D /B /O > %temp%\check.txt
+FOR /F %%j IN (%temp%\check.txt) DO set ver=%%j
+call :check_java "%ProgramFiles%\Java\%ver%\bin\java.exe"
+:_next_set_x86
+if not exist "%ProgramFiles(x86)%\Java\j*1.8.*" goto _next_set_java
+dir "%ProgramFiles(x86)%\Java\j*1.8.*" /A:D /B /O > %temp%\check.txt
+FOR /F %%j IN (%temp%\check.txt) DO set ver=%%j
+call :check_java "%ProgramFiles(x86)%\Java\%ver%\bin\java.exe"
+:_next_set_java
 call :check_java "%windir%\system32\java.exe"
 if "%found%"=="" (
 	echo 找不到 java.exe
