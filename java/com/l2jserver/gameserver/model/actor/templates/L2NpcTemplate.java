@@ -153,6 +153,30 @@ public final class L2NpcTemplate extends L2CharTemplate implements IIdentifiable
 		_aiType = set.getEnum("aiType", AIType.class, AIType.FIGHTER);
 		_aggroRange = set.getInt("aggroRange", 0);
 		_clanHelpRange = set.getInt("clanHelpRange", 0);
+		// l2jtw add start : GS-comment-043
+		if (_aggroRange > 500)
+		{
+			if (_aggroRange < 1000)
+			{
+				_aggroRange = 500;
+			}
+			else
+			{
+				_aggroRange = _aggroRange / 2;
+			}
+		}
+		if (_clanHelpRange > 300)
+		{
+			if (_clanHelpRange < 600)
+			{
+				_clanHelpRange = 300;
+			}
+			else
+			{
+				_clanHelpRange = _clanHelpRange / 2;
+			}
+		}
+		// l2jtw add end
 		_dodge = set.getInt("dodge", 0);
 		_isChaos = set.getBoolean("isChaos", false);
 		_isAggressive = set.getBoolean("isAggressive", true);
