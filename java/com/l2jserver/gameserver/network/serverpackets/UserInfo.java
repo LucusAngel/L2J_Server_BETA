@@ -343,8 +343,7 @@ public final class UserInfo extends L2GameServerPacket
 		/////////////////////////////////////////////////////////////////
 		writeH(9); // 603-21
 		writeD(0);
-		writeC(_activeChar.getInventoryLimit());
-		writeC(0);
+		writeH(_activeChar.getInventoryLimit());
 		writeC(_activeChar.isCursedWeaponEquipped() ? CursedWeaponsManager.getInstance().getLevel(_activeChar.getCursedWeaponEquippedId()) : 0);
 		
 		/////////////////////////////////////////////////////////////////
