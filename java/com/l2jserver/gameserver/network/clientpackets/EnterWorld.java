@@ -697,6 +697,7 @@ public class EnterWorld extends L2GameClientPacket
 				activeChar.stopTransformation(true);
 			}
 		}
+		activeChar.sendPacket(new UserInfo(activeChar)); //32
 		// l2jtw add end
 	}
 	
