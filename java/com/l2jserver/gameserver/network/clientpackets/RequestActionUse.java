@@ -188,6 +188,12 @@ public final class RequestActionUse extends L2GameClientPacket
 				}
 				break;
 			case 19: // Unsummon Pet
+				// l2jtw add start
+				if (summon == null)
+				{
+					return;
+				}
+				// l2jtw add end
 				if (summon.isDead())
 				{
 					sendPacket(SystemMessageId.DEAD_PET_CANNOT_BE_RETURNED);
