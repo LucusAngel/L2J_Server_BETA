@@ -18,6 +18,33 @@ if not %vdp% == Ertheia echo.
 if not %vdp% == Ertheia pause
 if not %vdp% == Ertheia exit
 REM ------------------------------------------------------
+REM 刪除已經達到 90 個以上的 log (因為達到 100 個後,GS就會出錯)
+if not exist log\backup\ md log\backup\
+if exist log\accounting*.log.90* (
+copy log\accounting*.* log\backup\ /Y > nul
+del log\accounting*.* /F /Q > nul
+)
+if exist log\chat*.log.90* (
+copy log\chat*.* log\backup\ /Y > nul
+del log\chat*.* /F /Q > nul
+)
+if exist log\error*.log.90* (
+copy log\error*.* log\backup\ /Y > nul
+del log\error*.* /F /Q > nul
+)
+if exist log\item*.log.90* (
+copy log\item*.* log\backup\ /Y > nul
+del log\item*.* /F /Q > nul
+)
+if exist log\java*.log.90* (
+copy log\java*.* log\backup\ /Y > nul
+del log\java*.* /F /Q > nul
+)
+if exist log\olympiad*.csv.90* (
+copy log\olympiad*.* log\backup\ /Y > nul
+del log\olympiad*.* /F /Q > nul
+)
+REM ------------------------------------------------------
 
 call :init
 :: ----- 設定 java 記憶體用量及其他參數 -----
