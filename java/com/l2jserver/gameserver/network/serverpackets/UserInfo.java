@@ -294,7 +294,9 @@ public final class UserInfo extends L2GameServerPacket
 		writeD(_activeChar.getClanId());
 		writeD(_activeChar.getClanCrestLargeId());
 		writeD(_activeChar.getClanCrestId());
-		writeD(0);
+		writeC(_activeChar.getClanPrivileges().getBitmask());
+		writeH(0);
+		writeC(0);
 		writeC(_activeChar.isClanLeader() ? 1 : 0);
 		writeD(_activeChar.getAllyId());
 		writeD(_activeChar.getAllyCrestId());
@@ -357,7 +359,6 @@ public final class UserInfo extends L2GameServerPacket
 		//writeD(_activeChar.getMountNpcId() > 0 ? _activeChar.getMountNpcId() + 1000000 : 0);
 		//writeC(_activeChar.getMountType().ordinal()); // mount type// 1-on Strider, 2-on Wyvern, 3-on Great Wolf, 0-no mount
 		//writeD(_activeChar.isMinimapAllowed() ? 1 : 0); // Minimap on Hellbound
-		//writeC(_activeChar.getClanPrivileges().getBitmask());
 		//writeC(_activeChar.getInventory().canEquipCloak() ? 1 : 0); // 603-not need
 	}
 	
