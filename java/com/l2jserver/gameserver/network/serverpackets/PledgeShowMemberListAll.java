@@ -70,7 +70,7 @@ public class PledgeShowMemberListAll extends L2GameServerPacket
 		
 		writeD(mainOrSubpledge);
 		writeD(_clan.getId());
-		writeD(0); // 603
+		writeD(2); // 603
 		writeD(_pledgeType);
 		writeS(_clan.getName());
 		writeS(_clan.getLeaderName());
