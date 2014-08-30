@@ -4225,7 +4225,10 @@ public final class L2PcInstance extends L2Playable
 			return false;
 		}
 		
+		/* Update by rocknow
 		if (isMounted() || inObserverMode())
+		 */
+		if ((skill.getId() != 7029 && isMounted()) || inObserverMode())
 		{
 			return false;
 		}
