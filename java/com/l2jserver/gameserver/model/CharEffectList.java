@@ -368,7 +368,10 @@ public final class CharEffectList
 		{
 			for (BuffInfo info : getToggles().values())
 			{
+				/* Update by rocknow
 				if (info != null)
+				 */
+				if (info != null && info.getSkill().getId() != 7029)
 				{
 					for (AbstractEffect effect : info.getEffects())
 					{
