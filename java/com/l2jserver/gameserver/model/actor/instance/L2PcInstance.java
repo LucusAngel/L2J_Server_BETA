@@ -2463,9 +2463,16 @@ public final class L2PcInstance extends L2Playable
 				getSubClasses().get(_classIndex).setClassId(Id);
 			}
 			setTarget(this);
+			/* GS-comment-045
 			broadcastPacket(new MagicSkillUse(this, 5103, 1, 1000, 0));
+			 */
 			setClassTemplate(Id);
 			setLearningClass(getClassId()); // l2jtw add
+			// GS-comment-045 Start
+			TransformData.getInstance().transformPlayer(105, this);
+			ThreadPoolManager.getInstance().scheduleGeneral(() -> this.untransform(), 200);
+			ThreadPoolManager.getInstance().scheduleGeneral(() -> broadcastPacket(new MagicSkillUse(this, 5103, 1, 0, 0)), 1200);
+			// GS-comment-045 End
 			if (getClassId().level() == 3)
 			{
 				sendPacket(SystemMessageId.THIRD_CLASS_TRANSFER);
