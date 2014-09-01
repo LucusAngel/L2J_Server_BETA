@@ -86,6 +86,7 @@ import com.l2jserver.gameserver.datatables.RecipeData;
 import com.l2jserver.gameserver.datatables.SkillReplaceTable; // l2jtw add
 import com.l2jserver.gameserver.datatables.SkillData;
 import com.l2jserver.gameserver.datatables.SkillTreesData;
+import com.l2jserver.gameserver.datatables.TransformData; // DP-comment-045
 import com.l2jserver.gameserver.enums.HtmlActionScope;
 import com.l2jserver.gameserver.enums.IllegalActionPunishmentType;
 import com.l2jserver.gameserver.enums.InstanceType;
