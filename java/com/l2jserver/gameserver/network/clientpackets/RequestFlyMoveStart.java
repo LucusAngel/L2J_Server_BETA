@@ -36,8 +36,38 @@ public final class RequestFlyMoveStart extends L2GameClientPacket
 		final L2PcInstance activeChar = getClient().getActiveChar();
 		
 		if (activeChar == null)
+		{
 			return;
-			
+		}
+		if (activeChar.isFlying() || activeChar.isMounted() || activeChar.isFlyingMounted() || activeChar.isInBoat() || activeChar.isInAirShip())
+		{
+			return;
+		}
+		if (activeChar.isTransformed() || activeChar.isCursedWeaponEquipped() || activeChar.isFishing())
+		{
+			return;
+		}
+		if (activeChar.isCastingNow() || activeChar.isCastingSimultaneouslyNow() || activeChar.isAttackingNow() || activeChar.isInCombat() || activeChar.isInDuel())
+		{
+			return;
+		}
+		if (activeChar.isStunned() || activeChar.isParalyzed() || activeChar.isSleeping() || activeChar.isAfraid() || activeChar.isAlikeDead() || activeChar.isFakeDeath())
+		{
+			return;
+		}
+		if (activeChar.isDead() || activeChar.isOutOfControl() || activeChar.isMovementDisabled())
+		{
+			return;
+		}
+		if (activeChar.isSitting() || activeChar.isMoving() || activeChar.isTeleporting())
+		{
+			return;
+		}
+		if (activeChar.isInStoreMode() || activeChar.isInCraftMode() || activeChar.isInOlympiadMode())
+		{
+			return;
+		}
+		
 		JumpManager.getInstance().StartJump(activeChar);
 	}
 	
