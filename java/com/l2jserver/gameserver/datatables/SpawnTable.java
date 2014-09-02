@@ -483,10 +483,14 @@ public final class SpawnTable extends DocumentParser
 	 */
 	private boolean removeSpawn(L2Spawn spawn)
 	{
+		boolean removed = true; // l2jtw add
 		if (_spawnTable.containsKey(spawn.getId()))
 		{
 			final Set<L2Spawn> set = _spawnTable.get(spawn.getId());
+			/* l2jtw add
 			boolean removed = set.remove(spawn);
+			 */
+			removed = set.remove(spawn);
 			if (set.isEmpty())
 			{
 				_spawnTable.remove(spawn.getId());
