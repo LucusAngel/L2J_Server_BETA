@@ -187,7 +187,10 @@ public final class RequestEnchantItem extends L2GameClientPacket
 						item.setEnchantLevel(item.getEnchantLevel() + 1);
 						item.updateDatabase();
 					}
+					/* l2jtw add
 					activeChar.sendPacket(new EnchantResult(0, 0, 0));
+					 */
+					activeChar.sendPacket(new EnchantResult(0, 0, 0, item.getEnchantLevel()));
 					
 					if (Config.LOG_ITEM_ENCHANTS)
 					{
