@@ -178,12 +178,25 @@ public final class L2ClassMasterInstance extends L2MerchantInstance
 		}
 		
 		final ClassId classId = player.getClassId();
+		// 603 start
+		int e_level = 0;
+		if (classId.getId() == 182 || classId.getId() == 183)
+		{
+			e_level = 1;
+		}
+		// 603 end
+		/* 603
 		if (getMinLevel(classId.level()) > player.getLevel())
+		 */
+		if (getMinLevel(classId.level() + e_level) > player.getLevel())
 		{
 			return;
 		}
 		
+		/* 603
 		if (!Config.CLASS_MASTER_SETTINGS.isAllowed(classId.level() + 1))
+		 */
+		if (!Config.CLASS_MASTER_SETTINGS.isAllowed(classId.level() + 1 + e_level))
 		{
 			return;
 		}
@@ -195,6 +208,14 @@ public final class L2ClassMasterInstance extends L2MerchantInstance
 	{
 		final NpcHtmlMessage html = new NpcHtmlMessage(objectId);
 		
+		// 603 start
+		final ClassId e_classId = player.getClassId();
+		int e_level = 0;
+		if (e_classId.getId() == 182 || e_classId.getId() == 183)
+		{
+			e_level = 1;
+		}
+		// 603 end
 		if (!Config.ALLOW_CLASS_MASTERS)
 		{
 			html.setFile(player.getHtmlPrefix(), "data/html/classmaster/disabled.htm");
@@ -204,7 +225,10 @@ public final class L2ClassMasterInstance extends L2MerchantInstance
 			final int jobLevel = player.getClassId().level();
 			final StringBuilder sb = new StringBuilder(100);
 			sb.append("<html><body>");
+			/* 603
 			switch (jobLevel)
+			 */
+			switch (jobLevel + e_level)
 			{
 				case 0:
 					if (Config.CLASS_MASTER_SETTINGS.isAllowed(1))
@@ -288,13 +312,19 @@ public final class L2ClassMasterInstance extends L2MerchantInstance
 		else
 		{
 			final ClassId currentClassId = player.getClassId();
+			/* 603 start
 			if (currentClassId.level() >= level)
+			 */
+			if (currentClassId.level() + e_level >= level)
 			{
 				html.setFile(player.getHtmlPrefix(), "data/html/classmaster/nomore.htm");
 			}
 			else
 			{
+				/* 603
 				final int minLevel = getMinLevel(currentClassId.level());
+				 */
+				final int minLevel = getMinLevel(currentClassId.level() + e_level);
 				if ((player.getLevel() >= minLevel) || Config.ALLOW_ENTIRE_TREE)
 				{
 					final StringBuilder menu = new StringBuilder(100);
@@ -345,7 +375,17 @@ public final class L2ClassMasterInstance extends L2MerchantInstance
 	private static final void showTutorialHtml(L2PcInstance player)
 	{
 		final ClassId currentClassId = player.getClassId();
+		// 603 start
+		int e_level = 0;
+		if (currentClassId.getId() == 182 || currentClassId.getId() == 183)
+		{
+			e_level = 1;
+		}
+		// 603 end
+		/* 603
 		if ((getMinLevel(currentClassId.level()) > player.getLevel()) && !Config.ALLOW_ENTIRE_TREE)
+		 */
+		if ((getMinLevel(currentClassId.level() + e_level) > player.getLevel()) && !Config.ALLOW_ENTIRE_TREE)
 		{
 			return;
 		}
@@ -367,14 +407,27 @@ public final class L2ClassMasterInstance extends L2MerchantInstance
 		}
 		
 		msg = msg.replaceAll("%menu%", menu.toString());
+		/* 603
 		msg = msg.replace("%req_items%", getRequiredItems(currentClassId.level() + 1));
+		 */
+		msg = msg.replace("%req_items%", getRequiredItems(currentClassId.level() + 1 + e_level));
 		player.sendPacket(new TutorialShowHtml(msg));
 	}
 	
 	private static final boolean checkAndChangeClass(L2PcInstance player, int val)
 	{
 		final ClassId currentClassId = player.getClassId();
+		// 603 start
+		int e_level = 0;
+		if (currentClassId.getId() == 182 || currentClassId.getId() == 183)
+		{
+			e_level = 1;
+		}
+		// 603 end
+		/* 603
 		if ((getMinLevel(currentClassId.level()) > player.getLevel()) && !Config.ALLOW_ENTIRE_TREE)
+		 */
+		if ((getMinLevel(currentClassId.level() + e_level) > player.getLevel()) && !Config.ALLOW_ENTIRE_TREE)
 		{
 			return false;
 		}
@@ -384,7 +437,10 @@ public final class L2ClassMasterInstance extends L2MerchantInstance
 			return false;
 		}
 		
+		/* 603
 		final int newJobLevel = currentClassId.level() + 1;
+		 */
+		final int newJobLevel = currentClassId.level() + 1 + e_level;
 		
 		// Weight/Inventory check
 		if (!Config.CLASS_MASTER_SETTINGS.getRewardItems(newJobLevel).isEmpty() && !player.isInventoryUnder90(false))
@@ -431,7 +487,10 @@ public final class L2ClassMasterInstance extends L2MerchantInstance
 		
 		player.broadcastUserInfo();
 		
+		/* 603
 		if (Config.CLASS_MASTER_SETTINGS.isAllowed(player.getClassId().level() + 1) && Config.ALTERNATE_CLASS_MASTER && (((player.getClassId().level() == 1) && (player.getLevel() >= 40)) || ((player.getClassId().level() == 2) && (player.getLevel() >= 76))))
+		 */
+		if (Config.CLASS_MASTER_SETTINGS.isAllowed(player.getClassId().level() + 1 + e_level) && Config.ALTERNATE_CLASS_MASTER && (((player.getClassId().level() == 1) && (player.getLevel() >= 40)) || ((player.getClassId().level() == 2) && (player.getLevel() >= 76))))
 		{
 			showQuestionMark(player);
 		}
