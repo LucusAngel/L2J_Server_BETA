@@ -157,8 +157,7 @@ public final class UserInfo extends L2GameServerPacket
 		writeC(_activeChar.isGM() ? 1 : 0);
 		writeC(_activeChar.getRace().ordinal());
 		writeC(_activeChar.getAppearance().getSex() ? 1 : 0);
-		if (_activeChar.getRace().ordinal() == 4) writeD(53); 
-		else writeD(_activeChar.getBaseClass());
+		writeD(_activeChar.getBaseClass());
 		writeD(_activeChar.getClassId().getId());
 		writeC(_activeChar.getLevel());
 		
