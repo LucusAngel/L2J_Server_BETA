@@ -1191,6 +1191,9 @@ public final class L2GamePacketHandler implements IPacketHandler<L2GameClient>, 
 							case 0xba: // 603
 								msg = new RequestInzoneWaitingTime();
 								break;
+							case 0xe3: // 603
+								msg = new RequestExAddEnchantScrollItem();
+								break;
 							case 0xe4: // 603
 								msg = new RequestExRemoveEnchantSupportItem();
 								break;
@@ -1269,7 +1272,6 @@ public final class L2GamePacketHandler implements IPacketHandler<L2GameClient>, 
 							case 0xe0: // 603
 							case 0xe1: // 603
 							case 0xe2: // 603
-							case 0xe3: // 603
 							case 0xe5: // 603
 							case 0xe6: // 603
 							case 0xe7: // 603
