@@ -435,7 +435,10 @@ public final class RequestEnchantItem extends L2GameClientPacket
 			}
 			
 			activeChar.broadcastUserInfo();
+			/* 603
 			activeChar.setActiveEnchantItemId(L2PcInstance.ID_NONE);
+			 */
+			activeChar.setActiveEnchantTimestamp(System.currentTimeMillis());
 		}
 	}
 	
