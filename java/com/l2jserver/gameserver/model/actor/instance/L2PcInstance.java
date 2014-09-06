@@ -2468,9 +2468,9 @@ public final class L2PcInstance extends L2Playable
 			broadcastPacket(new MagicSkillUse(this, 5103, 1, 1000, 0));
 			 */
 			setClassTemplate(Id);
-			setLearningClass(getClassId()); // l2jtw add
+			setLearningClass(getClassId()); // l2jtw add : GS-comment-047
 			// GS-comment-045 Start
-			TransformData.getInstance().transformPlayer(105, this);
+			TransformData.getInstance().transformPlayer(502, this);
 			ThreadPoolManager.getInstance().scheduleGeneral(() -> this.untransform(), 200);
 			ThreadPoolManager.getInstance().scheduleGeneral(() -> broadcastPacket(new MagicSkillUse(this, 5103, 1, 0, 0)), 1200);
 			// GS-comment-045 End
