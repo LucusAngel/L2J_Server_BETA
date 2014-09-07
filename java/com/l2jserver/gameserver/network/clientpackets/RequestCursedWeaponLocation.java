@@ -68,10 +68,13 @@ public final class RequestCursedWeaponLocation extends L2GameClientPacket
 		}
 		
 		// send the ExCursedWeaponLocation
+		/* 603
 		if (!list.isEmpty())
 		{
 			activeChar.sendPacket(new ExCursedWeaponLocation(list));
 		}
+		 */
+		activeChar.sendPacket(new ExCursedWeaponLocation(list));
 	}
 	
 	@Override

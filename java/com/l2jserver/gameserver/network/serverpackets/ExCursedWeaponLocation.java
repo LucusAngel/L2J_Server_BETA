@@ -57,7 +57,7 @@ public class ExCursedWeaponLocation extends L2GameServerPacket
 		else
 		{
 			writeD(0);
-			writeD(0);
+			//603 writeD(0);
 		}
 	}
 	
