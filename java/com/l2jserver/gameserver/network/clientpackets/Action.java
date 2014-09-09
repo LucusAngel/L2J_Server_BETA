@@ -64,6 +64,17 @@ public final class Action extends L2GameClientPacket
 		{
 			return;
 		}
+		// 603-temp fix start
+		if ((activeChar.getActiveEnchantTimestamp() > 0) && ((System.currentTimeMillis() - activeChar.getActiveEnchantTimestamp()) < 100))
+		{
+			//sendPacket(ActionFailed.STATIC_PACKET);
+			return;
+		}
+		else
+		{
+			activeChar.setActiveEnchantTimestamp(System.currentTimeMillis());
+		}
+		// 603-temp fix end
 		
 		if (activeChar.inObserverMode())
 		{

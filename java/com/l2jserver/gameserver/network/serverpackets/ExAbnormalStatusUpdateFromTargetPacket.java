@@ -36,14 +36,18 @@ public class ExAbnormalStatusUpdateFromTargetPacket extends L2GameServerPacket
 	
 	public ExAbnormalStatusUpdateFromTargetPacket(int ObjectId)
 	{
-		
-		L2Character target = null;
-		target = (L2Character) L2World.getInstance().findObject(ObjectId);
 		_objectId = ObjectId;
-		if (target != null)
+		if (_objectId == 0)
 		{
-			_effects = target.getEffectList().getEffects();
+			return;
 		}
+		L2Character target = null;
+		target = (L2Character) L2World.getInstance().findObject(_objectId);
+		if (target == null)
+		{
+			return;
+		}
+		_effects = target.getEffectList().getEffects();
 	}
 	
 	public ExAbnormalStatusUpdateFromTargetPacket(L2Object object)
@@ -64,6 +68,10 @@ public class ExAbnormalStatusUpdateFromTargetPacket extends L2GameServerPacket
 	@Override
 	protected final void writeImpl()
 	{
+		if (_objectId == 0)
+		{
+			return;
+		}
 		List<BuffInfo> el = new FastList<>();
 		for (BuffInfo e : _effects)
 		{
