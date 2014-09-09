@@ -155,7 +155,12 @@ public final class Action extends L2GameClientPacket
 			case 0:
 			{
 				obj.onAction(activeChar);
-				activeChar.sendPacket(new ExAbnormalStatusUpdateFromTargetPacket(activeChar.getTargetId())); // 603
+				// 603 start
+				if ((activeChar.getTarget() != null) && (obj.isCharacter() || obj.isNpc()))
+				{
+					activeChar.sendPacket(new ExAbnormalStatusUpdateFromTargetPacket(activeChar.getTargetId()));
+				}
+				// 603 end
 				break;
 			}
 			case 1:
@@ -168,6 +173,12 @@ public final class Action extends L2GameClientPacket
 				{
 					obj.onActionShift(activeChar);
 				}
+				// 603 start
+				if ((activeChar.getTarget() != null) && (obj.isCharacter() || obj.isNpc()))
+				{
+					activeChar.sendPacket(new ExAbnormalStatusUpdateFromTargetPacket(activeChar.getTargetId()));
+				}
+				// 603 end
 				break;
 			}
 			default:

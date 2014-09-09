@@ -23,9 +23,7 @@ import java.util.List;
 
 import javolution.util.FastList;
 
-import com.l2jserver.gameserver.model.L2Object;
 import com.l2jserver.gameserver.model.L2World;
-import com.l2jserver.gameserver.model.actor.L2Attackable;
 import com.l2jserver.gameserver.model.actor.L2Character;
 import com.l2jserver.gameserver.model.skills.BuffInfo;
 
@@ -41,27 +39,14 @@ public class ExAbnormalStatusUpdateFromTargetPacket extends L2GameServerPacket
 		{
 			return;
 		}
+		
 		L2Character target = null;
 		target = (L2Character) L2World.getInstance().findObject(_objectId);
 		if (target == null)
 		{
 			return;
 		}
-		_effects = target.getEffectList().getEffects();
-	}
-	
-	public ExAbnormalStatusUpdateFromTargetPacket(L2Object object)
-	{
-		_objectId = object.getObjectId();
-		if (object instanceof L2Attackable)
-		{
-			_effects = ((L2Character) ((L2Attackable) object).getTarget()).getEffectList().getEffects();
-		}
-	}
-	
-	public ExAbnormalStatusUpdateFromTargetPacket(L2Character target)
-	{
-		_objectId = target.getObjectId();
+		
 		_effects = target.getEffectList().getEffects();
 	}
 	
@@ -72,27 +57,19 @@ public class ExAbnormalStatusUpdateFromTargetPacket extends L2GameServerPacket
 		{
 			return;
 		}
-		List<BuffInfo> el = new FastList<>();
-		for (BuffInfo e : _effects)
-		{
-			if(e != null)
-			{
-				el.add(e);
-			}
-		}
 		
 		writeC(0xfe);
 		writeH(0xe6); // 603
 		writeD(_objectId);
-		writeH(el.size());
-		for (BuffInfo e : el)
+		writeH(_effects.size());
+		for (BuffInfo info : _effects)
 		{
-			if (e != null)
+			if ((info != null) && info.isInUse())
 			{
-				writeD(e.getSkill().getId());
-				writeH(e.getSkill().getLevel());
+				writeD(info.getSkill().getDisplayId());
+				writeH(info.getSkill().getDisplayLevel());
 				writeH(0); // 603-index?
-				writeH(e.getAbnormalTime() - e.getTime()); // 603
+				writeH(info.getTime()); // 603
 				writeD(0); // GS-comment-037
 			}
 		}

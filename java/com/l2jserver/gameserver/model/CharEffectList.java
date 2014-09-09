@@ -1547,7 +1547,7 @@ public final class CharEffectList
 		// l2jtw add start
 		for (L2Character temp : _owner.getStatus().getStatusListener())
 		{
-			if (temp != null)
+			if ((temp != null) && (temp.getTargetId() == _owner.getObjectId()))
 			{
 				temp.sendPacket(new ExAbnormalStatusUpdateFromTargetPacket(_owner.getObjectId()));
 			}
@@ -1650,6 +1650,12 @@ public final class CharEffectList
 		if (asu != null)
 		{
 			_owner.sendPacket(asu);
+			// l2jtw add start
+			if (_owner.getTargetId() == _owner.getObjectId())
+			{
+				_owner.sendPacket(new ExAbnormalStatusUpdateFromTargetPacket(_owner.getObjectId()));
+			}
+			// l2jtw add end
 		}
 		
 		if (ps != null)
