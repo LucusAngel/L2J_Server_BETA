@@ -18,17 +18,32 @@
  */
 package com.l2jserver.gameserver.network.serverpackets;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
+import com.l2jserver.gameserver.model.items.instance.L2ItemInstance;
 
 public class ExAdenaInvenCount extends L2GameServerPacket
 {
-	private L2PcInstance _player;
+	private L2PcInstance _activeChar;
+	private final List<L2ItemInstance> _items = new ArrayList<>();
+	private final long _adena_count;
 	private final int _item_count;
 	
-	public ExAdenaInvenCount(L2PcInstance player, int item_count)
+	public ExAdenaInvenCount(L2PcInstance activeChar)
 	{
-		_player = player;
-		_item_count = item_count;
+		_activeChar = activeChar;
+		
+		for (L2ItemInstance item : _activeChar.getInventory().getItems())
+		{
+			if (!item.isQuestItem())
+			{
+				_items.add(item);
+			}
+		}
+		_adena_count = _activeChar.getAdena();
+		_item_count = _items.size();
 	}
 	
 	@Override
@@ -36,7 +51,7 @@ public class ExAdenaInvenCount extends L2GameServerPacket
 	{
 		writeC(0xFE);
 		writeH(0x13E);
-		writeQ(_player.getAdena());
+		writeQ(_adena_count);
 		writeH(_item_count);
 	}
 }

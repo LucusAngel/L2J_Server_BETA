@@ -61,6 +61,5 @@ public final class ItemList extends AbstractItemPacket
 	public void runImpl()
 	{
 		getClient().sendPacket(new ExQuestItemList(_activeChar));
-		getClient().sendPacket(new ExAdenaInvenCount(_activeChar, _items.size())); // 603
 	}
 }

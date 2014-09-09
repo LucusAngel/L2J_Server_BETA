@@ -70,6 +70,7 @@ import com.l2jserver.gameserver.network.serverpackets.ExLightingCandleEvent; // 
 import com.l2jserver.gameserver.network.serverpackets.ExBrPremiumState; // 603-Test //FEDA
 import com.l2jserver.gameserver.network.serverpackets.ExUnReadMailCount; // 603-Test //FE13C
 import com.l2jserver.gameserver.network.serverpackets.ExPledgeCount; // 603-Test //FE13D
+import com.l2jserver.gameserver.network.serverpackets.ExAdenaInvenCount; // 603-Test //FE13E
 import com.l2jserver.gameserver.network.serverpackets.ExPledgeWaitingListAlarm; // 603-Test //FE147
 import com.l2jserver.gameserver.network.serverpackets.UserInfo; // 603-Test //32
 import com.l2jserver.gameserver.network.serverpackets.ExAcquireAPSkillList; // 603-Test //FE15F
@@ -398,6 +399,7 @@ public class EnterWorld extends L2GameClientPacket
 		sendPacket(new ExGetBookMarkInfoPacket(activeChar)); //FE85
 		activeChar.sendPacket(new ExAcquireAPSkillList()); //FE15F
 		sendPacket(new ItemList(activeChar, false)); //11
+		sendPacket(new ExAdenaInvenCount(activeChar)); //13E
 		sendPacket(new ShortCutInit(activeChar)); //45
 		activeChar.sendPacket(ExBasicActionList.STATIC_PACKET); //FE60
 		activeChar.sendPacket(new HennaInfo(activeChar)); //E5

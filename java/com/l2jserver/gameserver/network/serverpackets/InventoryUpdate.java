@@ -52,7 +52,7 @@ public class InventoryUpdate extends AbstractInventoryUpdate
 	@Override
 	public void runImpl() // 603
 	{
-		getClient().sendPacket(new ItemList(getClient().getActiveChar(), false));
+		getClient().sendPacket(new ExAdenaInvenCount(getClient().getActiveChar()));
 		getClient().sendPacket(new ExUserInfoInvenWeight(getClient().getActiveChar()));
 	}
 }
