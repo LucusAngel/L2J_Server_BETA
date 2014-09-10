@@ -351,10 +351,7 @@ public abstract class AbstractNpcInfo extends L2GameServerPacket
 				return;
 			}
 			writeD(_summon.getObjectId());
-			if (_val != 2)
-				writeC(0); // 603-TEST //  0=teleported  1=default   2=summoned
-			else
-				writeC(_val); //  0=teleported  1=default   2=summoned
+			writeC(_isSummoned ? 2 : _val); // 603-TEST //  0=teleported  1=default   2=summoned
 			writeC(0x25);
 			writeC(_isAttackable ? 1 : 0);
 			
