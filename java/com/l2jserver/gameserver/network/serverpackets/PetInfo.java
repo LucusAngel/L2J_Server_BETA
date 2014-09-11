@@ -174,7 +174,7 @@ public class PetInfo extends L2GameServerPacket
 		writeD(_summon.getMAtkSpd());// casting speed
 		
 		//603 writeD(_summon.getAbnormalVisualEffects());// c2 abnormal visual effect... bleed=1; poison=2; poison & bleed=3; flame=4;
-		writeC(_summon.isMountable() ? 1 : 0); // 603 // c2 ride button
+		writeC(0/* 603 _summon.isMountable() ? 1 : 0*/); // 603 // c2 ride button
 		
 		writeC(_summon.isInsideZone(ZoneId.WATER) ? 1 : _summon.isFlying() ? 2 : 0); // c2
 		
@@ -195,6 +195,6 @@ public class PetInfo extends L2GameServerPacket
 		{
 		   writeH(i); // 603
 		}
-		writeC(6); // 603
+		writeC(_summon.isMountable() ? 38 : 6); // 603 // c2 ride button
 	}
 }

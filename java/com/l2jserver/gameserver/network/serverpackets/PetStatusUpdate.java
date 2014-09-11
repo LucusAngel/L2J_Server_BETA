@@ -30,10 +30,15 @@ public class PetStatusUpdate extends L2GameServerPacket
 {
 	private final L2Summon _summon;
 	private int _maxFed, _curFed;
+	private int _type = 0; // 603
 	
+	/* 603
 	public PetStatusUpdate(L2Summon summon)
+	 */
+	public PetStatusUpdate(L2Summon summon, int type)
 	{
 		_summon = summon;
+		_type = type; // 603
 		if (_summon instanceof L2PetInstance)
 		{
 			L2PetInstance pet = (L2PetInstance) _summon;
@@ -68,6 +73,6 @@ public class PetStatusUpdate extends L2GameServerPacket
 		writeQ(_summon.getStat().getExp());
 		writeQ(_summon.getExpForThisLevel()); // 0% absolute value
 		writeQ(_summon.getExpForNextLevel()); // 100% absolute value
-		writeD(0); // 603
+		writeD(_type); // 603
 	}
 }
