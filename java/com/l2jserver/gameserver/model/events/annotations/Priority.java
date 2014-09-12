@@ -16,17 +16,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.l2jserver.gameserver.model;
+package com.l2jserver.gameserver.model.events.annotations;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * All teleport types.
- * @author xban1x
+ * @author UnAfraid
  */
-public enum TeleportWhereType
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.METHOD)
+public @interface Priority
 {
-	CASTLE,
-	CLANHALL,
-	SIEGEFLAG,
-	TOWN,
-	FORTRESS
+	public int value() default 0;
 }

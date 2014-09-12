@@ -437,7 +437,8 @@ public abstract class L2Summon extends L2Playable
 					getOwner().setPetInvItems(false);
 				}
 			}
-			
+			abortAttack();
+			abortCast();
 			storeMe();
 			storeEffect(true);
 			if (owner != null)
@@ -837,7 +838,7 @@ public abstract class L2Summon extends L2Playable
 	public void doCast(Skill skill)
 	{
 		final L2PcInstance actingPlayer = getActingPlayer();
-		if (!actingPlayer.checkPvpSkill(getTarget(), skill, true) && !actingPlayer.getAccessLevel().allowPeaceAttack())
+		if (!actingPlayer.checkPvpSkill(getTarget(), skill) && !actingPlayer.getAccessLevel().allowPeaceAttack())
 		{
 			// Send a System Message to the L2PcInstance
 			actingPlayer.sendPacket(SystemMessageId.TARGET_IS_INCORRECT);
