@@ -40,7 +40,7 @@ public class ExUseSharedGroupItem extends L2GameServerPacket
 	protected void writeImpl()
 	{
 		writeC(0xFE);
-		writeH(0x4A);
+		writeH(0x4B); // 603
 		
 		writeD(_itemId);
 		writeD(_grpId);

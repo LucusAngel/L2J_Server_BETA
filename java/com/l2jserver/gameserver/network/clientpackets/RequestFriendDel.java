@@ -27,6 +27,7 @@ import com.l2jserver.gameserver.datatables.CharNameTable;
 import com.l2jserver.gameserver.model.L2World;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.network.SystemMessageId;
+import com.l2jserver.gameserver.network.serverpackets.FriendList; // 603
 import com.l2jserver.gameserver.network.serverpackets.FriendPacket;
 import com.l2jserver.gameserver.network.serverpackets.SystemMessage;
 
@@ -86,18 +87,23 @@ public final class RequestFriendDel extends L2GameClientPacket
 			statement.execute();
 			
 			// Player deleted from your friend list
+			/* Update by rocknow
 			sm = SystemMessage.getSystemMessage(SystemMessageId.S1_HAS_BEEN_DELETED_FROM_YOUR_FRIENDS_LIST);
+			 */
+			sm = SystemMessage.getSystemMessage(SystemMessageId.S1_REMOVED_FROM_YOUR_FRIENDS_LIST);
 			sm.addString(_name);
 			activeChar.sendPacket(sm);
 			
 			activeChar.getFriendList().remove(Integer.valueOf(id));
 			activeChar.sendPacket(new FriendPacket(false, id));
+			activeChar.sendPacket(new FriendList(activeChar)); // 603
 			
 			L2PcInstance player = L2World.getInstance().getPlayer(_name);
 			if (player != null)
 			{
 				player.getFriendList().remove(Integer.valueOf(activeChar.getObjectId()));
 				player.sendPacket(new FriendPacket(false, activeChar.getObjectId()));
+				player.sendPacket(new FriendList(player)); // 603
 			}
 		}
 		catch (Exception e)

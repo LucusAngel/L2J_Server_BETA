@@ -31,6 +31,7 @@ public class RequestListPartyMatchingWaitingRoom extends L2GameClientPacket
 	private static int _minlvl;
 	private static int _maxlvl;
 	private static int _mode; // 1 - waitlist 0 - room waitlist
+	private static String _name; // 603
 	
 	@Override
 	protected void readImpl()
@@ -39,6 +40,7 @@ public class RequestListPartyMatchingWaitingRoom extends L2GameClientPacket
 		_minlvl = readD();
 		_maxlvl = readD();
 		_mode = readD();
+		_name = readS(); // 603
 	}
 	
 	@Override
@@ -51,7 +53,10 @@ public class RequestListPartyMatchingWaitingRoom extends L2GameClientPacket
 			return;
 		}
 		
+		/* l2jtw add
 		_activeChar.sendPacket(new ExListPartyMatchingWaitingRoom(_activeChar, _page, _minlvl, _maxlvl, _mode));
+		 */
+		_activeChar.sendPacket(new ExListPartyMatchingWaitingRoom(_activeChar, _page, _minlvl, _maxlvl, _mode, _name));
 	}
 	
 	@Override

@@ -52,7 +52,8 @@ public class PartySpelled extends L2GameServerPacket
 			{
 				writeD(info.getSkill().getId());
 				writeH(info.getSkill().getLevel());
-				writeD(info.getTime());
+				writeD(0); // 603
+				writeH(info.getTime()); // 603
 			}
 		}
 	}

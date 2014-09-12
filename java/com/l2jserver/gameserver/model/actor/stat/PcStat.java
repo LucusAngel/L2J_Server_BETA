@@ -23,6 +23,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import com.l2jserver.Config;
 import com.l2jserver.gameserver.datatables.ExperienceTable;
 import com.l2jserver.gameserver.datatables.PetDataTable;
+import com.l2jserver.gameserver.instancemanager.AwakingManager; // 603
 import com.l2jserver.gameserver.model.L2PetLevelData;
 import com.l2jserver.gameserver.model.PcCondOverride;
 import com.l2jserver.gameserver.model.actor.instance.L2ClassMasterInstance;
@@ -60,15 +61,25 @@ public class PcStat extends PlayableStat
 	private int _maxCubicCount = 1;
 	/** Player's maximum talisman count. */
 	private final AtomicInteger _talismanSlots = new AtomicInteger();
+	/* 603
 	private boolean _cloakSlot = false;
+	 */
+	private boolean _cloakSlot = true;
 	
 	public static final int VITALITY_LEVELS[] =
 	{
+		/* 603
 		240,
 		2000,
 		13000,
 		17000,
 		20000
+		 */
+		1,
+		35000,
+		70000,
+		105000,
+		140000
 	};
 	
 	public static final int MAX_VITALITY_POINTS = VITALITY_LEVELS[4];
@@ -270,6 +281,12 @@ public class PcStat extends PlayableStat
 			getActiveChar().sendPacket(SystemMessageId.YOU_INCREASED_YOUR_LEVEL);
 			
 			L2ClassMasterInstance.showQuestionMark(getActiveChar());
+			// 603-Start
+			if (Config.Auto_Awaking && getLevel() > 84 && !getActiveChar().isAwaken() && !getActiveChar().isSubClassActive())
+				AwakingManager.getInstance().SendReqAwaking(getActiveChar());
+			else if (Config.Auto_Awaking && getLevel() > 84 && !getActiveChar().isAwaken() && getActiveChar().isSubClassActive() && getActiveChar().getAwakenSubClassCount() < 1)
+				AwakingManager.getInstance().SendReqAwaking(getActiveChar());
+			// 603-End
 		}
 		
 		// Give AutoGet skills and all normal skills if Auto-Learn is activated.
@@ -433,6 +450,8 @@ public class PcStat extends PlayableStat
 	public void setCloakSlotStatus(boolean cloakSlot)
 	{
 		_cloakSlot = cloakSlot;
+		_cloakSlot = true; // 603 add
+		//FIXME: refactor me (Battlecruiser)
 	}
 	
 	@Override
@@ -722,6 +741,7 @@ public class PcStat extends PlayableStat
 		_vitalityPoints = points;
 		updateVitalityLevel(quiet);
 		getActiveChar().sendPacket(new ExVitalityPointInfo(getVitalityPoints()));
+		getActiveChar().sendPacket(new UserInfo(getActiveChar())); // l2jtw add
 	}
 	
 	public synchronized void updateVitalityPoints(float points, boolean useRates, boolean quiet)

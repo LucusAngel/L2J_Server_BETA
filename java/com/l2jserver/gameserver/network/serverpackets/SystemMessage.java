@@ -95,6 +95,7 @@ public final class SystemMessage extends L2GameServerPacket
 	// 15 exists in goddess of destruction but also may works in h5 needs to be verified!
 	// private static final byte TYPE_CLASS_ID = 15;
 	// id 14 unknown
+	private static final byte TYPE_DAMAGE = 16; // 603 (by otfnir)
 	private static final byte TYPE_SYSTEM_STRING = 13;
 	private static final byte TYPE_PLAYER_NAME = 12;
 	private static final byte TYPE_DOOR_NAME = 11;
@@ -177,7 +178,7 @@ public final class SystemMessage extends L2GameServerPacket
 		{
 			_params = Arrays.copyOf(_params, _paramIndex + 1);
 			_smId.setParamCount(_paramIndex + 1);
-			_log.log(Level.INFO, "Wrong parameter count '" + (_paramIndex + 1) + "' for SystemMessageId: " + _smId);
+			// 603-Test Show Damage _log.log(Level.INFO, "Wrong parameter count '" + (_paramIndex + 1) + "' for SystemMessageId: " + _smId);
 		}
 		
 		_params[_paramIndex++] = param;
@@ -395,6 +396,13 @@ public final class SystemMessage extends L2GameServerPacket
 		return _smId;
 	}
 	
+	// 603 (by otfnir)-Start
+	public final SystemMessage addDamage(final int targetObjectID, final int playerObjectID, final int damage)
+	{
+		append(new SMParam(TYPE_DAMAGE, new int[] {targetObjectID, playerObjectID, damage}));
+		return this;
+	}
+	// 603 (by otfnir)-End
 	public final SystemMessage getLocalizedMessage(final String lang)
 	{
 		if (!Config.L2JMOD_MULTILANG_SM_ENABLE || (_smId == SystemMessageId.S1))
@@ -563,6 +571,16 @@ public final class SystemMessage extends L2GameServerPacket
 					out.println(array[2]); // z
 					break;
 				}
+				// 603 (by otfnir)-Start
+				case TYPE_DAMAGE:
+				{
+					final int[] array = param.getIntArrayValue();
+					out.println(array[0]); // target
+					out.println(array[1]); // player
+					out.println(array[2]); // damage
+					break;
+				}
+				// 603 (by otfnir)-End
 			}
 		}
 	}
@@ -572,14 +590,14 @@ public final class SystemMessage extends L2GameServerPacket
 	{
 		writeC(0x62);
 		
-		writeD(_smId.getId());
-		writeD(_paramIndex);
+		writeH(_smId.getId()); // 603
+		writeC(_paramIndex); // 603
 		
 		SMParam param;
 		for (int i = 0; i < _paramIndex; i++)
 		{
 			param = _params[i];
-			writeD(param.getType());
+			writeC(param.getType()); // 603
 			
 			switch (param.getType())
 			{
@@ -613,7 +631,7 @@ public final class SystemMessage extends L2GameServerPacket
 				{
 					final int[] array = param.getIntArrayValue();
 					writeD(array[0]); // SkillId
-					writeD(array[1]); // SkillLevel
+					writeH(array[1]); // 603 // SkillLevel
 					break;
 				}
 				
@@ -625,6 +643,16 @@ public final class SystemMessage extends L2GameServerPacket
 					writeD(array[2]); // z
 					break;
 				}
+				// 603 (by otfnir)-Start
+				case TYPE_DAMAGE:
+				{
+					final int[] array = param.getIntArrayValue();
+					writeD(array[0]); // target
+					writeD(array[1]); // player
+					writeD(array[2]); // damage
+					break;
+				}
+				// 603 (by otfnir)-End
 			}
 		}
 	}

@@ -57,29 +57,36 @@ public class CharSelected extends L2GameServerPacket
 		
 		writeF(_activeChar.getCurrentHp());
 		writeF(_activeChar.getCurrentMp());
-		writeD(_activeChar.getSp());
+		writeQ(_activeChar.getSp()); // 603
 		writeQ(_activeChar.getExp());
 		writeD(_activeChar.getLevel());
-		writeD(_activeChar.getKarma()); // thx evill33t
+		int Karma = 0 - _activeChar.getKarma(); // 603-Test
+		writeD(Karma); // thx evill33t // 603-Test
 		writeD(_activeChar.getPkKills());
-		writeD(_activeChar.getINT());
-		writeD(_activeChar.getSTR());
-		writeD(_activeChar.getCON());
-		writeD(_activeChar.getMEN());
-		writeD(_activeChar.getDEX());
-		writeD(_activeChar.getWIT());
+		//603 writeD(_activeChar.getINT());
+		//603 writeD(_activeChar.getSTR());
+		//603 writeD(_activeChar.getCON());
+		//603 writeD(_activeChar.getMEN());
+		//603 writeD(_activeChar.getDEX());
+		//603 writeD(_activeChar.getWIT());
 		
 		writeD(GameTimeController.getInstance().getGameTime() % (24 * 60)); // "reset" on 24th hour
 		writeD(0x00);
 		
 		writeD(_activeChar.getClassId().getId());
 		
+		writeB(new byte[16]); // 603
 		writeD(0x00);
 		writeD(0x00);
 		writeD(0x00);
 		writeD(0x00);
+		writeD(0x00); // 603
+		writeD(0x00); // 603
+		writeD(0x00); // 603
+		writeD(0x00); // 603
+		writeD(0x00); // 603
 		
-		writeB(new byte[64]);
+		writeB(new byte[28]); // 603
 		writeD(0x00);
 	}
 }

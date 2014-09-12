@@ -44,6 +44,7 @@ public abstract class AbstractRefinePacket extends L2GameClientPacket
 	protected static final int GEMSTONE_D = 2130;
 	protected static final int GEMSTONE_C = 2131;
 	protected static final int GEMSTONE_B = 2132;
+	protected static final int GEMSTONE_A = 2133; // 603
 	
 	private static final Map<Integer, LifeStone> _lifeStones = new HashMap<>();
 	
@@ -66,6 +67,7 @@ public abstract class AbstractRefinePacket extends L2GameClientPacket
 			82,
 			84,
 			85
+			, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99 // 603
 		};
 		private final int _grade;
 		private final int _level;
@@ -194,6 +196,25 @@ public abstract class AbstractRefinePacket extends L2GameClientPacket
 		_lifeStones.put(16166, new LifeStone(GRADE_HIGH, 13));
 		_lifeStones.put(16167, new LifeStone(GRADE_TOP, 13));
 		_lifeStones.put(16178, new LifeStone(GRADE_ACC, 13));
+		// 603-Start
+		_lifeStones.put(18563, new LifeStone(GRADE_NONE, 14));
+		_lifeStones.put(18564, new LifeStone(GRADE_MID, 14));
+		_lifeStones.put(18565, new LifeStone(GRADE_HIGH, 14));
+		_lifeStones.put(18566, new LifeStone(GRADE_TOP, 14));
+		_lifeStones.put(19166, new LifeStone(GRADE_ACC, 14));
+		
+		_lifeStones.put(18568, new LifeStone(GRADE_NONE, 15));
+		_lifeStones.put(18569, new LifeStone(GRADE_MID, 15));
+		_lifeStones.put(18570, new LifeStone(GRADE_HIGH, 15));
+		_lifeStones.put(18571, new LifeStone(GRADE_TOP, 15));
+		_lifeStones.put(19167, new LifeStone(GRADE_ACC, 15));
+		
+		_lifeStones.put(18573, new LifeStone(GRADE_NONE, 16));
+		_lifeStones.put(18574, new LifeStone(GRADE_MID, 16));
+		_lifeStones.put(18575, new LifeStone(GRADE_HIGH, 16));
+		_lifeStones.put(18576, new LifeStone(GRADE_TOP, 16));
+		_lifeStones.put(19168, new LifeStone(GRADE_ACC, 16));
+		// 603-End
 	}
 	
 	protected static final LifeStone getLifeStone(int itemId)
@@ -458,6 +479,12 @@ public abstract class AbstractRefinePacket extends L2GameClientPacket
 			case S80:
 			case S84:
 				return GEMSTONE_B;
+			// 603-Start
+			case R:
+			case R95:
+			case R99:
+				return GEMSTONE_A;
+			// 603-End
 			default:
 				return 0;
 		}
@@ -488,6 +515,13 @@ public abstract class AbstractRefinePacket extends L2GameClientPacket
 						return 360;
 					case S84:
 						return 480;
+					// 603-Start
+					case R:
+					case R95:
+						return 960;
+					case R99:
+						return 1920;
+					// 603-End
 					default:
 						return 0;
 				}
@@ -505,6 +539,12 @@ public abstract class AbstractRefinePacket extends L2GameClientPacket
 					case S80:
 					case S84:
 						return 36;
+					// 603-Start
+					case R:
+					case R95:
+					case R99:
+						return 48;
+					// 603-End
 					default:
 						return 0;
 				}

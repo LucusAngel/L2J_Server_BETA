@@ -57,5 +57,11 @@ public class HennaItemDrawInfo extends L2GameServerPacket
 		writeC(_activeChar.getDEX() + _henna.getStatDEX()); // equip DEX
 		writeD(_activeChar.getWIT()); // current WIT
 		writeC(_activeChar.getWIT() + _henna.getStatWIT()); // equip WIT
+		//looks like the new stats (Battlecruiser)
+		writeD(0); // 603-current New-1
+		writeC(0); // 603-equip New-1
+		writeD(0); // 603-current New-2
+		writeC(0); // 603-equip New-2
+		writeD(0x00); // 603
 	}
 }

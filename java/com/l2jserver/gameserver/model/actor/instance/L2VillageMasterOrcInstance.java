@@ -37,6 +37,10 @@ public final class L2VillageMasterOrcInstance extends L2VillageMasterInstance
 			return false;
 		}
 		
+		//FIXME: validate this (Battlecruiser)
+		/* l2jtw add
 		return pclass.isOfRace(Race.ORC);
+		 */
+		return pclass.isOfRace(Race.ORC) || pclass.isOfRace(null);
 	}
 }

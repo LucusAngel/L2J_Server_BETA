@@ -38,7 +38,7 @@ public class ExAskModifyPartyLooting extends L2GameServerPacket
 	protected void writeImpl()
 	{
 		writeC(0xFE);
-		writeH(0xBF);
+		writeH(0xC0); // 603
 		writeS(_requestor);
 		writeD(_partyDistributionType.getId());
 	}

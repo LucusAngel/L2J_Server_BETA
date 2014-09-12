@@ -34,15 +34,17 @@ public class ExListPartyMatchingWaitingRoom extends L2GameServerPacket
 	private final int _minlvl;
 	private final int _maxlvl;
 	private final int _mode;
+	private final String _name; // 603
 	private final List<L2PcInstance> _members;
 	
-	public ExListPartyMatchingWaitingRoom(L2PcInstance player, int page, int minlvl, int maxlvl, int mode)
+	public ExListPartyMatchingWaitingRoom(L2PcInstance player, int page, int minlvl, int maxlvl, int mode, String name) // l2jtw add
 	{
 		_activeChar = player;
 		// _page = page;
 		_minlvl = minlvl;
 		_maxlvl = maxlvl;
 		_mode = mode;
+		_name = name; // 603
 		_members = new ArrayList<>();
 	}
 	
@@ -51,12 +53,14 @@ public class ExListPartyMatchingWaitingRoom extends L2GameServerPacket
 	{
 		writeC(0xFE);
 		writeH(0x36);
+		/* 603
 		if (_mode == 0)
 		{
 			writeD(0);
 			writeD(0);
 			return;
 		}
+		 */
 		
 		for (L2PcInstance cha : PartyMatchWaitingList.getInstance().getPlayers())
 		{
@@ -79,13 +83,16 @@ public class ExListPartyMatchingWaitingRoom extends L2GameServerPacket
 			_members.add(cha);
 		}
 		
-		writeD(0x01); // Page?
+		writeD(_members.size()); // 603
 		writeD(_members.size());
 		for (L2PcInstance member : _members)
 		{
 			writeS(member.getName());
 			writeD(member.getActiveClass());
 			writeD(member.getLevel());
+			writeD(0); // 603 : GS-comment-028.1
+			writeD(0); // 603 : GS-comment-028.2
+				//for{writeD(?);} // 603 : GS-comment-028.3
 		}
 	}
 }

@@ -28,11 +28,13 @@ public class RequestTutorialLinkHtml extends L2GameClientPacket
 {
 	private static final String _C__85_REQUESTTUTORIALLINKHTML = "[C] 85 RequestTutorialLinkHtml";
 	
+	private int _id; // 603
 	private String _bypass;
 	
 	@Override
 	protected void readImpl()
 	{
+		_id = readD(); // 603
 		_bypass = readS();
 	}
 	

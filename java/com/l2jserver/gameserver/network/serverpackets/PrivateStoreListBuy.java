@@ -45,6 +45,7 @@ public class PrivateStoreListBuy extends AbstractItemPacket
 		writeC(0xbe);
 		writeD(_objId);
 		writeQ(_playerAdena);
+		writeD(0x00); // 603
 		
 		writeD(_items.length);
 		

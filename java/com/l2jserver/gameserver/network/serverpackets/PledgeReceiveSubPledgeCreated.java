@@ -43,7 +43,7 @@ public class PledgeReceiveSubPledgeCreated extends L2GameServerPacket
 	protected void writeImpl()
 	{
 		writeC(0xfe);
-		writeH(0x40);
+		writeH(0x41); // 603
 		
 		writeD(0x01);
 		writeD(_subPledge.getId());

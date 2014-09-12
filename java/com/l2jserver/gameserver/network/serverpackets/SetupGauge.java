@@ -20,9 +20,9 @@ package com.l2jserver.gameserver.network.serverpackets;
 
 public final class SetupGauge extends L2GameServerPacket
 {
-	public static final int BLUE = 0;
+	public static final int BLUE = 2; // 603
 	public static final int RED = 1;
-	public static final int CYAN = 2;
+	public static final int GREEN = 3; // 603
 	
 	private final int _dat1;
 	private final int _time;
@@ -31,14 +31,14 @@ public final class SetupGauge extends L2GameServerPacket
 	
 	public SetupGauge(int dat1, int time)
 	{
-		_dat1 = dat1;// color 0-blue 1-red 2-cyan 3-green
+		_dat1 = dat1;// color 0-no(use skill) 1-red(use bow) 2-blue(in water) 3-green
 		_time = time;
 		_time2 = time;
 	}
 	
 	public SetupGauge(int color, int currentTime, int maxTime)
 	{
-		_dat1 = color;// color 0-blue 1-red 2-cyan 3-green
+		_dat1 = color;// color 0-no(use skill) 1-red(use bow) 2-blue(in water) 3-green
 		_time = currentTime;
 		_time2 = maxTime;
 	}

@@ -47,7 +47,10 @@ public enum BaseStats
 	
 	private static final Logger _log = Logger.getLogger(BaseStats.class.getName());
 	
+	/* l2jtw add
 	public static final int MAX_STAT_VALUE = 100;
+	 */
+	public static final int MAX_STAT_VALUE = 512;
 	
 	protected static final double[] STRbonus = new double[MAX_STAT_VALUE];
 	protected static final double[] INTbonus = new double[MAX_STAT_VALUE];
@@ -95,13 +98,22 @@ public enum BaseStats
 	{
 		public double calcBonus(L2Character actor);
 	}
+	// l2jtw add start
+	public static int getSafeStat(int statValue)
+	{
+		return statValue >= MAX_STAT_VALUE ? MAX_STAT_VALUE -1 : statValue;
+	}
+	// l2jtw add end
 	
 	protected static final class STR implements BaseStat
 	{
 		@Override
 		public final double calcBonus(L2Character actor)
 		{
+			/* l2jtw add
 			return STRbonus[actor.getSTR()];
+			 */
+			return STRbonus[getSafeStat(actor.getSTR())];
 		}
 	}
 	
@@ -110,7 +122,10 @@ public enum BaseStats
 		@Override
 		public final double calcBonus(L2Character actor)
 		{
+			/* l2jtw add
 			return INTbonus[actor.getINT()];
+			 */
+			return INTbonus[getSafeStat(actor.getINT())];
 		}
 	}
 	
@@ -119,7 +134,10 @@ public enum BaseStats
 		@Override
 		public final double calcBonus(L2Character actor)
 		{
+			/* l2jtw add
 			return DEXbonus[actor.getDEX()];
+			 */
+			return DEXbonus[getSafeStat(actor.getDEX())];
 		}
 	}
 	
@@ -128,7 +146,10 @@ public enum BaseStats
 		@Override
 		public final double calcBonus(L2Character actor)
 		{
+			/* l2jtw add
 			return WITbonus[actor.getWIT()];
+			 */
+			return WITbonus[getSafeStat(actor.getWIT())];
 		}
 	}
 	
@@ -137,7 +158,10 @@ public enum BaseStats
 		@Override
 		public final double calcBonus(L2Character actor)
 		{
+			/* l2jtw add
 			return CONbonus[actor.getCON()];
+			 */
+			return CONbonus[getSafeStat(actor.getCON())];
 		}
 	}
 	
@@ -146,7 +170,10 @@ public enum BaseStats
 		@Override
 		public final double calcBonus(L2Character actor)
 		{
+			/* l2jtw add
 			return MENbonus[actor.getMEN()];
+			 */
+			return MENbonus[getSafeStat(actor.getMEN())];
 		}
 	}
 	

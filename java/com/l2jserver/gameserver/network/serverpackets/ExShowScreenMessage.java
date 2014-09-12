@@ -192,9 +192,11 @@ public class ExShowScreenMessage extends L2GameServerPacket
 		writeD(_time);
 		writeD(_fade ? 0x01 : 0x00);
 		writeD(_npcString);
+		int exsize = 5; // 603
 		if (_npcString == -1)
 		{
 			writeS(_text);
+			exsize = exsize - 1; // 603
 		}
 		else
 		{
@@ -203,8 +205,13 @@ public class ExShowScreenMessage extends L2GameServerPacket
 				for (String s : _parameters)
 				{
 					writeS(s);
+					exsize = exsize - 1; // 603
 				}
 			}
+		}
+		for (int i = 0; i < exsize; i++) // 603
+		{
+			writeS("");
 		}
 	}
 }

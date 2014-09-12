@@ -37,7 +37,7 @@ public class ExGetOffAirShip extends L2GameServerPacket
 	protected void writeImpl()
 	{
 		writeC(0xFE);
-		writeH(0x64);
+		writeH(0x65); // 603
 		
 		writeD(_playerId);
 		writeD(_airShipId);

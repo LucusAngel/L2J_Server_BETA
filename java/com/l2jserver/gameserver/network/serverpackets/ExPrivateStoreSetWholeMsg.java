@@ -43,7 +43,7 @@ public class ExPrivateStoreSetWholeMsg extends L2GameServerPacket
 	protected void writeImpl()
 	{
 		writeC(0xFE);
-		writeH(0x80);
+		writeH(0x81); // 603
 		writeD(_objectId);
 		writeS(_msg);
 	}

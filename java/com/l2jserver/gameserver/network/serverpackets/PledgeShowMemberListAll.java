@@ -59,8 +59,8 @@ public class PledgeShowMemberListAll extends L2GameServerPacket
 		}
 		
 		// unless this is sent sometimes, the client doesn't recognise the player as the leader
-		_activeChar.sendPacket(new UserInfo(_activeChar));
-		_activeChar.sendPacket(new ExBrExtraUserInfo(_activeChar));
+		//603 _activeChar.sendPacket(new UserInfo(_activeChar));
+		//603 _activeChar.sendPacket(new ExBrExtraUserInfo(_activeChar));
 		
 	}
 	
@@ -70,6 +70,7 @@ public class PledgeShowMemberListAll extends L2GameServerPacket
 		
 		writeD(mainOrSubpledge);
 		writeD(_clan.getId());
+		writeD(2); // 603
 		writeD(_pledgeType);
 		writeS(_clan.getName());
 		writeS(_clan.getLeaderName());
@@ -83,6 +84,7 @@ public class PledgeShowMemberListAll extends L2GameServerPacket
 		writeD(_clan.getReputationScore());
 		writeD(0x00); // 0
 		writeD(0x00); // 0
+		writeD(0x00); // 603
 		writeD(_clan.getAllyId());
 		writeS(_clan.getAllyName());
 		writeD(_clan.getAllyCrestId());

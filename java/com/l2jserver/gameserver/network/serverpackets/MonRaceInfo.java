@@ -71,8 +71,8 @@ public class MonRaceInfo extends L2GameServerPacket
 					writeC(0x00);
 				}
 			}
-			writeD(0x00);
-			writeD(0x00); // CT2.3 special effect
+			//603 writeD(0x00);
+			//603 writeD(0x00); // CT2.3 special effect
 		}
 	}
 }

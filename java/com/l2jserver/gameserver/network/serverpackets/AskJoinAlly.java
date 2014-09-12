@@ -22,15 +22,18 @@ public class AskJoinAlly extends L2GameServerPacket
 {
 	private final String _requestorName;
 	private final int _requestorObjId;
+	private final String _requestorAllyName; // 603
 	
 	/**
 	 * @param requestorObjId
+	 * @param requestorAllyName
 	 * @param requestorName
 	 */
-	public AskJoinAlly(int requestorObjId, String requestorName)
+	public AskJoinAlly(int requestorObjId, String requestorAllyName, String requestorName) // 603
 	{
 		_requestorName = requestorName;
 		_requestorObjId = requestorObjId;
+		_requestorAllyName = requestorAllyName; // 603
 	}
 	
 	@Override
@@ -38,6 +41,8 @@ public class AskJoinAlly extends L2GameServerPacket
 	{
 		writeC(0xbb);
 		writeD(_requestorObjId);
+		writeS(_requestorAllyName); // 603
+		writeS(""); // 603
 		writeS(_requestorName);
 	}
 }

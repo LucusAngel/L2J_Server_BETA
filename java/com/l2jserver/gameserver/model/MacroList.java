@@ -76,6 +76,7 @@ public class MacroList implements IRestorable
 			}
 			_macroses.put(macro.getId(), macro);
 			registerMacroInDb(macro);
+			_owner.sendPacket(new SendMacroList(SendMacroList.ADD, 1, macro, macro.getId())); // l2jtw add
 		}
 		else
 		{
@@ -85,8 +86,12 @@ public class MacroList implements IRestorable
 				deleteMacroFromDb(old);
 			}
 			registerMacroInDb(macro);
+			_owner.sendPacket(new SendMacroList(SendMacroList.EDIT, 1, macro, macro.getId())); // l2jtw add
 		}
+		//FIXME: validate this (Battlecruiser)
+		/* l2jtw add
 		sendUpdate();
+		 */
 	}
 	
 	public void deleteMacro(int id)
@@ -106,7 +111,10 @@ public class MacroList implements IRestorable
 			}
 		}
 		
+		_owner.sendPacket(new SendMacroList(SendMacroList.DELETE, 0, null, id)); // l2jtw add
+		/* l2jtw add
 		sendUpdate();
+		 */
 	}
 	
 	public void sendUpdate()
@@ -117,13 +125,19 @@ public class MacroList implements IRestorable
 		{
 			if (allMacros.isEmpty())
 			{
+				/*
 				_owner.sendPacket(new SendMacroList(_revision, 0, null));
+				 */
+				_owner.sendPacket(new SendMacroList(SendMacroList.ADD, allMacros.size(), null, 0)); // l2jtw add
 			}
 			else
 			{
 				for (Macro m : allMacros)
 				{
+					/*
 					_owner.sendPacket(new SendMacroList(_revision, allMacros.size(), m));
+					 */
+					_owner.sendPacket(new SendMacroList(SendMacroList.ADD, allMacros.size(), m, m.getId())); // l2jtw add
 				}
 			}
 		}

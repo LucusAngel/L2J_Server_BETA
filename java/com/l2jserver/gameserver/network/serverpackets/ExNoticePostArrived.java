@@ -42,7 +42,7 @@ public class ExNoticePostArrived extends L2GameServerPacket
 	protected void writeImpl()
 	{
 		writeC(0xFE);
-		writeH(0xA9);
+		writeH(0xAA); // 603
 		writeD(_showAnim ? 0x01 : 0x00);
 	}
 }

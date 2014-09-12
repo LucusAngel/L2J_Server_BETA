@@ -26,10 +26,12 @@ import com.l2jserver.gameserver.model.actor.L2Summon;
 public class PetStatusShow extends L2GameServerPacket
 {
 	private final int _summonType;
+	private final int _summonObjId; // 603
 	
 	public PetStatusShow(L2Summon summon)
 	{
 		_summonType = summon.getSummonType();
+		_summonObjId = summon.getObjectId(); // 603
 	}
 	
 	@Override
@@ -37,5 +39,6 @@ public class PetStatusShow extends L2GameServerPacket
 	{
 		writeC(0xb1);
 		writeD(_summonType);
+		writeD(_summonObjId); // 603
 	}
 }

@@ -45,11 +45,11 @@ public class ExFishingStart extends L2GameServerPacket
 		writeC(0xFE);
 		writeH(0x1E);
 		writeD(_activeChar.getObjectId());
-		writeD(_fishType); // fish type
+		writeC(_fishType); // 603 // fish type
 		writeD(_x); // x position
 		writeD(_y); // y position
 		writeD(_z); // z position
-		writeC(_isNightLure ? 0x01 : 0x00); // night lure
-		writeC(0x00); // show fish rank result button
+		writeC(_isNightLure ? 0x01 : 0x00); // 603 : GS-comment-027 // night lure
+		//603 writeC(0x00); // show fish rank result button
 	}
 }

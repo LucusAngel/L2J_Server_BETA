@@ -38,7 +38,7 @@ public class ExShowOwnthingPos extends L2GameServerPacket
 	protected void writeImpl()
 	{
 		writeC(0xFE);
-		writeH(0x93);
+		writeH(0x94); // 603
 		
 		if (TerritoryWarManager.getInstance().isTWInProgress())
 		{

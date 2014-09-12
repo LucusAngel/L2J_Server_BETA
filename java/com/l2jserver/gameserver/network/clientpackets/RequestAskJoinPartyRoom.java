@@ -54,7 +54,11 @@ public class RequestAskJoinPartyRoom extends L2GameClientPacket
 			if (!target.isProcessingRequest())
 			{
 				player.onTransactionRequest(target);
+				//FIXME: Validate me (Battlecruiser)
+				/* l2jtw add
 				target.sendPacket(new ExAskJoinPartyRoom(player.getName()));
+				 */
+				target.sendPacket(new ExAskJoinPartyRoom(player));
 			}
 			else
 			{

@@ -48,7 +48,7 @@ public class ExChangePostState extends L2GameServerPacket
 	protected void writeImpl()
 	{
 		writeC(0xfe);
-		writeH(0xb3);
+		writeH(0xb4); // 603
 		writeD(_receivedBoard ? 1 : 0);
 		writeD(_changedMsgIds.length);
 		for (int postId : _changedMsgIds)

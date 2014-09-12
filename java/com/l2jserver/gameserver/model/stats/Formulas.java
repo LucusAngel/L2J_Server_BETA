@@ -120,29 +120,31 @@ public final class Formulas
 	{
 		Calculator[] std = new Calculator[Stats.NUM_STATS];
 		
+		//FIXME: Validate this!!! (Battlecruiser)
+		
 		std[Stats.MAX_HP.ordinal()] = new Calculator();
-		std[Stats.MAX_HP.ordinal()].addFunc(FuncMaxHpMul.getInstance());
+		// rocknow-close std[Stats.MAX_HP.ordinal()].addFunc(FuncMaxHpMul.getInstance());
 		
 		std[Stats.MAX_MP.ordinal()] = new Calculator();
-		std[Stats.MAX_MP.ordinal()].addFunc(FuncMaxMpMul.getInstance());
+		// rocknow-close std[Stats.MAX_MP.ordinal()].addFunc(FuncMaxMpMul.getInstance());
 		
 		std[Stats.POWER_ATTACK.ordinal()] = new Calculator();
-		std[Stats.POWER_ATTACK.ordinal()].addFunc(FuncPAtkMod.getInstance());
+		// rocknow-close std[Stats.POWER_ATTACK.ordinal()].addFunc(FuncPAtkMod.getInstance());
 		
 		std[Stats.MAGIC_ATTACK.ordinal()] = new Calculator();
-		std[Stats.MAGIC_ATTACK.ordinal()].addFunc(FuncMAtkMod.getInstance());
+		// rocknow-close std[Stats.MAGIC_ATTACK.ordinal()].addFunc(FuncMAtkMod.getInstance());
 		
 		std[Stats.POWER_DEFENCE.ordinal()] = new Calculator();
-		std[Stats.POWER_DEFENCE.ordinal()].addFunc(FuncPDefMod.getInstance());
+		// rocknow-close std[Stats.POWER_DEFENCE.ordinal()].addFunc(FuncPDefMod.getInstance());
 		
 		std[Stats.MAGIC_DEFENCE.ordinal()] = new Calculator();
-		std[Stats.MAGIC_DEFENCE.ordinal()].addFunc(FuncMDefMod.getInstance());
+		// rocknow-close std[Stats.MAGIC_DEFENCE.ordinal()].addFunc(FuncMDefMod.getInstance());
 		
 		std[Stats.CRITICAL_RATE.ordinal()] = new Calculator();
-		std[Stats.CRITICAL_RATE.ordinal()].addFunc(FuncAtkCritical.getInstance());
+		// rocknow-close std[Stats.CRITICAL_RATE.ordinal()].addFunc(FuncAtkCritical.getInstance());
 		
 		std[Stats.MCRITICAL_RATE.ordinal()] = new Calculator();
-		std[Stats.MCRITICAL_RATE.ordinal()].addFunc(FuncMAtkCritical.getInstance());
+		// rocknow-close std[Stats.MCRITICAL_RATE.ordinal()].addFunc(FuncMAtkCritical.getInstance());
 		
 		std[Stats.ACCURACY_COMBAT.ordinal()] = new Calculator();
 		std[Stats.ACCURACY_COMBAT.ordinal()].addFunc(FuncAtkAccuracy.getInstance());
@@ -151,13 +153,13 @@ public final class Formulas
 		std[Stats.EVASION_RATE.ordinal()].addFunc(FuncAtkEvasion.getInstance());
 		
 		std[Stats.POWER_ATTACK_SPEED.ordinal()] = new Calculator();
-		std[Stats.POWER_ATTACK_SPEED.ordinal()].addFunc(FuncPAtkSpeed.getInstance());
+		// rocknow-close std[Stats.POWER_ATTACK_SPEED.ordinal()].addFunc(FuncPAtkSpeed.getInstance());
 		
 		std[Stats.MAGIC_ATTACK_SPEED.ordinal()] = new Calculator();
-		std[Stats.MAGIC_ATTACK_SPEED.ordinal()].addFunc(FuncMAtkSpeed.getInstance());
+		// rocknow-close std[Stats.MAGIC_ATTACK_SPEED.ordinal()].addFunc(FuncMAtkSpeed.getInstance());
 		
 		std[Stats.MOVE_SPEED.ordinal()] = new Calculator();
-		std[Stats.MOVE_SPEED.ordinal()].addFunc(FuncMoveSpeed.getInstance());
+		// rocknow-close std[Stats.MOVE_SPEED.ordinal()].addFunc(FuncMoveSpeed.getInstance());
 		
 		return std;
 	}
@@ -197,7 +199,7 @@ public final class Formulas
 		if (cha.isPlayer())
 		{
 			cha.addStatFunc(FuncMaxHpMul.getInstance());
-			cha.addStatFunc(FuncMaxCpMul.getInstance());
+			//603 cha.addStatFunc(FuncMaxCpMul.getInstance());
 			cha.addStatFunc(FuncMaxMpMul.getInstance());
 			cha.addStatFunc(FuncPAtkMod.getInstance());
 			cha.addStatFunc(FuncMAtkMod.getInstance());
@@ -209,7 +211,7 @@ public final class Formulas
 			cha.addStatFunc(FuncAtkEvasion.getInstance());
 			cha.addStatFunc(FuncPAtkSpeed.getInstance());
 			cha.addStatFunc(FuncMAtkSpeed.getInstance());
-			cha.addStatFunc(FuncMoveSpeed.getInstance());
+			//603 cha.addStatFunc(FuncMoveSpeed.getInstance());
 			
 			cha.addStatFunc(FuncHenna.getInstance(Stats.STAT_STR));
 			cha.addStatFunc(FuncHenna.getInstance(Stats.STAT_DEX));
@@ -227,19 +229,19 @@ public final class Formulas
 		}
 		else if (cha.isSummon())
 		{
-			cha.addStatFunc(FuncMaxHpMul.getInstance());
-			cha.addStatFunc(FuncMaxMpMul.getInstance());
-			cha.addStatFunc(FuncPAtkMod.getInstance());
-			cha.addStatFunc(FuncMAtkMod.getInstance());
-			cha.addStatFunc(FuncPDefMod.getInstance());
-			cha.addStatFunc(FuncMDefMod.getInstance());
-			cha.addStatFunc(FuncAtkCritical.getInstance());
-			cha.addStatFunc(FuncMAtkCritical.getInstance());
+			// rocknow-close cha.addStatFunc(FuncMaxHpMul.getInstance());
+			// rocknow-close cha.addStatFunc(FuncMaxMpMul.getInstance());
+			// rocknow-close cha.addStatFunc(FuncPAtkMod.getInstance());
+			// rocknow-close cha.addStatFunc(FuncMAtkMod.getInstance());
+			// rocknow-close cha.addStatFunc(FuncPDefMod.getInstance());
+			// rocknow-close cha.addStatFunc(FuncMDefMod.getInstance());
+			// rocknow-close cha.addStatFunc(FuncAtkCritical.getInstance());
+			// rocknow-close cha.addStatFunc(FuncMAtkCritical.getInstance());
 			cha.addStatFunc(FuncAtkAccuracy.getInstance());
 			cha.addStatFunc(FuncAtkEvasion.getInstance());
-			cha.addStatFunc(FuncMoveSpeed.getInstance());
-			cha.addStatFunc(FuncPAtkSpeed.getInstance());
-			cha.addStatFunc(FuncMAtkSpeed.getInstance());
+			// rocknow-close cha.addStatFunc(FuncMoveSpeed.getInstance());
+			// rocknow-close cha.addStatFunc(FuncPAtkSpeed.getInstance());
+			// rocknow-close cha.addStatFunc(FuncMAtkSpeed.getInstance());
 		}
 	}
 	

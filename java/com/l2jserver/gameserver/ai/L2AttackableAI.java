@@ -160,6 +160,7 @@ public class L2AttackableAI extends L2CharacterAI implements Runnable
 		final L2Attackable me = getActiveChar();
 		
 		// Check if the target isn't invulnerable
+		//L2JTW commented this out
 		if (target.isInvul())
 		{
 			// However EffectInvincible requires to check GMs specially
@@ -172,6 +173,7 @@ public class L2AttackableAI extends L2CharacterAI implements Runnable
 				return false;
 			}
 		}
+		//End of L2JTW commented out block
 		
 		// Check if the target isn't a Folk or a Door
 		if (target instanceof L2DoorInstance)

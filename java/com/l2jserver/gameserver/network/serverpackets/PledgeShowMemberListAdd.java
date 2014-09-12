@@ -54,7 +54,7 @@ public final class PledgeShowMemberListAdd extends L2GameServerPacket
 		writeS(_name);
 		writeD(_lvl);
 		writeD(_classId);
-		writeD(0x00);
+		writeD(0x01); // 603
 		writeD(0x01);
 		writeD(_isOnline); // 1 = online 0 = offline
 		writeD(_pledgeType);

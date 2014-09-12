@@ -33,6 +33,6 @@ public class ExSearchOrc extends L2GameServerPacket
 	protected void writeImpl()
 	{
 		writeC(0xFE);
-		writeH(0x45);
+		writeH(0x46); // 603
 	}
 }

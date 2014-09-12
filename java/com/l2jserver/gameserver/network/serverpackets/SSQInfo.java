@@ -53,7 +53,9 @@ public class SSQInfo extends L2GameServerPacket
 	@Override
 	protected final void writeImpl()
 	{
+		/* 603 Close
 		writeC(0x73);
 		writeH(256 + _state);
+		 */
 	}
 }

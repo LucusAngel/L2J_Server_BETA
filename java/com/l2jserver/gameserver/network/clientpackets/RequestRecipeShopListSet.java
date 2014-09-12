@@ -124,7 +124,9 @@ public final class RequestRecipeShopListSet extends L2GameClientPacket
 			player.getManufactureItems().put(i.getRecipeId(), i);
 		}
 		
+		/* 603 fix
 		player.setStoreName(!player.hasManufactureShop() ? "" : player.getStoreName());
+		 */
 		player.setPrivateStoreType(PrivateStoreType.MANUFACTURE);
 		player.sitDown();
 		player.broadcastUserInfo();

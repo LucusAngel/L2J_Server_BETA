@@ -172,6 +172,7 @@ public class PcStatus extends PlayableStatus
 				{
 					getActiveChar().sendPacket(SystemMessageId.MP_BECAME_0_ARCANE_SHIELD_DISAPPEARING);
 					getActiveChar().stopSkillEffects(true, 1556);
+					getActiveChar().stopSkillEffects(true, 11065); // l2jtw add
 					value = mpDam - getActiveChar().getCurrentMp();
 					getActiveChar().setCurrentMp(0);
 				}
@@ -247,6 +248,7 @@ public class PcStatus extends PlayableStatus
 				smsg.addString(getActiveChar().getName());
 				smsg.addCharName(attacker);
 				smsg.addInt(fullValue);
+				smsg.addDamage(getActiveChar().getObjectId(), attacker.getObjectId(), fullValue * -1); // 603 (by otfnir)
 				getActiveChar().sendPacket(smsg);
 				
 				if (tDmg > 0)
@@ -255,6 +257,7 @@ public class PcStatus extends PlayableStatus
 					smsg.addString(getActiveChar().getSummon().getName());
 					smsg.addCharName(attacker);
 					smsg.addInt(tDmg);
+					smsg.addDamage(getActiveChar().getObjectId(), attacker.getObjectId(), tDmg * -1); // 603 (by otfnir)
 					getActiveChar().sendPacket(smsg);
 					
 					if (attackerPlayer != null)

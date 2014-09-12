@@ -192,7 +192,11 @@ public final class QuestManager extends ScriptManager<Quest>
 		// or taken any other action which it might re-take by re-reading the data.
 		// the current solution properly closes the running tasks of the old quest but
 		// ignores the data; perhaps the least of all evils...
+		// FIXME: Validate this!
+		/* l2jtw fix
 		final Quest old = _quests.put(quest.getName(), quest);
+		 */
+		final Quest old = _quests.get(quest.getName());
 		if (old != null)
 		{
 			old.unload();
@@ -261,7 +265,10 @@ public final class QuestManager extends ScriptManager<Quest>
 	 */
 	public void addScript(Quest script)
 	{
+		/* l2jtw fix
 		final Quest old = _scripts.put(script.getClass().getSimpleName(), script);
+		 */
+		final Quest old = _scripts.get(script.getName());
 		if (old != null)
 		{
 			old.unload();
@@ -270,8 +277,12 @@ public final class QuestManager extends ScriptManager<Quest>
 		
 		if (Config.ALT_DEV_SHOW_SCRIPTS_LOAD_IN_LOGS)
 		{
+			/* l2jtw fix
 			_log.info("Loaded script " + Util.splitWords(script.getClass().getSimpleName()) + ".");
+			 */
+			_log.info("Loaded script " + Util.splitWords(script.getName()) + ".");
 		}
+		_scripts.put(script.getName(), script); // l2jtw add
 	}
 	
 	/**

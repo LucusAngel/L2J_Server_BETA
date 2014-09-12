@@ -41,7 +41,7 @@ public class ExDominionWarStart extends L2GameServerPacket
 	protected void writeImpl()
 	{
 		writeC(0xFE);
-		writeH(0xA3);
+		writeH(0xA4); // 603
 		writeD(_objId);
 		writeD(0x01); // ??
 		writeD(_terId);

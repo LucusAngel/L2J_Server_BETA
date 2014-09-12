@@ -62,6 +62,7 @@ public class L2SummonAI extends L2PlayableAI implements Runnable
 	protected void onIntentionActive()
 	{
 		L2Summon summon = (L2Summon) _actor;
+		// L2JTW always setIntention without check
 		if (_startFollow)
 		{
 			setIntention(AI_INTENTION_FOLLOW, summon.getOwner());

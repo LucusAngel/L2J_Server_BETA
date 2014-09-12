@@ -133,6 +133,7 @@ public class L2SiegeGuardAI extends L2CharacterAI implements Runnable
 		}
 		
 		// Check if the target isn't invulnerable
+		// L2JTW commented this check out
 		if (target.isInvul())
 		{
 			// However EffectInvincible requires to check GMs specially
@@ -400,6 +401,7 @@ public class L2SiegeGuardAI extends L2CharacterAI implements Runnable
 			return;
 		}
 		
+		// L2JTW commented this check out
 		if (target.isInvul())
 		{
 			return; // speeding it up for siege guards

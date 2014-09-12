@@ -225,6 +225,17 @@ public final class MapRegionManager extends DocumentParser
 	 * @param activeChar
 	 * @return
 	 */
+	// 603-Start
+	public int getClosestTownId(L2Character activeChar)
+	{
+		L2MapRegion region = getMapRegion(activeChar);
+		
+		if (region != null)
+			return region.getLocId();
+		
+		return 0;
+	}
+	// 603-End
 	public int getAreaCastle(L2Character activeChar)
 	{
 		L2MapRegion region = getMapRegion(activeChar);

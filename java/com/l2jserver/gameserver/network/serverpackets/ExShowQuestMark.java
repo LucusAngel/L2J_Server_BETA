@@ -24,10 +24,12 @@ package com.l2jserver.gameserver.network.serverpackets;
 public class ExShowQuestMark extends L2GameServerPacket
 {
 	private final int _questId;
+	private final int _cond; // 603
 	
-	public ExShowQuestMark(int questId)
+	public ExShowQuestMark(int questId, int cond) // 603
 	{
 		_questId = questId;
+		_cond = cond; // 603
 	}
 	
 	@Override
@@ -36,5 +38,6 @@ public class ExShowQuestMark extends L2GameServerPacket
 		writeC(0xfe);
 		writeH(0x21);
 		writeD(_questId);
+		writeD(_cond); // 603
 	}
 }

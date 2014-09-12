@@ -35,5 +35,6 @@ public final class JoinParty extends L2GameServerPacket
 	{
 		writeC(0x3a);
 		writeD(_response);
+		writeD(0x00); // 603
 	}
 }

@@ -18,6 +18,8 @@
  */
 package com.l2jserver.gameserver.network.serverpackets;
 
+import java.util.ArrayList; // 603
+import java.util.List; // 603
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.items.instance.L2ItemInstance;
 
@@ -29,6 +31,7 @@ public class ExBuySellList extends AbstractItemPacket
 	private L2ItemInstance[] _sellList = null;
 	private L2ItemInstance[] _refundList = null;
 	private final boolean _done;
+	private final List<L2ItemInstance> _items = new ArrayList<>(); // 603
 	
 	public ExBuySellList(L2PcInstance player, boolean done)
 	{
@@ -38,14 +41,24 @@ public class ExBuySellList extends AbstractItemPacket
 			_refundList = player.getRefund().getItems();
 		}
 		_done = done;
+		// 603 add start
+		for (L2ItemInstance item : player.getInventory().getItems())
+		{
+			if (!item.isQuestItem())
+			{
+				_items.add(item);
+			}
+		}
+		// 603 add end
 	}
 	
 	@Override
 	protected final void writeImpl()
 	{
 		writeC(0xFE);
-		writeH(0xB7);
+		writeH(0xB8); // 603
 		writeD(0x01);
+		writeD(_items.size()); // 603
 		
 		if ((_sellList != null))
 		{

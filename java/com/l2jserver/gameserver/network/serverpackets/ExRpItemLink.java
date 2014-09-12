@@ -26,6 +26,9 @@ import com.l2jserver.gameserver.model.items.instance.L2ItemInstance;
 public final class ExRpItemLink extends L2GameServerPacket
 {
 	private final L2ItemInstance _item;
+	private int check_Augmentation; // 603
+	private int check_ElementType; // 603
+	private int check_EnchantOption; // 603
 	
 	public ExRpItemLink(L2ItemInstance item)
 	{
@@ -36,17 +39,47 @@ public final class ExRpItemLink extends L2GameServerPacket
 	protected void writeImpl()
 	{
 		writeC(0xFE);
-		writeH(0x6C);
+		writeH(0x6D); // 603
+		check_Augmentation = 0;
+		check_ElementType = 0;
+		check_EnchantOption = 0;
+		if (_item.isAugmented())
+		{
+			check_Augmentation = 1;
+		}
+		if (_item.getAttackElementPower() > 0)
+		{
+			check_ElementType = 2;
+		}
+		else
+		{
+			for (byte i = 0; i < 6; i++)
+			{
+				if (_item.getElementDefAttr(i) > 0)
+				{
+					check_ElementType = 2;
+				}
+			}
+		}
+		for (int op : _item.getEnchantOptions())
+		{
+			if (op > 0)
+			{
+				check_EnchantOption = 4;
+			}
+		}
+		writeC(check_Augmentation + check_ElementType + check_EnchantOption + 0);
 		writeD(_item.getObjectId());
 		writeD(_item.getDisplayId());
-		writeD(_item.getLocationSlot());
+		writeC(_item.getLocationSlot()); // 603
 		writeQ(_item.getCount());
-		writeH(_item.getItem().getType2());
-		writeH(_item.getCustomType1());
+		writeC(_item.getItem().getType2()); // 603
+		writeC(_item.getCustomType1()); // 603
 		writeH(_item.isEquipped() ? 0x01 : 0x00);
-		writeD(_item.getItem().getBodyPart());
-		writeH(_item.getEnchantLevel());
-		writeH(_item.getCustomType2());
+		writeQ(_item.getItem().getBodyPart()); // 603
+		writeC(_item.getEnchantLevel()); // 603
+		writeC(_item.getCustomType2()); // 603
+		/* 603
 		if (_item.isAugmented())
 		{
 			writeD(_item.getAugmentation().getAugmentationId());
@@ -55,18 +88,31 @@ public final class ExRpItemLink extends L2GameServerPacket
 		{
 			writeD(0x00);
 		}
+		 */
 		writeD(_item.getMana());
 		writeD(_item.isTimeLimitedItem() ? (int) (_item.getRemainingTime() / 1000) : -9999);
-		writeH(_item.getAttackElementType());
-		writeH(_item.getAttackElementPower());
-		for (byte i = 0; i < 6; i++)
+		writeC(0x01); // 603
+		if (_item.isAugmented()) // 603
 		{
-			writeH(_item.getElementDefAttr(i));
+			writeD(_item.getAugmentation().getAugmentationId());
+		}
+		if (check_ElementType > 0) // 603
+		{
+			writeH(_item.getAttackElementType());
+			writeH(_item.getAttackElementPower());
+			for (byte i = 0; i < 6; i++)
+			{
+				writeH(_item.getElementDefAttr(i));
+			}
 		}
 		// Enchant Effects
-		for (int op : _item.getEnchantOptions())
+		if (check_EnchantOption > 0) // 603
 		{
-			writeH(op);
+			for (int op : _item.getEnchantOptions())
+			{
+				writeH(op);
+			}
 		}
+		//603 writeD(0x00); // 603-Appearance
 	}
 }

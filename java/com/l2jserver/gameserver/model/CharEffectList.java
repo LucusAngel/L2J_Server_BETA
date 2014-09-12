@@ -46,6 +46,7 @@ import com.l2jserver.gameserver.model.skills.BuffInfo;
 import com.l2jserver.gameserver.model.skills.EffectScope;
 import com.l2jserver.gameserver.model.skills.Skill;
 import com.l2jserver.gameserver.network.serverpackets.AbnormalStatusUpdate;
+import com.l2jserver.gameserver.network.serverpackets.ExAbnormalStatusUpdateFromTargetPacket; // l2jtw add
 import com.l2jserver.gameserver.network.serverpackets.ExOlympiadSpelledInfo;
 import com.l2jserver.gameserver.network.serverpackets.PartySpelled;
 import com.l2jserver.gameserver.network.serverpackets.ShortBuffStatusUpdate;
@@ -367,7 +368,11 @@ public final class CharEffectList
 		{
 			for (BuffInfo info : getToggles().values())
 			{
+				//FIXME: validate this(Battlecruiser)
+				/* Update by rocknow
 				if (info != null)
+				 */
+				if (info != null && info.getSkill().getId() != 7029)
 				{
 					for (AbstractEffect effect : info.getEffects())
 					{
@@ -1440,7 +1445,11 @@ public final class CharEffectList
 			{
 				BuffInfo stackedInfo = _stackedEffects.get(skill.getAbnormalType());
 				// Skills are only replaced if the incoming buff has greater or equal abnormal level.
+				// FIXME: Validate this! (Battlecruiser)
+				/* l2jtw add : GS-comment-044
 				if ((stackedInfo != null) && (skill.getAbnormalLvl() >= stackedInfo.getSkill().getAbnormalLvl()))
+				 */
+				if ((stackedInfo != null) && (skill.getAbnormalLvl() >= stackedInfo.getSkill().getAbnormalLvl()) && (skill.getAbnormalTime() >= stackedInfo.getSkill().getAbnormalTime()))
 				{
 					// If it is an herb, set as not in use the lesser buff.
 					// Effect will be present in the effect list.
@@ -1537,6 +1546,16 @@ public final class CharEffectList
 		{
 			return;
 		}
+		//FIXME: validate this(Battlecruiser)
+		// l2jtw add start
+		for (L2Character temp : _owner.getStatus().getStatusListener())
+		{
+			if ((temp != null) && (temp.getTargetId() == _owner.getObjectId()))
+			{
+				temp.sendPacket(new ExAbnormalStatusUpdateFromTargetPacket(_owner.getObjectId()));
+			}
+		}
+		// l2jtw add end
 		
 		updateEffectFlags();
 		
@@ -1634,6 +1653,13 @@ public final class CharEffectList
 		if (asu != null)
 		{
 			_owner.sendPacket(asu);
+			//FIXME: Validate this (Battlecruiser)
+			// l2jtw add start
+			if (_owner.getTargetId() == _owner.getObjectId())
+			{
+				_owner.sendPacket(new ExAbnormalStatusUpdateFromTargetPacket(_owner.getObjectId()));
+			}
+			// l2jtw add end
 		}
 		
 		if (ps != null)

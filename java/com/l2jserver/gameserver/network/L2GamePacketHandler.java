@@ -115,17 +115,20 @@ public final class L2GamePacketHandler implements IPacketHandler<L2GameClient>, 
 						
 						switch (id2)
 						{
-							case 0x36:
+							case 0x33: // 603
 								msg = new RequestGotoLobby();
 								break;
-							case 0x93:
+							case 0xa6: // 603
 								msg = new RequestEx2ndPasswordCheck();
 								break;
-							case 0x94:
+							case 0xa7: // 603
 								msg = new RequestEx2ndPasswordVerify();
 								break;
-							case 0x95:
+							case 0xa8: // 603
 								msg = new RequestEx2ndPasswordReq();
+								break;
+							case 0xa9: // 603
+								msg = new RequestCharacterNameCreatable();
 								break;
 							default:
 								printDebugDoubleOpcode(opcode, id2, buf, state, client);
@@ -422,6 +425,9 @@ public final class L2GamePacketHandler implements IPacketHandler<L2GameClient>, 
 					case 0x67:
 						msg = new RequestPledgeCrest();
 						break;
+					case 0x6a: // 603
+						// New Request Friend List
+						break;
 					case 0x6b: // RequestSendL2FriendSay
 						msg = new RequestSendFriendMsg();
 						break;
@@ -464,7 +470,7 @@ public final class L2GamePacketHandler implements IPacketHandler<L2GameClient>, 
 					case 0x78: // RequestFriendAddReply
 						msg = new RequestAnswerFriendInvite();
 						break;
-					case 0x79:
+					case 0x79: // 603 : Old Request Friend List
 						msg = new RequestFriendList();
 						break;
 					case 0x7a:
@@ -556,6 +562,8 @@ public final class L2GamePacketHandler implements IPacketHandler<L2GameClient>, 
 						break;
 					case 0x9a: // SetPrivateStoreList
 						msg = new SetPrivateStoreListBuy();
+						break;
+					case 0x9b: // 603
 						break;
 					case 0x9c:
 						msg = new RequestPrivateStoreQuitBuy();
@@ -725,17 +733,29 @@ public final class L2GamePacketHandler implements IPacketHandler<L2GameClient>, 
 							case 0x05:
 								msg = new RequestWriteHeroWords();
 								break;
-							case 0x5F:
+							case 0x5C: // 603
 								/**
 								 * Server Packets: ExMpccRoomInfo FE:9B ExListMpccWaiting FE:9C ExDissmissMpccRoom FE:9D ExManageMpccRoomMember FE:9E ExMpccRoomMember FE:9F
 								 */
 								// TODO: RequestJoinMpccRoom chdd
 								break;
-							case 0x5E:
+							case 0x5B: // 603
 								// TODO: RequestManageMpccRoom chdddddS
 								break;
-							case 0x5D:
+							case 0x5A: // 603
 								// TODO: RequestListMpccWaiting chddd
+								break;
+							case 0x5D: // 603
+								// RequestOustFromMpccRoom
+								break;
+							case 0x5E: // 603
+								// RequestDismissMpccRoom
+								break;
+							case 0x5F: // 603
+								// RequestWithdrawMpccRoom
+								break;
+							case 0x61: // 603
+								// RequestMpccPartymasterList
 								break;
 							case 0x06:
 								msg = new RequestExAskJoinMPCC();
@@ -866,6 +886,7 @@ public final class L2GamePacketHandler implements IPacketHandler<L2GameClient>, 
 							case 0x31:
 								msg = new RequestListPartyMatchingWaitingRoom();
 								break;
+							/* not used and delete
 							case 0x32:
 								msg = new RequestExEnchantSkillSafe();
 								break;
@@ -875,85 +896,88 @@ public final class L2GamePacketHandler implements IPacketHandler<L2GameClient>, 
 							case 0x34:
 								msg = new RequestExEnchantSkillRouteChange();
 								break;
-							case 0x35:
+							 */
+							case 0x32: // 603
 								msg = new RequestExEnchantItemAttribute();
 								break;
+							/* not exist
 							case 0x36:
 								msg = new ExGetOnAirShip();
 								break;
-							case 0x38:
+							 */
+							case 0x35: // 603
 								msg = new MoveToLocationAirShip();
 								break;
-							case 0x39:
+							case 0x36: // 603
 								msg = new RequestBidItemAuction();
 								break;
-							case 0x3a:
+							case 0x37: // 603
 								msg = new RequestInfoItemAuction();
 								break;
-							case 0x3b:
+							case 0x38: // 603
 								msg = new RequestExChangeName();
 								break;
-							case 0x3c:
+							case 0x39: // 603
 								msg = new RequestAllCastleInfo();
 								break;
-							case 0x3d:
+							case 0x3a: // 603
 								msg = new RequestAllFortressInfo();
 								break;
-							case 0x3e:
+							case 0x3b: // 603
 								msg = new RequestAllAgitInfo();
 								break;
-							case 0x3f:
+							case 0x3c: // 603
 								msg = new RequestFortressSiegeInfo();
 								break;
-							case 0x40:
+							case 0x3d: // 603
 								msg = new RequestGetBossRecord();
 								break;
-							case 0x41:
+							case 0x3e: // 603
 								msg = new RequestRefine();
 								break;
-							case 0x42:
+							case 0x3f: // 603
 								msg = new RequestConfirmCancelItem();
 								break;
-							case 0x43:
+							case 0x40: // 603
 								msg = new RequestRefineCancel();
 								break;
-							case 0x44:
+							case 0x41: // 603
 								msg = new RequestExMagicSkillUseGround();
 								break;
-							case 0x45:
+							case 0x42: // 603
 								msg = new RequestDuelSurrender();
 								break;
-							case 0x46:
+							case 0x43: // 603
 								msg = new RequestExEnchantSkillInfoDetail();
 								break;
-							case 0x48:
+							case 0x45: // 603
 								msg = new RequestFortressMapInfo();
 								break;
-							case 0x49:
+							case 0x46: // 603
 								// RequestPVPMatchRecord
 								break;
-							case 0x4a:
+							case 0x47: // 603
 								msg = new SetPrivateStoreWholeMsg();
 								break;
-							case 0x4b:
+							case 0x48: // 603
 								msg = new RequestDispel();
 								break;
-							case 0x4c:
+							case 0x49: // 603
 								msg = new RequestExTryToPutEnchantTargetItem();
 								break;
-							case 0x4d:
+							case 0x4a: // 603
 								msg = new RequestExTryToPutEnchantSupportItem();
 								break;
-							case 0x4e:
+							case 0x4b: // 603
 								msg = new RequestExCancelEnchantItem();
 								break;
-							case 0x4f:
+							case 0x4c: // 603
 								msg = new RequestChangeNicknameColor();
 								break;
-							case 0x50:
+							case 0x4d: // 603
 								msg = new RequestResetNickname();
 								break;
-							case 0x51:
+							case 0x4e: // 603
 								id3 = 0;
 								if (buf.remaining() >= 4)
 								{
@@ -989,162 +1013,296 @@ public final class L2GamePacketHandler implements IPacketHandler<L2GameClient>, 
 										break;
 								}
 								break;
-							case 0x52:
+							case 0x4f: // 603
 								msg = new RequestWithDrawPremiumItem();
 								break;
-							case 0x53:
+							case 0x50: // 603
 								// RequestJump
 								break;
-							case 0x54:
+							case 0x51: // 603
 								// RequestStartShowCrataeCubeRank
 								break;
-							case 0x55:
+							case 0x52: // 603
 								// RequestStopShowCrataeCubeRank
 								break;
-							case 0x56:
+							case 0x53: // 603
 								// NotifyStartMiniGame
 								break;
-							case 0x57:
+							case 0x54: // 603
 								msg = new RequestJoinDominionWar();
 								break;
-							case 0x58:
+							case 0x55: // 603
 								msg = new RequestDominionInfo();
 								break;
-							case 0x59:
+							case 0x56: // 603
 								// RequestExCleftEnter
 								break;
-							case 0x5a:
+							case 0x57: // 603
 								msg = new RequestExCubeGameChangeTeam();
 								break;
-							case 0x5b:
+							case 0x58: // 603
 								msg = new EndScenePlayer();
 								break;
-							case 0x5c:
+							case 0x59: // 603
 								msg = new RequestExCubeGameReadyAnswer();
 								break;
-							case 0x63:
+							case 0x60: // 603
 								msg = new RequestSeedPhase();
 								break;
-							case 0x65:
+							case 0x62: // 603
 								msg = new RequestPostItemList();
 								break;
-							case 0x66:
+							case 0x63: // 603
 								msg = new RequestSendPost();
 								break;
-							case 0x67:
+							case 0x64: // 603
 								msg = new RequestReceivedPostList();
 								break;
-							case 0x68:
+							case 0x65: // 603
 								msg = new RequestDeleteReceivedPost();
 								break;
-							case 0x69:
+							case 0x66: // 603
 								msg = new RequestReceivedPost();
 								break;
-							case 0x6a:
+							case 0x67: // 603
 								msg = new RequestPostAttachment();
 								break;
-							case 0x6b:
+							case 0x68: // 603
 								msg = new RequestRejectPostAttachment();
 								break;
-							case 0x6c:
+							case 0x69: // 603
 								msg = new RequestSentPostList();
 								break;
-							case 0x6d:
+							case 0x6a: // 603
 								msg = new RequestDeleteSentPost();
 								break;
-							case 0x6e:
+							case 0x6b: // 603
 								msg = new RequestSentPost();
 								break;
-							case 0x6f:
+							case 0x6c: // 603
 								msg = new RequestCancelPostAttachment();
 								break;
-							case 0x70:
+							case 0x6d: // 603
 								// RequestShowNewUserPetition
 								break;
-							case 0x71:
+							case 0x6e: // 603
 								// RequestShowStepThree
 								break;
-							case 0x72:
+							case 0x6f: // 603
 								// RequestShowStepTwo
 								break;
-							case 0x73:
+							case 0x70: // 603
 								// ExRaidReserveResult
 								break;
-							case 0x75:
+							case 0x71: // 603
+								// ExCloseRaidSocket
+								break;
+							case 0x72: // 603
 								msg = new RequestRefundItem();
 								break;
-							case 0x76:
+							case 0x73: // 603
 								msg = new RequestBuySellUIClose();
 								break;
-							case 0x77:
+							case 0x74: // 603
 								// RequestEventMatchObserverEnd
 								break;
-							case 0x78:
+							case 0x75: // 603
 								msg = new RequestPartyLootModification();
 								break;
-							case 0x79:
+							case 0x76: // 603
 								msg = new AnswerPartyLootModification();
 								break;
-							case 0x7a:
+							case 0x77: // 603
 								msg = new AnswerCoupleAction();
 								break;
-							case 0x7b:
+							case 0x78: // 603
 								msg = new BrEventRankerList();
 								break;
-							case 0x7c:
+							case 0x79: // 603
 								// AskMembership
 								break;
-							case 0x7d:
+							case 0x7a: // 603
 								// RequestAddExpandQuestAlarm
 								break;
-							case 0x7e:
+							case 0x7b: // 603
 								msg = new RequestVoteNew();
 								break;
-							case 0x84:
+							case 0x81: // 603
 								msg = new RequestExAddContactToContactList();
 								break;
-							case 0x85:
+							case 0x82: // 603
 								msg = new RequestExDeleteContactFromContactList();
 								break;
-							case 0x86:
+							case 0x83: // 603
 								msg = new RequestExShowContactList();
 								break;
-							case 0x87:
+							case 0x84: // 603
 								msg = new RequestExFriendListExtended();
 								break;
-							case 0x88:
+							case 0x85: // 603
 								msg = new RequestExOlympiadMatchListRefresh();
 								break;
-							case 0x89:
+							case 0x86: // 603
 								// RequestBRGamePoint
 								break;
-							case 0x8A:
+							case 0x87: // 603
 								// RequestBRProductList
 								break;
-							case 0x8B:
+							case 0x88: // 603
 								// RequestBRProductInfo
 								break;
-							case 0x8C:
+							case 0x89: // 603
 								// RequestBRBuyProduct
 								break;
-							case 0x8D:
+							case 0x8a: // 603
 								// RequestBRRecentProductList
 								break;
-							case 0x8E:
+							case 0x8b: // 603
 								// BrMinigameLoadScores
 								break;
-							case 0x8F:
+							case 0x8c: // 603
 								// BrMinigameInsertScore
 								break;
-							case 0x90:
+							case 0x8d: // 603
 								// BrLectureMark
 								break;
-							case 0x91:
+							case 0xae: // 603
 								// RequestGoodsInventoryInfo
 								break;
-							case 0x92:
+							case 0xaf: // 603
 								// RequestUseGoodsInventoryItem
 								break;
+							// 603-Start
+							case 0x8e: // 603
+								msg = new RequestCrystallizeEstimate();
+								break;
+							case 0x91: // 603
+								msg = new RequestFlyMove();
+								break;
+							case 0xa1: // 603
+								msg = new RequestCallToChangeClass();
+								break;
+							case 0xa2: // 603
+								msg = new RequestChangeToAwakenedClass();
+								break;
+							case 0xad: // 603
+								msg = new RequestFlyMoveStart();
+								break;
+							case 0xba: // 603
+								msg = new RequestInzoneWaitingTime();
+								break;
+							case 0xe3: // 603
+								msg = new RequestExAddEnchantScrollItem();
+								break;
+							case 0xe4: // 603
+								msg = new RequestExRemoveEnchantSupportItem();
+								break;
+							case 0x7c: // 603
+							case 0x7d: // 603
+							case 0x7e: // 603
+							case 0x7f: // 603
+							case 0x80: // 603
+							case 0x8f: // 603
+							case 0x90: // 603
+							case 0x92: // 603
+							case 0x93: // 603
+							case 0x94: // 603
+							case 0x95: // 603
+							case 0x96: // 603
+							case 0x97: // 603
+							case 0x98: // 603
+							case 0x99: // 603
+							case 0x9a: // 603
+							case 0x9b: // 603
+							case 0x9c: // 603
+							case 0x9d: // 603
+							case 0x9e: // 603
+							case 0x9f: // 603
+							case 0xa0: // 603
+							case 0xa3: // 603
+							case 0xa4: // 603
+							case 0xa5: // 603
+							case 0xa6: // 603
+							case 0xa7: // 603
+							case 0xa8: // 603
+							case 0xa9: // 603
+							case 0xb0: // 603
+							case 0xb1: // 603
+							case 0xb2: // 603
+							case 0xb4: // 603
+							case 0xb5: // 603
+							case 0xb6: // 603
+							case 0xb7: // 603
+							case 0xb8: // 603
+							case 0xb9: // 603
+							case 0xbb: // 603
+							case 0xbc: // 603
+							case 0xbd: // 603
+							case 0xbe: // 603
+							case 0xbf: // 603
+							case 0xc0: // 603
+							case 0xc1: // 603
+							case 0xc2: // 603
+							case 0xc3: // 603
+							case 0xc4: // 603
+							case 0xc5: // 603
+							case 0xc6: // 603
+							case 0xc7: // 603
+							case 0xc9: // 603
+							case 0xca: // 603
+							case 0xcb: // 603
+							case 0xcc: // 603
+							case 0xcd: // 603
+							case 0xce: // 603
+							case 0xcf: // 603
+							case 0xd0: // 603
+							case 0xd2: // 603
+							case 0xd4: // 603
+							case 0xd5: // 603
+							case 0xd6: // 603
+							case 0xd7: // 603
+							case 0xd8: // 603
+							case 0xd9: // 603
+							case 0xda: // 603
+							case 0xdb: // 603
+							case 0xdc: // 603
+							case 0xdd: // 603
+							case 0xde: // 603
+							case 0xdf: // 603
+							case 0xe0: // 603
+							case 0xe1: // 603
+							case 0xe2: // 603
+							case 0xe5: // 603
+							case 0xe6: // 603
+							case 0xe7: // 603
+							case 0xe8: // 603
+							case 0xe9: // 603
+							case 0xea: // 603
+							case 0xeb: // 603
+							case 0xec: // 603
+							case 0xed: // 603
+							case 0xee: // 603
+							case 0xef: // 603
+							case 0xf0: // 603
+							case 0xf1: // 603
+							case 0xf2: // 603
+							case 0xf3: // 603
+							case 0xf4: // 603
+							case 0xf6: // 603
+							case 0xf7: // 603
+							case 0xf8: // 603
+							case 0xf9: // 603
+							case 0xfa: // 603
+							case 0xfb: // 603
+							case 0xfc: // 603
+							case 0xfd: // 603
+							case 0xfe: // 603
+							case 0xff: // 603
+							case 0x100: // 603
+							case 0x101: // 603
+							case 0x102: // 603
+								break;
+							// 603-End
 							default:
 								printDebugDoubleOpcode(opcode, id2, buf, state, client);
 								break;

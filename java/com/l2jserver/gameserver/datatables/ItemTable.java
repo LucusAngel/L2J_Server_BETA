@@ -400,6 +400,8 @@ public class ItemTable
 	{
 		load();
 		EnchantItemHPBonusData.getInstance().load();
+		//We don't manipulate with item names
+		//FIXME: remove Taiwan Tony's ItemNameTable at all
 	}
 	
 	protected static class ResetOwner implements Runnable

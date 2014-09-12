@@ -92,12 +92,13 @@ public final class RelationChanged extends L2GameServerPacket
 		writeC(0xce);
 		if (_multi == null)
 		{
-			writeD(1);
+			writeC(2); // 603
 			writeRelation(_singled);
 		}
 		else
 		{
-			writeD(_multi.size());
+			writeC(4); // 603
+			writeH(_multi.size()); // 603
 			for (Relation r : _multi)
 			{
 				writeRelation(r);
@@ -110,8 +111,9 @@ public final class RelationChanged extends L2GameServerPacket
 	{
 		writeD(relation._objId);
 		writeD(relation._relation);
-		writeD(relation._autoAttackable);
-		writeD(relation._karma);
-		writeD(relation._pvpFlag);
+		writeC(relation._autoAttackable); // 603
+		int Karma = 0 - relation._karma; // 603-Test
+		writeD(Karma); // 603-Test
+		writeC(relation._pvpFlag); // 603
 	}
 }

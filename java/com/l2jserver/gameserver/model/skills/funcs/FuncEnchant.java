@@ -84,6 +84,11 @@ public class FuncEnchant extends Func
 		{
 			switch (item.getItem().getItemGradeSPlus())
 			{
+				// 603-Start
+				case R:
+					env.addValue((5 * enchant) + (10 * overenchant));
+					break;
+				// 603-End
 				case S:
 					// M. Atk. increases by 4 for all weapons.
 					// Starting at +4, M. Atk. bonus double.
@@ -111,6 +116,31 @@ public class FuncEnchant extends Func
 			final WeaponType type = (WeaponType) item.getItemType();
 			switch (item.getItem().getItemGradeSPlus())
 			{
+				// 603-Start
+				case R:
+					if (item.getWeaponItem().getBodyPart() == L2Item.SLOT_LR_HAND)
+					{
+						if ((type == WeaponType.BOW) || (type == WeaponType.CROSSBOW))
+						{
+							// P. Atk. increases by 10 for bows.
+							// Starting at +4, P. Atk. bonus double.
+							env.addValue((12 * enchant) + (24 * overenchant));
+						}
+						else
+						{
+							// P. Atk. increases by 6 for two-handed swords, two-handed blunts, dualswords, and two-handed combat weapons.
+							// Starting at +4, P. Atk. bonus double.
+							env.addValue((7 * enchant) + (14 * overenchant));
+						}
+					}
+					else
+					{
+						// P. Atk. increases by 5 for one-handed swords, one-handed blunts, daggers, spears, and other weapons.
+						// Starting at +4, P. Atk. bonus double.
+						env.addValue((6 * enchant) + (12 * overenchant));
+					}
+					break;
+				// 603-End
 				case S:
 					if (item.getWeaponItem().getBodyPart() == L2Item.SLOT_LR_HAND)
 					{

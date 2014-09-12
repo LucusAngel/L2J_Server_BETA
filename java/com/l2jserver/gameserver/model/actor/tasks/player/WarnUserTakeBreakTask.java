@@ -19,6 +19,7 @@
 package com.l2jserver.gameserver.model.actor.tasks.player;
 
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
+import com.l2jserver.gameserver.network.serverpackets.SystemMessage; // Update by rocknow
 import com.l2jserver.gameserver.network.SystemMessageId;
 
 /**
@@ -41,7 +42,14 @@ public class WarnUserTakeBreakTask implements Runnable
 		{
 			if (_player.isOnline())
 			{
+				/* Update by pmq start
 				_player.sendPacket(SystemMessageId.PLAYING_FOR_LONG_TIME);
+				 */
+				SystemMessageId.PLAYING_FOR_LONG_TIME.setParamCount(1);
+				SystemMessage msg = SystemMessage.getSystemMessage(SystemMessageId.PLAYING_FOR_LONG_TIME);
+				msg.addInt((int)(_player.getUptime() / 3600000));
+				_player.sendPacket(msg);
+				// Update by pmq end
 			}
 			else
 			{

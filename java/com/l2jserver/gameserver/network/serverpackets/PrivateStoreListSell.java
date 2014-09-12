@@ -43,6 +43,7 @@ public class PrivateStoreListSell extends AbstractItemPacket
 		writeD(_objId);
 		writeD(_packageSale ? 1 : 0);
 		writeQ(_playerAdena);
+		writeD(0x00); // 603
 		writeD(_items.length);
 		for (TradeItem item : _items)
 		{

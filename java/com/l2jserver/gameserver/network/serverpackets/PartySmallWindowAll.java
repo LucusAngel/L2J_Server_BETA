@@ -37,8 +37,8 @@ public final class PartySmallWindowAll extends L2GameServerPacket
 	{
 		writeC(0x4e);
 		writeD(_party.getLeaderObjectId());
-		writeD(_party.getDistributionType().getId());
-		writeD(_party.getMemberCount() - 1);
+		writeC(_party.getDistributionType().getId()); // 603
+		writeC(_party.getMemberCount() - 1); // 603
 		
 		for (L2PcInstance member : _party.getMembers())
 		{
@@ -54,23 +54,25 @@ public final class PartySmallWindowAll extends L2GameServerPacket
 				writeD(member.getMaxHp());
 				writeD((int) member.getCurrentMp());
 				writeD(member.getMaxMp());
-				writeD(member.getLevel());
-				writeD(member.getClassId().getId());
-				writeD(0x00);// writeD(0x01); ??
-				writeD(member.getRace().ordinal());
-				writeD(0x00); // T2.3
-				writeD(0x00); // T2.3
+				writeD(member.getVitalityPoints()); // 603
+				writeC(member.getLevel()); // 603
+				writeH(member.getClassId().getId()); // 603
+				writeC(0x00); // 603-Member_index? // writeD(0x01); ??
+				writeH(member.getRace().ordinal()); // 603
+				//603 writeD(0x00); // T2.3
+				//603 writeD(0x00); // T2.3
 				if (member.hasSummon())
 				{
+					writeD(1); // pet count
 					writeD(member.getSummon().getObjectId());
 					writeD(member.getSummon().getId() + 1000000);
-					writeD(member.getSummon().getSummonType());
+					writeC(member.getSummon().getSummonType()); // 603
 					writeS(member.getSummon().getName());
 					writeD((int) member.getSummon().getCurrentHp());
 					writeD(member.getSummon().getMaxHp());
 					writeD((int) member.getSummon().getCurrentMp());
 					writeD(member.getSummon().getMaxMp());
-					writeD(member.getSummon().getLevel());
+					writeC(member.getSummon().getLevel()); // 603
 				}
 				else
 				{

@@ -39,6 +39,6 @@ public final class DeleteObject extends L2GameServerPacket
 	{
 		writeC(0x08);
 		writeD(_objectId);
-		writeD(0x00); // c2
+		writeC(0x00); // 603 // c2
 	}
 }

@@ -188,6 +188,12 @@ public final class RequestActionUse extends L2GameClientPacket
 				}
 				break;
 			case 19: // Unsummon Pet
+				// l2jtw add start
+				if (summon == null)
+				{
+					return;
+				}
+				// l2jtw add end
 				if (summon.isDead())
 				{
 					sendPacket(SystemMessageId.DEAD_PET_CANNOT_BE_RETURNED);
@@ -413,6 +419,29 @@ public final class RequestActionUse extends L2GameClientPacket
 			case 73:
 				useCoupleSocial(_actionId - 55);
 				break;
+			// 603-Start
+			case 78: // Use Token 1
+			case 79: // Use Token 2
+			case 80: // Use Token 3
+			case 81: // Use Token 4
+			case 82: // Token 1 Targeting
+			case 83: // Token 2 Targeting
+			case 84: // Token 3 Targeting
+			case 85: // Token 4 Targeting
+				activeChar.sendMessage(243); // MessageTable.Messages[243]
+				break;
+			case 87:
+				tryBroadcastSocial(28);
+				break;
+			case 88:
+				tryBroadcastSocial(29);
+				break;
+			case 89:
+				tryBroadcastSocial(30);
+				break;
+			case 90: // InzoneWaitingTime
+				break;
+			// 603-End
 			case 1000: // Siege Golem - Siege Hammer
 				if ((target != null) && target.isDoor())
 				{
@@ -680,6 +709,55 @@ public final class RequestActionUse extends L2GameClientPacket
 			case 1098: // Elite Maguen - Maguen Party Return
 				useSkill(6684, true);
 				break;
+			// 603-Start
+			case 1106:
+				useSkill(11278, true);
+				break;
+			case 1107:
+				useSkill(11279, true);
+				break;
+			case 1108:
+				useSkill(11280, true);
+				break;
+			case 1109:
+				useSkill(11281, true);
+				break;
+			case 1110:
+				useSkill(11282, true);
+				break;
+			case 1111:
+				useSkill(11283, true);
+				break;
+			case 1113:
+				useSkill(10051, true);
+				break;
+			case 1114:
+				useSkill(10052, true);
+				break;
+			case 1115:
+				useSkill(10053, true);
+				break;
+			case 1116:
+				useSkill(10054, true);
+				break;
+			case 1117:
+				useSkill(10794, true);
+				break;
+			case 1118:
+				useSkill(10795, true);
+				break;
+			case 1120:
+				useSkill(10797, true);
+				break;
+			case 1121:
+				useSkill(10798, true);
+				break;
+			case 1122:
+				useSkill(11806, true);
+				break;
+			case 1123:
+				useSkill(14767, true);
+			// 603-End
 			case 5000: // Baby Rudolph - Reindeer Scratch
 				useSkill(23155, true);
 				break;
@@ -728,6 +806,11 @@ public final class RequestActionUse extends L2GameClientPacket
 			case 5015: // Deseloph, Hyum, Rekang, Lilias, Lapham, Mafum, Deseloph, Hyum, Rekang, Lilias, Lapham, Mafum - Switch Stance
 				useSkill(6054, true);
 				break;
+			// 603-Start
+			case 5016:
+				useSkill(23318, true);
+				break;
+			// 603-End
 			// Social Packets
 			case 12: // Greeting
 				tryBroadcastSocial(2);

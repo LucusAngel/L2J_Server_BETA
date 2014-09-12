@@ -48,7 +48,7 @@ public class ExChangeClientEffectInfo extends L2GameServerPacket
 	protected void writeImpl()
 	{
 		writeC(0xFE);
-		writeH(0xC2);
+		writeH(0xC3); // 603
 		writeD(_type);
 		writeD(_key);
 		writeD(_value);

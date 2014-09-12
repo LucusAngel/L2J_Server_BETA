@@ -87,8 +87,19 @@ public class Attack extends L2GameServerPacket
 	{
 		writeD(hit.getTargetId());
 		writeD(hit.getDamage());
-		writeC(hit.getFlags());
+		writeD(hit.getFlags()); // 603
+		writeD(hit.getSSGrade()); // 603
 	}
+	// 603-Start
+	private void writeHits(Hit hit)
+	{
+		writeD(hit.getTargetId());
+		writeD(0);
+		writeD(hit.getDamage());
+		writeD(hit.getFlags());
+		writeD(hit.getSSGrade());
+	}
+	// 603-End
 	
 	@Override
 	protected final void writeImpl()
@@ -97,7 +108,7 @@ public class Attack extends L2GameServerPacket
 		writeC(0x33);
 		
 		writeD(_attackerObjId);
-		writeHit(it.next());
+		writeHits(it.next()); // 603
 		writeLoc(_attackerLoc);
 		
 		writeH(_hits.size() - 1);

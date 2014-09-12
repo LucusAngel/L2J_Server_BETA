@@ -41,7 +41,7 @@ public class ExShowFortressMapInfo extends L2GameServerPacket
 	protected void writeImpl()
 	{
 		writeC(0xFE);
-		writeH(0x7D);
+		writeH(0x7E); // 603
 		
 		writeD(_fortress.getResidenceId());
 		writeD(_fortress.getSiege().isInProgress() ? 1 : 0); // fortress siege status

@@ -51,6 +51,6 @@ public class Earthquake extends L2GameServerPacket
 		writeD(_z);
 		writeD(_intensity);
 		writeD(_duration);
-		writeD(0x00); // Unknown
+		writeD(0x01); // 603 // Unknown
 	}
 }

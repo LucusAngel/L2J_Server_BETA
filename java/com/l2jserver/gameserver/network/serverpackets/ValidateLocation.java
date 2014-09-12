@@ -39,5 +39,6 @@ public class ValidateLocation extends L2GameServerPacket
 		writeD(_charObjId);
 		writeLoc(_loc);
 		writeD(_loc.getHeading());
+		writeC(0xFF); // 603
 	}
 }

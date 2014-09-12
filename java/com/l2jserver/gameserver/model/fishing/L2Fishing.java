@@ -28,6 +28,7 @@ import com.l2jserver.gameserver.model.events.AbstractScript;
 import com.l2jserver.gameserver.network.SystemMessageId;
 import com.l2jserver.gameserver.network.serverpackets.ExFishingHpRegen;
 import com.l2jserver.gameserver.network.serverpackets.ExFishingStartCombat;
+import com.l2jserver.gameserver.network.serverpackets.ExUserInfoFishing; // 603
 import com.l2jserver.gameserver.network.serverpackets.PlaySound;
 import com.l2jserver.gameserver.network.serverpackets.SystemMessage;
 import com.l2jserver.util.Rnd;
@@ -98,6 +99,7 @@ public class L2Fishing implements Runnable
 		}
 		_mode = Rnd.get(100) >= 80 ? 1 : 0;
 		
+		_fisher.broadcastPacket(new ExUserInfoFishing(_fisher)); // 603
 		_fisher.broadcastPacket(new ExFishingStartCombat(_fisher, _time, _fishMaxHp, _mode, _lureType, _deceptiveMode));
 		_fisher.sendPacket(new PlaySound(1, "SF_S_01", 0, 0, 0, 0, 0));
 		// Succeeded in getting a bite

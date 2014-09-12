@@ -43,7 +43,7 @@ public class ExAirShipInfo extends L2GameServerPacket
 	protected void writeImpl()
 	{
 		writeC(0xfe);
-		writeH(0x60);
+		writeH(0x61); // 603
 		
 		writeD(_ship.getObjectId());
 		writeD(_x);

@@ -37,6 +37,10 @@ public final class L2VillageMasterDwarfInstance extends L2VillageMasterInstance
 			return false;
 		}
 		
+		//FIXME: Validate this (Battlecruiser)
+		/* l2jtw add
 		return pclass.isOfRace(Race.DWARF);
+		 */
+		return pclass.isOfRace(Race.DWARF) || pclass.isOfRace(null);
 	}
 }

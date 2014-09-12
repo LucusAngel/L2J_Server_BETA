@@ -30,10 +30,13 @@ public final class RequestRecipeShopManagePrev extends L2GameClientPacket
 {
 	private static final String _C__C0_RequestRecipeShopPrev = "[C] C0 RequestRecipeShopPrev";
 	
+	private int _target; // 603
+	
 	@Override
 	protected void readImpl()
 	{
 		// trigger
+		_target = readD(); // 603
 	}
 	
 	@Override

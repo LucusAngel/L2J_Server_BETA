@@ -122,16 +122,28 @@ public final class NpcSay extends L2GameServerPacket
 		writeD(_textType);
 		writeD(_npcId);
 		writeD(_npcString);
+		int size = 5; // 603
 		if (_npcString == -1)
 		{
 			writeS(_text);
+			size = size - 1; // 603
 		}
 		else if (_parameters != null)
 		{
 			for (String s : _parameters)
 			{
 				writeS(s);
+				size = size - 1; // 603
 			}
 		}
+		for (int i = 0; i < size; i++) // 603
+		{
+			writeS("");
+		}
+		writeD(0x00); // 603
+		writeD(0x00); // 603
+		writeD(0x00); // 603
+		writeD(0x00); // 603
+		writeD(0x00); // 603
 	}
 }

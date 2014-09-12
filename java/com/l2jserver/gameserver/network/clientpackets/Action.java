@@ -28,6 +28,7 @@ import com.l2jserver.gameserver.model.skills.AbnormalType;
 import com.l2jserver.gameserver.model.skills.BuffInfo;
 import com.l2jserver.gameserver.network.SystemMessageId;
 import com.l2jserver.gameserver.network.serverpackets.ActionFailed;
+import com.l2jserver.gameserver.network.serverpackets.ExAbnormalStatusUpdateFromTargetPacket; // 603
 
 public final class Action extends L2GameClientPacket
 {
@@ -63,6 +64,17 @@ public final class Action extends L2GameClientPacket
 		{
 			return;
 		}
+		// 603-temp fix start
+		if ((activeChar.getActiveEnchantTimestamp() > 0) && ((System.currentTimeMillis() - activeChar.getActiveEnchantTimestamp()) < 100))
+		{
+			//sendPacket(ActionFailed.STATIC_PACKET);
+			return;
+		}
+		else
+		{
+			activeChar.setActiveEnchantTimestamp(System.currentTimeMillis());
+		}
+		// 603-temp fix end
 		
 		if (activeChar.inObserverMode())
 		{
@@ -106,7 +118,7 @@ public final class Action extends L2GameClientPacket
 			sendPacket(ActionFailed.STATIC_PACKET);
 			return;
 		}
-		
+		//L2JTW: if (!obj.isTargetable())
 		if (!obj.isTargetable() && !activeChar.canOverrideCond(PcCondOverride.TARGET_ALL))
 		{
 			sendPacket(ActionFailed.STATIC_PACKET);
@@ -140,6 +152,12 @@ public final class Action extends L2GameClientPacket
 			case 0:
 			{
 				obj.onAction(activeChar);
+				// 603 start
+				if ((activeChar.getTarget() != null) && (obj.isCharacter() || obj.isNpc()))
+				{
+					activeChar.sendPacket(new ExAbnormalStatusUpdateFromTargetPacket(activeChar.getTargetId()));
+				}
+				// 603 end
 				break;
 			}
 			case 1:
@@ -152,6 +170,12 @@ public final class Action extends L2GameClientPacket
 				{
 					obj.onActionShift(activeChar);
 				}
+				// 603 start
+				if ((activeChar.getTarget() != null) && (obj.isCharacter() || obj.isNpc()))
+				{
+					activeChar.sendPacket(new ExAbnormalStatusUpdateFromTargetPacket(activeChar.getTargetId()));
+				}
+				// 603 end
 				break;
 			}
 			default:

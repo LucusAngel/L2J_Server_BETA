@@ -18,6 +18,7 @@
  */
 package com.l2jserver.gameserver.network.clientpackets;
 
+/* 603
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +28,7 @@ import com.l2jserver.gameserver.datatables.UIData;
 import com.l2jserver.gameserver.model.ActionKey;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.network.L2GameClient.GameClientState;
+ */
 
 /**
  * Request Save Key Mapping client packet.
@@ -37,17 +39,23 @@ public class RequestSaveKeyMapping extends L2GameClientPacket
 	private static String _C__D0_22_REQUESTSAVEKEYMAPPING = "[C] D0:22 RequestSaveKeyMapping";
 	
 	private int _tabNum;
+	/* 603
 	private final Map<Integer, List<ActionKey>> _keyMap = new HashMap<>();
 	private final Map<Integer, List<Integer>> _catMap = new HashMap<>();
+	 */
 	
 	@Override
 	protected void readImpl()
 	{
+		/* 603
 		int category = 0;
 		
 		readD(); // Unknown
 		readD(); // Unknown
+		 */
 		_tabNum = readD();
+		readB(new byte[_tabNum]); // l2jtw add
+		/* 603
 		for (int i = 0; i < _tabNum; i++)
 		{
 			int cmd1Size = readC();
@@ -77,17 +85,20 @@ public class RequestSaveKeyMapping extends L2GameClientPacket
 		}
 		readD();
 		readD();
+		 */
 	}
 	
 	@Override
 	protected void runImpl()
 	{
+		/* 603
 		final L2PcInstance player = getActiveChar();
 		if (!Config.STORE_UI_SETTINGS || (player == null) || (getClient().getState() != GameClientState.IN_GAME))
 		{
 			return;
 		}
 		player.getUISettings().storeAll(_catMap, _keyMap);
+		 */
 	}
 	
 	@Override

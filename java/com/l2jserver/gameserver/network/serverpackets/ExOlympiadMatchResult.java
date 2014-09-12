@@ -54,7 +54,7 @@ public class ExOlympiadMatchResult extends L2GameServerPacket
 	protected void writeImpl()
 	{
 		writeC(0xFE);
-		writeH(0xD4);
+		writeH(0xD5); // 603
 		writeD(0x01); // Type 0 = Match List, 1 = Match Result
 		
 		writeD(_tie ? 1 : 0); // 0 - win, 1 - tie

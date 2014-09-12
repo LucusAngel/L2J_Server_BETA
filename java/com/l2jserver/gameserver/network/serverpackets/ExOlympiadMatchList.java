@@ -56,7 +56,7 @@ public class ExOlympiadMatchList extends L2GameServerPacket
 	protected final void writeImpl()
 	{
 		writeC(0xFE);
-		writeH(0xD4);
+		writeH(0xD5); // 603
 		writeD(0x00); // Type 0 = Match List, 1 = Match Result
 		
 		writeD(_games.size());

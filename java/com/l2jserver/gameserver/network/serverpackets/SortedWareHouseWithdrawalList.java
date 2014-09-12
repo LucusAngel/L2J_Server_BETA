@@ -40,9 +40,13 @@ public class SortedWareHouseWithdrawalList extends L2GameServerPacket
 	public static final int CLAN = 2;
 	public static final int CASTLE = 3; // not sure
 	public static final int FREIGHT = 4; // not sure
+	private int check_Augmentation; // 603
+	private int check_ElementType; // 603
+	private int check_EnchantOption; // 603
 	
 	private L2PcInstance _activeChar;
 	private long _playerAdena;
+	private L2ItemInstance[] _inventory_items; // 603
 	private List<L2WarehouseItem> _objects = new FastList<>();
 	private int _whType;
 	private byte _sortorder;
@@ -98,6 +102,7 @@ public class SortedWareHouseWithdrawalList extends L2GameServerPacket
 		_sortorder = sortorder;
 		
 		_playerAdena = _activeChar.getAdena();
+		_inventory_items = _activeChar.getInventory().getItems(); // 603
 		if (_activeChar.getActiveWarehouse() == null)
 		{
 			// Something went wrong!
@@ -750,19 +755,63 @@ public class SortedWareHouseWithdrawalList extends L2GameServerPacket
 		writeH(_whType);
 		writeQ(_playerAdena);
 		writeH(_objects.size());
+		writeD(0x00); // 603
+		if (_whType == 1 || _whType == 2) // 603
+		{
+			if (_objects.size() > 0)
+			{
+				writeH(0x01); // 603 : GS-comment-033
+				writeD(0x1063);
+			}
+			else
+			{
+				writeH(0x00); // 603
+			}
+		}
+		writeD(_inventory_items.length);
 		
 		for (L2WarehouseItem item : _objects)
 		{
+			check_Augmentation = 0;
+			check_ElementType = 0;
+			check_EnchantOption = 0;
+			if (item.isAugmented())
+			{
+				check_Augmentation = 1;
+			}
+			if (item.getAttackElementPower() > 0)
+			{
+				check_ElementType = 2;
+			}
+			else
+			{
+				for (byte i = 0; i < 6; i++)
+				{
+					if (item.getElementDefAttr(i) > 0)
+					{
+						check_ElementType = 2;
+					}
+				}
+			}
+			for (int op : item.getEnchantOptions())
+			{
+				if (op > 0)
+				{
+					check_EnchantOption = 4;
+				}
+			}
+			writeC(check_Augmentation + check_ElementType + check_EnchantOption + 0);
 			writeD(item.getObjectId());
 			writeD(item.getItem().getDisplayId());
-			writeD(item.getLocationSlot());
+			writeC(item.getLocationSlot()); // 603
 			writeQ(item.getCount());
-			writeH(item.getItem().getType2());
-			writeH(item.getCustomType1());
+			writeC(item.getItem().getType2()); // 603
+			writeC(item.getCustomType1()); // 603
 			writeH(0x00); // Can't be equipped in WH
-			writeD(item.getItem().getBodyPart());
-			writeH(item.getEnchantLevel());
-			writeH(item.getCustomType2());
+			writeQ(item.getItem().getBodyPart()); // 603
+			writeC(item.getEnchantLevel()); // 603
+			writeC(item.getCustomType2()); // 603
+			/* 603
 			if (item.isAugmented())
 			{
 				writeD(item.getAugmentationId());
@@ -771,20 +820,35 @@ public class SortedWareHouseWithdrawalList extends L2GameServerPacket
 			{
 				writeD(0x00);
 			}
+			 */
 			writeD(item.getMana());
 			writeD(item.getTime());
-			writeH(item.getAttackElementType());
-			writeH(item.getAttackElementPower());
-			for (byte i = 0; i < 6; i++)
+			writeC(0x01); // 603
+			if (item.isAugmented()) // 603
 			{
-				writeH(item.getElementDefAttr(i));
+				writeD(item.getAugmentationId());
+			}
+			if (check_ElementType > 0) // 603
+			{
+				writeH(item.getAttackElementType());
+				writeH(item.getAttackElementPower());
+				for (byte i = 0; i < 6; i++)
+				{
+					writeH(item.getElementDefAttr(i));
+				}
 			}
 			// Enchant Effects
-			for (int op : item.getEnchantOptions())
+			if (check_EnchantOption > 0) // 603
 			{
-				writeH(op);
+				for (int op : item.getEnchantOptions())
+				{
+					writeH(op);
+				}
 			}
+			// 603 writeD(0x00); // 603-Appearance
 			writeD(item.getObjectId());
+			writeD(0x00); // 603 TEST
+			writeD(0x00); // 603 TEST
 		}
 	}
 }

@@ -35,6 +35,7 @@ import com.l2jserver.gameserver.model.events.returns.ChatFilterReturn;
 import com.l2jserver.gameserver.model.items.instance.L2ItemInstance;
 import com.l2jserver.gameserver.network.SystemMessageId;
 import com.l2jserver.gameserver.network.serverpackets.ActionFailed;
+import com.l2jserver.gameserver.network.serverpackets.ExShowUsm; // 603
 import com.l2jserver.gameserver.util.Util;
 
 /**
@@ -70,6 +71,8 @@ public final class Say2 extends L2GameClientPacket
 	public static final int MPCC_ROOM = 21;
 	public static final int NPC_ALL = 22;
 	public static final int NPC_SHOUT = 23;
+	public static final int NEW_24 = 24; // ???
+	public static final int GLOBAL = 25; // &
 	
 	private static final String[] CHAT_NAMES =
 	{
@@ -94,7 +97,11 @@ public final class Say2 extends L2GameClientPacket
 		"CRITICAL_ANNOUNCE",
 		"SCREEN_ANNOUNCE",
 		"BATTLEFIELD",
-		"MPCC_ROOM"
+		"MPCC_ROOM",
+		"NPC_ALL",
+		"NPC_SHOUT",
+		"NEW_24",
+		"GLOBAL"
 	};
 	
 	private static final String[] WALKER_COMMAND_LIST =

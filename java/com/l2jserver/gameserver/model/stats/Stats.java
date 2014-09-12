@@ -176,6 +176,9 @@ public enum Stats
 	// Skill mastery
 	SKILL_MASTERY("skillMastery"),
 	
+	//Summon // l2jtw add
+	MAX_SUMMON_POINT("maxSummonPoint"),
+	
 	// Vitality
 	VITALITY_CONSUME_RATE("vitalityConsumeRate"),
 	

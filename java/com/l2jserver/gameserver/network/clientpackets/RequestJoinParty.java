@@ -169,7 +169,11 @@ public final class RequestJoinParty extends L2GameClientPacket
 			requestor.sendPacket(SystemMessageId.ONLY_LEADER_CAN_INVITE);
 			return;
 		}
+		//FIXME: refactor me & unhardcode me (Battlecruiser)
+		/* 603
 		if (party.getMemberCount() >= 9)
+		 */
+		if (party.getMemberCount() >= 7)
 		{
 			requestor.sendPacket(SystemMessageId.PARTY_FULL);
 			return;

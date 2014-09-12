@@ -33,7 +33,10 @@ public final class PledgeShowMemberListUpdate extends L2GameServerPacket
 	private final int _level;
 	private final int _classId;
 	private final int _objectId;
+	/* 603
 	private final boolean _isOnline;
+	 */
+	private final int _isOnline;
 	private final int _race;
 	private final int _sex;
 	
@@ -54,7 +57,7 @@ public final class PledgeShowMemberListUpdate extends L2GameServerPacket
 		_race = player.getRace().ordinal();
 		_sex = player.getAppearance().getSex() ? 1 : 0;
 		_objectId = player.getObjectId();
-		_isOnline = player.isOnline();
+		_isOnline = player.isOnline() ? player.getObjectId() : 0; // 603
 	}
 	
 	public PledgeShowMemberListUpdate(L2ClanMember member)
@@ -63,7 +66,7 @@ public final class PledgeShowMemberListUpdate extends L2GameServerPacket
 		_level = member.getLevel();
 		_classId = member.getClassId();
 		_objectId = member.getObjectId();
-		_isOnline = member.isOnline();
+		_isOnline = member.isOnline() ? member.getObjectId() : 0; // 603
 		_pledgeType = member.getPledgeType();
 		_race = member.getRaceOrdinal();
 		_sex = member.getSex() ? 1 : 0;
@@ -85,6 +88,7 @@ public final class PledgeShowMemberListUpdate extends L2GameServerPacket
 		writeD(_level);
 		writeD(_classId);
 		writeD(_sex);
+		/* 603
 		writeD(_race);
 		if (_isOnline)
 		{
@@ -97,6 +101,10 @@ public final class PledgeShowMemberListUpdate extends L2GameServerPacket
 			writeD(0);
 			writeD(0);
 		}
+		 */
+		writeD(_objectId); // 603
+		writeD(_isOnline); // 603
+		writeD(_pledgeType); // 603
 		writeD(_hasSponsor);
 	}
 }

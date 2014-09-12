@@ -36,11 +36,14 @@ public final class ProtocolVersion extends L2GameClientPacket
 	private static final Logger _logAccounting = Logger.getLogger("accounting");
 	
 	private int _version;
+	private int _support = 603; // Update by rocknow
 	
 	@Override
 	protected void readImpl()
 	{
 		_version = readD();
+		readB(new byte[256]); // 603
+		readD(); // 603
 	}
 	
 	@Override
@@ -56,6 +59,37 @@ public final class ProtocolVersion extends L2GameClientPacket
 			// this is just a ping attempt from the new C2 client
 			getClient().close((L2GameServerPacket) null);
 		}
+		//FIXME: validate me (Battlecruiser)
+		// Update by rocknow-Start
+		else if (_version < _support)
+		{
+			LogRecord record = new LogRecord(Level.WARNING, "Older protocol");
+			record.setParameters(new Object[]{_version, getClient()});
+			_logAccounting.log(record);
+			_log.fine(getClient() + MessageTable.Messages[2].getExtra(1) +
+									MessageTable.Messages[2].getExtra(4) + 
+									MessageTable.Messages[2].getExtra(2) + _version + 
+									MessageTable.Messages[2].getExtra(3) +
+									MessageTable.Messages[2].getExtra(6));
+			KeyPacket pk = new KeyPacket(getClient().enableCrypt(),0);
+			getClient().setProtocolOk(false);
+			getClient().close(pk);
+		}
+		else if (_version > _support)
+		{
+			LogRecord record = new LogRecord(Level.WARNING, "Newer protocol");
+			record.setParameters(new Object[]{_version, getClient()});
+			_logAccounting.log(record);
+			_log.fine(getClient() + MessageTable.Messages[2].getExtra(1) +
+									MessageTable.Messages[2].getExtra(5) + 
+									MessageTable.Messages[2].getExtra(2) + _version + 
+									MessageTable.Messages[2].getExtra(3) +
+									MessageTable.Messages[2].getExtra(6));
+			KeyPacket pk = new KeyPacket(getClient().enableCrypt(),0);
+			getClient().setProtocolOk(false);
+			getClient().close(pk);
+		}
+		// Update by rocknow-End
 		else if (!Config.PROTOCOL_LIST.contains(_version))
 		{
 			LogRecord record = new LogRecord(Level.WARNING, "Wrong protocol");

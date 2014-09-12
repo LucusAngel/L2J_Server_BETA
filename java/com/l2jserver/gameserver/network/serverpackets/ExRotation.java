@@ -35,7 +35,7 @@ public class ExRotation extends L2GameServerPacket
 	protected void writeImpl()
 	{
 		writeC(0xFE);
-		writeH(0xC1);
+		writeH(0xC2); // 603
 		writeD(_charId);
 		writeD(_heading);
 	}

@@ -49,14 +49,18 @@ public final class ShortCutRegister extends L2GameServerPacket
 				writeD(0x00); // unknown
 				writeD(0x00); // unknown
 				writeD(0x00); // item augment id
+				writeD(0x00); // 603
 				break;
 			}
 			case SKILL:
 			{
 				writeD(_shortcut.getId());
 				writeD(_shortcut.getLevel());
+				writeD(_shortcut.getSharedReuseGroup()); // 603
 				writeC(0x00); // C5
 				writeD(_shortcut.getCharacterType());
+				writeD(0x00); // 603
+				writeD(0x00); // 603
 				break;
 			}
 			case ACTION:

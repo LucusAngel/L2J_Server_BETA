@@ -60,7 +60,11 @@ public final class RequestAnswerJoinParty extends L2GameClientPacket
 		{
 			if (requestor.isInParty())
 			{
+				//FIXME: refactor me (Config) (Battlecruiser)
+				/* 603
 				if (requestor.getParty().getMemberCount() >= 9)
+				 */
+				if (requestor.getParty().getMemberCount() >= 7)
 				{
 					SystemMessage sm = SystemMessage.getSystemMessage(SystemMessageId.PARTY_FULL);
 					player.sendPacket(sm);

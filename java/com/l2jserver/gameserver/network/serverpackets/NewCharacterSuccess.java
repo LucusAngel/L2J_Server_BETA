@@ -48,24 +48,24 @@ public final class NewCharacterSuccess extends L2GameServerPacket
 			// TODO: Unhardcode these
 			writeD(chr.getRace().ordinal());
 			writeD(chr.getClassId().getId());
-			writeD(0x46);
+			writeD(0x63); // 603
 			writeD(chr.getBaseSTR());
-			writeD(0x0A);
-			writeD(0x46);
+			writeD(0x01); // 603
+			writeD(0x63); // 603
 			writeD(chr.getBaseDEX());
-			writeD(0x0A);
-			writeD(0x46);
+			writeD(0x01); // 603
+			writeD(0x63); // 603
 			writeD(chr.getBaseCON());
-			writeD(0x0A);
-			writeD(0x46);
+			writeD(0x01); // 603
+			writeD(0x63); // 603
 			writeD(chr.getBaseINT());
-			writeD(0x0A);
-			writeD(0x46);
+			writeD(0x01); // 603
+			writeD(0x63); // 603
 			writeD(chr.getBaseWIT());
-			writeD(0x0A);
-			writeD(0x46);
+			writeD(0x01); // 603
+			writeD(0x63); // 603
 			writeD(chr.getBaseMEN());
-			writeD(0x0A);
+			writeD(0x01); // 603
 		}
 	}
 }

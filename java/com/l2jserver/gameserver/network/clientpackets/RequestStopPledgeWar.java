@@ -57,7 +57,10 @@ public final class RequestStopPledgeWar extends L2GameClientPacket
 		
 		if (clan == null)
 		{
+			/*
 			player.sendMessage("No such clan.");
+			 */
+			player.sendPacket(SystemMessageId.CLAN_DOESNT_EXISTS);
 			player.sendPacket(ActionFailed.STATIC_PACKET);
 			return;
 		}

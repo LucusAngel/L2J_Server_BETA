@@ -34,7 +34,7 @@ public class ExDuelReady extends L2GameServerPacket
 	protected void writeImpl()
 	{
 		writeC(0xFE);
-		writeH(0x4D);
+		writeH(0x4E); // 603
 		
 		writeD(_unk1);
 	}

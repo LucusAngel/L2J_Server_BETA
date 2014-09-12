@@ -404,6 +404,7 @@ public class Olympiad extends ListenersContainer
 			
 			Announcements.getInstance().announceToAll(sm);
 			Announcements.getInstance().announceToAll("Olympiad Validation Period has began");
+			//L2JTW msg: Announcements.getInstance().announceToAll(SystemMessage.getSystemMessage(SystemMessageId.THE_OLYMPIAD_GAME_HAS_STARTED));
 			
 			if (_scheduledWeeklyTask != null)
 			{
@@ -434,6 +435,7 @@ public class Olympiad extends ListenersContainer
 		public void run()
 		{
 			Announcements.getInstance().announceToAll("Olympiad Validation Period has ended");
+			//L2JTW msg: Announcements.getInstance().announceToAll(SystemMessage.getSystemMessage(SystemMessageId.THE_OLYMPIAD_GAME_HAS_ENDED));
 			_period = 0;
 			_currentCycle++;
 			deleteNobles();

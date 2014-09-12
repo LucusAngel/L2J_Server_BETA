@@ -80,6 +80,9 @@ public class CharSelectionInfo extends L2GameServerPacket
 		// Can prevent players from creating new characters (if 0); (if 1, the client will ask if chars may be created (0x13) Response: (0x0D) )
 		writeD(Config.MAX_CHARACTERS_NUMBER_PER_ACCOUNT);
 		writeC(0x00);
+		writeC(0x01); // 603
+		writeD(0x02); // 603
+		writeC(0x00); // 603
 		
 		long lastAccess = 0L;
 		
@@ -127,13 +130,14 @@ public class CharSelectionInfo extends L2GameServerPacket
 			writeF(charInfoPackage.getCurrentHp());
 			writeF(charInfoPackage.getCurrentMp());
 			
-			writeD(charInfoPackage.getSp());
+			writeQ(charInfoPackage.getSp()); // 603
 			writeQ(charInfoPackage.getExp());
 			writeF((float) (charInfoPackage.getExp() - ExperienceTable.getInstance().getExpForLevel(charInfoPackage.getLevel())) / (ExperienceTable.getInstance().getExpForLevel(charInfoPackage.getLevel() + 1) - ExperienceTable.getInstance().getExpForLevel(charInfoPackage.getLevel()))); // High Five
 																																																																								// exp %
 			writeD(charInfoPackage.getLevel());
 			
-			writeD(charInfoPackage.getKarma());
+			int Karma = 0 - charInfoPackage.getKarma(); // 603-Test
+			writeD(Karma); // 603-Test
 			writeD(charInfoPackage.getPkKills());
 			writeD(charInfoPackage.getPvPKills());
 			
@@ -144,12 +148,35 @@ public class CharSelectionInfo extends L2GameServerPacket
 			writeD(0x00);
 			writeD(0x00);
 			writeD(0x00);
+			writeD(0); // 603
+			writeD(0); // 603
 			
 			for (int slot : getPaperdollOrder())
 			{
 				writeD(charInfoPackage.getPaperdollItemId(slot));
 			}
 			
+			writeD(0); // 603
+			writeD(0); // 603
+			writeD(0); // 603
+			writeD(0); // 603
+			writeD(0); // 603
+			writeD(0); // 603
+			writeD(0); // 603
+			writeD(0); // 603
+			writeD(0); // 603
+			writeD(0); // 603
+			writeD(0); // 603
+			writeD(0); // 603
+			writeD(0); // 603
+			writeD(0); // 603
+			writeD(0); // 603
+			writeD(0); // 603
+			writeH(0); // 603 : GS-comment-025.1
+			writeH(0); // 603 : GS-comment-025.2
+			writeH(0); // 603 : GS-comment-025.3
+			writeH(0); // 603 : GS-comment-025.4
+			writeH(0); // 603 : GS-comment-025.5
 			writeD(charInfoPackage.getHairStyle());
 			writeD(charInfoPackage.getHairColor());
 			writeD(charInfoPackage.getFace());
@@ -170,9 +197,9 @@ public class CharSelectionInfo extends L2GameServerPacket
 			writeD(i == _activeId ? 0x01 : 0x00); // c3 auto-select char
 			
 			writeC(charInfoPackage.getEnchantEffect() > 127 ? 127 : charInfoPackage.getEnchantEffect());
-			writeH(0x00);
-			writeH(0x00);
-			// writeD(charInfoPackage.getAugmentationId());
+			//603 : GS-comment-026 writeH(0x00);
+			//603 : GS-comment-026 writeH(0x00);
+			writeD(charInfoPackage.getAugmentationId()); // 603 : GS-comment-026
 			
 			// writeD(charInfoPackage.getTransformId()); // Used to display Transformations
 			writeD(0x00); // Currently on retail when you are on character select you don't see your transformation.
@@ -187,6 +214,12 @@ public class CharSelectionInfo extends L2GameServerPacket
 			
 			// High Five by Vistall:
 			writeD(charInfoPackage.getVitalityPoints()); // H5 Vitality
+			writeD(200); // 603
+			writeD(5); // 603 systemmsg-6073 $s1 vitality items can be used
+			writeD(1); // 603 1 = active / 0 = not active
+			writeC(0); // 603 awake = 1???
+			writeC(0); // 603
+			writeC(1); // 603
 		}
 	}
 	

@@ -34,7 +34,7 @@ public class ExRequestChangeNicknameColor extends L2GameServerPacket
 	protected final void writeImpl()
 	{
 		writeC(0xfe);
-		writeH(0x83);
+		writeH(0x84); // 603
 		writeD(_itemObjectId);
 	}
 }

@@ -32,6 +32,8 @@ public final class RequestShortCutReg extends L2GameClientPacket
 	private int _page;
 	private int _lvl;
 	private int _characterType; // 1 - player, 2 - pet
+	private int _unk1; // 603
+	private int _unk2; // 603
 	
 	@Override
 	protected void readImpl()
@@ -44,6 +46,8 @@ public final class RequestShortCutReg extends L2GameClientPacket
 		_id = readD();
 		_lvl = readD();
 		_characterType = readD();
+		_unk1 = readD(); // 603
+		_unk2 = readD(); // 603
 	}
 	
 	@Override

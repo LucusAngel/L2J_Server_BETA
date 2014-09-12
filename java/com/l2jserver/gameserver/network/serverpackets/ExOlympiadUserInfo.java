@@ -76,7 +76,7 @@ public class ExOlympiadUserInfo extends L2GameServerPacket
 	protected final void writeImpl()
 	{
 		writeC(0xFE);
-		writeH(0x7A);
+		writeH(0x7B); // 603
 		if (_player != null)
 		{
 			writeC(_player.getOlympiadSide());

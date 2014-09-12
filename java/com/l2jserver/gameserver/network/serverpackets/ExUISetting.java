@@ -74,7 +74,7 @@ public class ExUISetting extends L2GameServerPacket
 	protected void writeImpl()
 	{
 		writeC(0xFE);
-		writeH(0x70);
+		writeH(0x71); // 603
 		
 		writeD(buffsize);
 		writeD(categories);

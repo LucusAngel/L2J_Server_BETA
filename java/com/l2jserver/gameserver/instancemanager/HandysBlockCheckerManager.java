@@ -74,6 +74,7 @@ public final class HandysBlockCheckerManager
 	 */
 	public synchronized void increaseArenaVotes(int arena)
 	{
+		//L2J TW has here NPE avoidance
 		int newVotes = _arenaVotes.get(arena) + 1;
 		ArenaParticipantsHolder holder = _arenaPlayers[arena];
 		

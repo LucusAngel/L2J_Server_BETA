@@ -77,7 +77,10 @@ public class RequestExTryToPutEnchantTargetItem extends L2GameClientPacket
 		}
 		activeChar.setIsEnchanting(true);
 		activeChar.setActiveEnchantTimestamp(System.currentTimeMillis());
+		/* 603
 		activeChar.sendPacket(new ExPutEnchantTargetItemResult(_objectId));
+		 */
+		activeChar.sendPacket(new ExPutEnchantTargetItemResult(1));
 	}
 	
 	@Override

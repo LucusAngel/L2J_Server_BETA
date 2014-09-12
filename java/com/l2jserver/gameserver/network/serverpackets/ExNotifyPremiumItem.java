@@ -29,6 +29,6 @@ public class ExNotifyPremiumItem extends L2GameServerPacket
 	protected void writeImpl()
 	{
 		writeC(0xFE);
-		writeH(0x85);
+		writeH(0x86); // 603
 	}
 }

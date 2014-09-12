@@ -93,7 +93,7 @@ public final class AttackRequest extends L2GameClientPacket
 			activeChar.sendPacket(ActionFailed.STATIC_PACKET);
 			return;
 		}
-		
+		//L2JTW: else if (!target.isTargetable())
 		else if (!target.isTargetable() && !activeChar.canOverrideCond(PcCondOverride.TARGET_ALL))
 		{
 			activeChar.sendPacket(ActionFailed.STATIC_PACKET);

@@ -187,7 +187,11 @@ public final class RequestEnchantItem extends L2GameClientPacket
 						item.setEnchantLevel(item.getEnchantLevel() + 1);
 						item.updateDatabase();
 					}
+					//FIXME: Validate this (Battlecruiser)
+					/* l2jtw add
 					activeChar.sendPacket(new EnchantResult(0, 0, 0));
+					 */
+					activeChar.sendPacket(new EnchantResult(0, 0, 0, item.getEnchantLevel()));
 					
 					if (Config.LOG_ITEM_ENCHANTS)
 					{
@@ -432,7 +436,10 @@ public final class RequestEnchantItem extends L2GameClientPacket
 			}
 			
 			activeChar.broadcastUserInfo();
+			/* 603
 			activeChar.setActiveEnchantItemId(L2PcInstance.ID_NONE);
+			 */
+			activeChar.setActiveEnchantTimestamp(System.currentTimeMillis());
 		}
 	}
 	

@@ -48,6 +48,6 @@ public class PartyMatchDetail extends L2GameServerPacket
 		writeD(_room.getLootType()); // Loot Type
 		writeD(_room.getLocation()); // Room Location
 		writeS(_room.getTitle()); // Room title
-		writeH(0x00); // Unknown
+		writeH(0x105); // 603 // Unknown
 	}
 }

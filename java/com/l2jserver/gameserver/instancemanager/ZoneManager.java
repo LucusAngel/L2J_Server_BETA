@@ -194,6 +194,10 @@ public final class ZoneManager extends DocumentParser
 						
 						minZ = parseInteger(attrs, "minZ");
 						maxZ = parseInteger(attrs, "maxZ");
+						if (minZ > maxZ) // l2jtw add. This makes sense (Battlecruiser)
+						{
+							_log.warning("ZoneData: minZ > maxZ: " + zoneName + " in file: " + getCurrentFile().getName());
+						}
 						
 						zoneType = parseString(attrs, "type");
 						zoneShape = parseString(attrs, "shape");

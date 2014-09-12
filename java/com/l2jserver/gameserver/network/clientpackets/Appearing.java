@@ -21,6 +21,10 @@ package com.l2jserver.gameserver.network.clientpackets;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.network.serverpackets.ExBrExtraUserInfo;
 import com.l2jserver.gameserver.network.serverpackets.UserInfo;
+import com.l2jserver.gameserver.network.serverpackets.ExVitalityEffectInfo; // 603
+import com.l2jserver.gameserver.network.serverpackets.ExBrPremiumState; // 603
+import com.l2jserver.gameserver.network.serverpackets.ItemList; // 603
+import com.l2jserver.gameserver.network.serverpackets.QuestList; // 603
 
 /**
  * Appearing Packet Handler
@@ -55,6 +59,10 @@ public final class Appearing extends L2GameClientPacket
 		}
 		
 		sendPacket(new UserInfo(activeChar));
+		activeChar.sendPacket(new ExVitalityEffectInfo()); // 603
+		activeChar.sendPacket(new QuestList()); // 603
+		sendPacket(new ExBrPremiumState(activeChar.getObjectId(), 1)); // 603
+		sendPacket(new ItemList(activeChar, false)); // 603
 		sendPacket(new ExBrExtraUserInfo(activeChar));
 	}
 	

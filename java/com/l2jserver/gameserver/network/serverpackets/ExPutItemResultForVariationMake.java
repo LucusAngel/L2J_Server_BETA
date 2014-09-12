@@ -33,7 +33,7 @@ public class ExPutItemResultForVariationMake extends L2GameServerPacket
 	protected void writeImpl()
 	{
 		writeC(0xFE);
-		writeH(0x53);
+		writeH(0x54); // 603
 		writeD(_itemObjId);
 		writeD(_itemId);
 		writeD(0x01);

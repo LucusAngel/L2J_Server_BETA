@@ -34,7 +34,7 @@ public final class PartySmallWindowUpdate extends L2GameServerPacket
 	{
 		writeC(0x52);
 		writeD(_member.getObjectId());
-		writeS(_member.getName());
+		writeH(0x3FF); // 603
 		
 		writeD((int) _member.getCurrentCp()); // c4
 		writeD(_member.getMaxCp()); // c4
@@ -43,8 +43,9 @@ public final class PartySmallWindowUpdate extends L2GameServerPacket
 		writeD(_member.getMaxHp());
 		writeD((int) _member.getCurrentMp());
 		writeD(_member.getMaxMp());
-		writeD(_member.getLevel());
-		writeD(_member.getClassId().getId());
+		writeC(_member.getLevel()); // 603
+		writeH(_member.getClassId().getId()); // 603
+		writeD(_member.getVitalityPoints()); // 603
 		
 	}
 }

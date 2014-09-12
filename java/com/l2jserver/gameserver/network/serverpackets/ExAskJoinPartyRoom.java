@@ -18,16 +18,21 @@
  */
 package com.l2jserver.gameserver.network.serverpackets;
 
+import com.l2jserver.gameserver.model.PartyMatchRoomList; // l2jtw add
+import com.l2jserver.gameserver.model.actor.instance.L2PcInstance; // l2jtw add
+
 /**
  * @author KenM
  */
 public class ExAskJoinPartyRoom extends L2GameServerPacket
 {
 	private final String _charName;
+	private final String _roomName; // l2jtw add
 	
-	public ExAskJoinPartyRoom(String charName)
+	public ExAskJoinPartyRoom(L2PcInstance player) // l2jtw add
 	{
-		_charName = charName;
+		_charName = player.getName(); // l2jtw add
+		_roomName = PartyMatchRoomList.getInstance().getPlayerRoom(player).getTitle(); // l2jtw add
 	}
 	
 	@Override
@@ -36,5 +41,6 @@ public class ExAskJoinPartyRoom extends L2GameServerPacket
 		writeC(0xFE);
 		writeH(0x35);
 		writeS(_charName);
+		writeS(_roomName); // l2jtw add
 	}
 }

@@ -98,8 +98,10 @@ public final class SpawnTable extends DocumentParser
 		}
 		
 		if (npcTemplate.isType("L2SiegeGuard") || npcTemplate.isType("L2RaidBoss") || (!Config.ALLOW_CLASS_MASTERS && npcTemplate.isType("L2ClassMaster")))
+		//L2JTW, doesn't seem crucial: if (npcTemplate.isType("L2SiegeGuard") || npcTemplate.isType("L2RaidBoss") || (!Config.ALLOW_CLASS_MASTERS && npcTemplate.isType("L2ClassMaster") || npcTemplate.isType("L2GrandBoss"))) // rocknow add
 		{
 			// Don't spawn
+			// L2JTW puts a warning into log
 			return false;
 		}
 		

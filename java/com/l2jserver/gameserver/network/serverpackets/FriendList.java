@@ -18,10 +18,14 @@
  */
 package com.l2jserver.gameserver.network.serverpackets;
 
+import java.sql.Connection; // 603	
+import java.sql.PreparedStatement; // 603
+import java.sql.ResultSet; // 603
 import java.util.List;
 
 import javolution.util.FastList;
 
+import com.l2jserver.L2DatabaseFactory; // 603
 import com.l2jserver.gameserver.datatables.CharNameTable;
 import com.l2jserver.gameserver.model.L2World;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
@@ -40,12 +44,16 @@ public class FriendList extends L2GameServerPacket
 		int _objId;
 		String _name;
 		boolean _online;
+		int _classid; // 603
+		int _level; // 603
 		
-		public FriendInfo(int objId, String name, boolean online)
+		public FriendInfo(int objId, String name, boolean online, int classid, int level) // 603
 		{
 			_objId = objId;
 			_name = name;
 			_online = online;
+			_classid = classid; // 603
+			_level = level; // 603
 		}
 	}
 	
@@ -57,11 +65,37 @@ public class FriendList extends L2GameServerPacket
 			String name = CharNameTable.getInstance().getNameById(objId);
 			L2PcInstance player1 = L2World.getInstance().getPlayer(objId);
 			boolean online = false;
+			int classid = 0; // 603
+			int level = 0; // 603
+ 			// 603-Start
+			if (player1 == null)
+			{
+				try (Connection con = L2DatabaseFactory.getInstance().getConnection();
+					PreparedStatement statement = con.prepareStatement("SELECT char_name, online, classid, level FROM characters WHERE charId = ?"))
+				{
+					statement.setInt(1, objId);
+					try (ResultSet rset = statement.executeQuery())
+					{
+						if (rset.next())
+						{
+							_info.add(new FriendInfo(objId, rset.getString(1), rset.getInt(2) == 1, rset.getInt(3), rset.getInt(4)));
+						}
+					}
+				}
+				catch (Exception e)
+				{
+					// Who cares?
+				}
+				continue;
+			}
+			// 603-End
 			if ((player1 != null) && player1.isOnline())
 			{
 				online = true;
 			}
-			_info.add(new FriendInfo(objId, name, online));
+			classid = player1.getClassId().getId(); // 603
+			level = player1.getLevel(); // 603
+			_info.add(new FriendInfo(objId, name, online, classid, level)); // 603
 		}
 	}
 	
@@ -76,6 +110,9 @@ public class FriendList extends L2GameServerPacket
 			writeS(info._name);
 			writeD(info._online ? 0x01 : 0x00); // online
 			writeD(info._online ? info._objId : 0x00); // object id if online
+			writeD(info._level); // 603
+			writeD(info._classid); // 603
+			writeS(""); // 603
 		}
 	}
 }

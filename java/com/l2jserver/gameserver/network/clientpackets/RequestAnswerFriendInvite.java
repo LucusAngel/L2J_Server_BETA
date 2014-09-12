@@ -25,6 +25,7 @@ import java.util.logging.Level;
 import com.l2jserver.L2DatabaseFactory;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.network.SystemMessageId;
+import com.l2jserver.gameserver.network.serverpackets.FriendList; // 603
 import com.l2jserver.gameserver.network.serverpackets.FriendPacket;
 import com.l2jserver.gameserver.network.serverpackets.SystemMessage;
 
@@ -72,14 +73,19 @@ public final class RequestAnswerFriendInvite extends L2GameClientPacket
 					requestor.getFriendList().add(player.getObjectId());
 					
 					// has joined as friend.
+					/* Update by rocknow
 					msg = SystemMessage.getSystemMessage(SystemMessageId.S1_JOINED_AS_FRIEND);
+					 */
+					msg = SystemMessage.getSystemMessage(SystemMessageId.S1_ADDED_TO_FRIENDS);
 					msg.addString(requestor.getName());
 					player.sendPacket(msg);
 					player.getFriendList().add(requestor.getObjectId());
 					
 					// Send notifications for both player in order to show them online
 					player.sendPacket(new FriendPacket(true, requestor.getObjectId()));
+					player.sendPacket(new FriendList(player)); // 603
 					requestor.sendPacket(new FriendPacket(true, player.getObjectId()));
+					requestor.sendPacket(new FriendList(requestor)); // 603
 				}
 				catch (Exception e)
 				{

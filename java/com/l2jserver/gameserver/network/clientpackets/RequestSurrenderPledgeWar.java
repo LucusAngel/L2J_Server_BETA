@@ -56,7 +56,10 @@ public final class RequestSurrenderPledgeWar extends L2GameClientPacket
 		
 		if (clan == null)
 		{
+			/*
 			_activeChar.sendMessage("No such clan.");
+			 */
+			_activeChar.sendPacket(SystemMessage.getSystemMessage(SystemMessageId.CLAN_DOESNT_EXISTS));
 			_activeChar.sendPacket(ActionFailed.STATIC_PACKET);
 			return;
 		}

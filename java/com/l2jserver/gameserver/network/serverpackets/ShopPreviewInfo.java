@@ -38,7 +38,7 @@ public class ShopPreviewInfo extends L2GameServerPacket
 	protected final void writeImpl()
 	{
 		writeC(0xF6);
-		writeD(Inventory.PAPERDOLL_TOTALSLOTS);
+		writeD(/*Inventory.PAPERDOLL_TOTALSLOTS*/36); // Official=36(com.l2jserver.gameserver.model.itemcontainer.Inventory.java)
 		// Slots
 		writeD(getFromList(Inventory.PAPERDOLL_UNDER));
 		writeD(getFromList(Inventory.PAPERDOLL_REAR));
@@ -47,18 +47,35 @@ public class ShopPreviewInfo extends L2GameServerPacket
 		writeD(getFromList(Inventory.PAPERDOLL_RFINGER));
 		writeD(getFromList(Inventory.PAPERDOLL_LFINGER));
 		writeD(getFromList(Inventory.PAPERDOLL_HEAD));
-		writeD(getFromList(Inventory.PAPERDOLL_RHAND));
+		writeD(getFromList(Inventory.PAPERDOLL_RHAND)); // Official: RHand OR RLHand
 		writeD(getFromList(Inventory.PAPERDOLL_LHAND));
 		writeD(getFromList(Inventory.PAPERDOLL_GLOVES));
 		writeD(getFromList(Inventory.PAPERDOLL_CHEST));
 		writeD(getFromList(Inventory.PAPERDOLL_LEGS));
 		writeD(getFromList(Inventory.PAPERDOLL_FEET));
 		writeD(getFromList(Inventory.PAPERDOLL_CLOAK));
-		writeD(getFromList(Inventory.PAPERDOLL_RHAND));
+		writeD(getFromList(Inventory.PAPERDOLL_RHAND)); // Official: only RLHand
 		writeD(getFromList(Inventory.PAPERDOLL_HAIR));
 		writeD(getFromList(Inventory.PAPERDOLL_HAIR2));
 		writeD(getFromList(Inventory.PAPERDOLL_RBRACELET));
 		writeD(getFromList(Inventory.PAPERDOLL_LBRACELET));
+		writeD(getFromList(Inventory.PAPERDOLL_DECO1)); // 603
+		writeD(getFromList(Inventory.PAPERDOLL_DECO2)); // 603
+		writeD(getFromList(Inventory.PAPERDOLL_DECO3)); // 603
+		writeD(getFromList(Inventory.PAPERDOLL_DECO4)); // 603
+		writeD(getFromList(Inventory.PAPERDOLL_DECO5)); // 603
+		writeD(getFromList(Inventory.PAPERDOLL_DECO6)); // 603
+		writeD(getFromList(Inventory.PAPERDOLL_BELT)); // 603
+		writeD(0); // 603-1
+		writeD(0); // 603-2
+		writeD(0); // 603-3
+		writeD(0); // 603-4
+		writeD(0); // 603-5
+		writeD(0); // 603-6
+		writeD(0); // 603-7
+		writeD(0); // 603-8
+		writeD(0); // 603-9
+		writeD(0); // 603-10
 	}
 	
 	private int getFromList(int key)

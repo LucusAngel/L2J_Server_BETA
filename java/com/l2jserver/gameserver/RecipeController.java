@@ -463,6 +463,7 @@ public class RecipeController
 		private void updateCurMp()
 		{
 			StatusUpdate su = new StatusUpdate(_target);
+			su.addAttribute(StatusUpdate.MAX_MP, _target.getMaxMp()); // l2jtw add : GS-comment-013
 			su.addAttribute(StatusUpdate.CUR_MP, (int) _target.getCurrentMp());
 			_target.sendPacket(su);
 		}
@@ -494,9 +495,14 @@ public class RecipeController
 				
 				if (_target == _player)
 				{
+					/* l2jtw fix
 					SystemMessage sm = SystemMessage.getSystemMessage(SystemMessageId.S1_S2_EQUIPPED); // you equipped ...
 					sm.addLong(count);
 					sm.addItemName(item.getItemId());
+					 */
+					SystemMessage sm = SystemMessage.getSystemMessage(SystemMessageId.S2_S1_DISAPPEARED); // $s2 $s1(s) disappeared.
+					sm.addItemName(item.getItemId());
+					sm.addLong(count);
 					_player.sendPacket(sm);
 				}
 				else
@@ -701,15 +707,23 @@ public class RecipeController
 				{
 					sm = SystemMessage.getSystemMessage(SystemMessageId.S2_S3_S_CREATED_FOR_C1_FOR_S4_ADENA);
 					sm.addString(_target.getName());
+					/* l2jtw fix
 					sm.addInt(itemCount);
 					sm.addItemName(itemId);
+					 */
+					sm.addItemName(itemId);
+					sm.addInt(itemCount);
 					sm.addLong(_price);
 					_player.sendPacket(sm);
 					
 					sm = SystemMessage.getSystemMessage(SystemMessageId.C1_CREATED_S2_S3_S_FOR_S4_ADENA);
 					sm.addString(_player.getName());
+					/* l2jtw fix
 					sm.addInt(itemCount);
 					sm.addItemName(itemId);
+					 */
+					sm.addItemName(itemId);
+					sm.addInt(itemCount);
 					sm.addLong(_price);
 					_target.sendPacket(sm);
 				}

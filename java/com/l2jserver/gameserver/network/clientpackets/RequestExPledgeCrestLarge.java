@@ -19,6 +19,8 @@
 package com.l2jserver.gameserver.network.clientpackets;
 
 import com.l2jserver.gameserver.network.serverpackets.ExPledgeCrestLarge;
+import com.l2jserver.gameserver.model.L2Clan; // 603
+import com.l2jserver.gameserver.model.actor.instance.L2PcInstance; // 603
 
 /**
  * Fomat : chd c: (id) 0xD0 h: (subid) 0x10 d: the crest id This is a trigger
@@ -29,17 +31,31 @@ public final class RequestExPledgeCrestLarge extends L2GameClientPacket
 	private static final String _C__D0_10_REQUESTEXPLEDGECRESTLARGE = "[C] D0:10 RequestExPledgeCrestLarge";
 	
 	private int _crestId;
+	private int _unk; // 603
 	
 	@Override
 	protected void readImpl()
 	{
 		_crestId = readD();
+		_unk = readD(); // 603
 	}
 	
 	@Override
 	protected void runImpl()
 	{
+		// 603-Start
+		L2PcInstance _activeChar = getClient().getActiveChar();
+		if (_activeChar == null)
+			return;
+		
+		L2Clan clan = _activeChar.getClan();
+		if (clan == null)
+			return;
+		// 603-End
+		/* 603
 		sendPacket(new ExPledgeCrestLarge(_crestId));
+		 */
+		sendPacket(new ExPledgeCrestLarge(clan, _crestId));
 	}
 	
 	@Override

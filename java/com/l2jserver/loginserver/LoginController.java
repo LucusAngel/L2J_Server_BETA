@@ -332,6 +332,7 @@ public class LoginController
 	
 	public boolean isBannedAddress(InetAddress address)
 	{
+		if (address == null || !isValidIPAddress(address.getHostAddress())) return true; // l2jtw add : GS-comment-003
 		String[] parts = address.getHostAddress().split("\\.");
 		Long bi = _bannedIps.get(address);
 		if (bi == null)

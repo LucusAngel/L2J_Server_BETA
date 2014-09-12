@@ -44,7 +44,7 @@ public class ExSendManorList extends L2GameServerPacket
 		for (String manor : _manors)
 		{
 			writeD(i++);
-			writeS(manor);
+			//603 writeS(manor);
 		}
 	}
 }

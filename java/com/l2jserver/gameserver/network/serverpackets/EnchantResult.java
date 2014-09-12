@@ -23,13 +23,24 @@ public class EnchantResult extends L2GameServerPacket
 	private final int _result;
 	private final int _crystal;
 	private final int _count;
+	private final int _enchantLevel; // l2jtw add
 	
 	public EnchantResult(int result, int crystal, int count)
 	{
 		_result = result;
 		_crystal = crystal;
 		_count = count;
+		_enchantLevel = 0; // l2jtw add
 	}
+	// l2jtw add start
+	public EnchantResult(int result, int crystal, int count, int enchantLevel)
+	{
+		_result = result;
+		_crystal = crystal;
+		_count = count;
+		_enchantLevel = enchantLevel;
+	}
+	// l2jtw end
 	
 	@Override
 	protected final void writeImpl()
@@ -38,5 +49,11 @@ public class EnchantResult extends L2GameServerPacket
 		writeD(_result);
 		writeD(_crystal);
 		writeQ(_count);
+		// l2jtw add start
+		writeD(_enchantLevel);
+		writeH(0); // unknow
+		writeH(0); // unknow
+		writeH(0); // unknow
+		// l2jtw end
 	}
 }

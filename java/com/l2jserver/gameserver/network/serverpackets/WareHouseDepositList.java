@@ -27,10 +27,11 @@ import com.l2jserver.gameserver.model.items.instance.L2ItemInstance;
 public final class WareHouseDepositList extends AbstractItemPacket
 {
 	public static final int PRIVATE = 1;
-	public static final int CLAN = 4;
+	public static final int CLAN = 2; // rocknow
 	public static final int CASTLE = 3; // not sure
-	public static final int FREIGHT = 1;
+	public static final int FREIGHT = 4; // rocknow
 	private final long _playerAdena;
+	private final L2ItemInstance[] _warehouse_items; // 603
 	private final List<L2ItemInstance> _items = new ArrayList<>();
 	/**
 	 * <ul>
@@ -46,6 +47,7 @@ public final class WareHouseDepositList extends AbstractItemPacket
 	{
 		_whType = type;
 		_playerAdena = player.getAdena();
+		_warehouse_items = player.getActiveWarehouse().getItems(); // 603
 		
 		final boolean isPrivate = _whType == PRIVATE;
 		for (L2ItemInstance temp : player.getInventory().getAvailableItems(true, isPrivate, false))
@@ -63,6 +65,19 @@ public final class WareHouseDepositList extends AbstractItemPacket
 		writeC(0x41);
 		writeH(_whType);
 		writeQ(_playerAdena);
+		writeD(_warehouse_items.length); // 603
+		if (_whType == 1 || _whType == 2) // 603
+		{
+			if (_warehouse_items.length > 0)
+			{
+				writeH(0x01); // 603 : GS-comment-033
+				writeD(0x1063);
+			}
+			else
+			{
+				writeH(0x00); // 603
+			}
+		}
 		writeH(_items.size());
 		
 		for (L2ItemInstance item : _items)

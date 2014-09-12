@@ -69,5 +69,7 @@ public class ExManagePartyRoomMember extends L2GameServerPacket
 				writeD(0x00);
 			}
 		}
+		writeD(0); // 603 : GS-comment-028.2
+			//for{writeD(0);} // 603 : GS-comment-028.3
 	}
 }

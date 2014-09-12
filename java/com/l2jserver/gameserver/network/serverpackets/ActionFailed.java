@@ -30,5 +30,6 @@ public final class ActionFailed extends L2GameServerPacket
 	protected void writeImpl()
 	{
 		writeC(0x1f);
+		writeD(0x00); // 603
 	}
 }

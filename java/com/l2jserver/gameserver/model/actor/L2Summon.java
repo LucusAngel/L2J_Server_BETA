@@ -67,6 +67,7 @@ import com.l2jserver.gameserver.network.serverpackets.PetStatusUpdate;
 import com.l2jserver.gameserver.network.serverpackets.RelationChanged;
 import com.l2jserver.gameserver.network.serverpackets.SystemMessage;
 import com.l2jserver.gameserver.network.serverpackets.TeleportToLocation;
+import com.l2jserver.gameserver.network.serverpackets.ExTeleportToLocation; // 603
 import com.l2jserver.gameserver.taskmanager.DecayTaskManager;
 import com.l2jserver.gameserver.util.Util;
 import com.l2jserver.util.Rnd;
@@ -132,6 +133,7 @@ public abstract class L2Summon extends L2Playable
 		}
 		
 		setFollowStatus(true);
+		getOwner().sendPacket(new PetStatusUpdate(this, 5)); // 603
 		updateAndBroadcastStatus(0);
 		sendPacket(new RelationChanged(this, getOwner().getRelation(getOwner()), false));
 		for (L2PcInstance player : getOwner().getKnownList().getKnownPlayersInRadius(800))
@@ -420,12 +422,14 @@ public abstract class L2Summon extends L2Playable
 			getAI().stopFollow();
 			if (owner != null)
 			{
+				/* 603
 				owner.sendPacket(new PetDelete(getSummonType(), getObjectId()));
 				final L2Party party = owner.getParty();
 				if (party != null)
 				{
 					party.broadcastToPartyMembers(owner, new ExPartyPetWindowDelete(this));
 				}
+				 */
 				
 				if ((getInventory() != null) && (getInventory().getSize() > 0))
 				{
@@ -471,6 +475,17 @@ public abstract class L2Summon extends L2Playable
 					}
 				}
 			}
+			// 603 start
+			if (owner != null)
+			{
+				owner.sendPacket(new PetDelete(getSummonType(), getObjectId()));
+				final L2Party party = owner.getParty();
+				if (party != null)
+				{
+					party.broadcastToPartyMembers(owner, new ExPartyPetWindowDelete(this));
+				}
+			}
+			// 603 end
 		}
 	}
 	
@@ -813,6 +828,7 @@ public abstract class L2Summon extends L2Playable
 				sm.addNpcName(this);
 				sm.addCharName(target);
 				sm.addInt(damage);
+				sm.addDamage(target.getObjectId(), this.getObjectId(), damage * -1); // 603 (by otfnir)
 			}
 			
 			sendPacket(sm);
@@ -829,6 +845,7 @@ public abstract class L2Summon extends L2Playable
 			sm.addNpcName(this);
 			sm.addCharName(attacker);
 			sm.addInt((int) damage);
+			sm.addDamage(this.getObjectId(), attacker.getObjectId(), (int) damage * -1); // 603 (by otfnir)
 			sendPacket(sm);
 		}
 	}
@@ -890,7 +907,10 @@ public abstract class L2Summon extends L2Playable
 		}
 		
 		sendPacket(new PetInfo(this, val));
+		/* 603
 		sendPacket(new PetStatusUpdate(this));
+		 */
+		sendPacket(new PetStatusUpdate(this, 0));
 		if (isVisible())
 		{
 			broadcastNpcInfo(val);
@@ -955,6 +975,7 @@ public abstract class L2Summon extends L2Playable
 	{
 		super.onTeleported();
 		sendPacket(new TeleportToLocation(this, getX(), getY(), getZ(), getHeading()));
+		sendPacket(new ExTeleportToLocation(this, getX(), getY(), getZ(), getHeading())); // 603
 	}
 	
 	@Override

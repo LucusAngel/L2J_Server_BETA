@@ -40,7 +40,10 @@ public final class SetPrivateStoreListBuy extends L2GameClientPacket
 {
 	private static final String _C__9A_SETPRIVATESTORELISTBUY = "[C] 9A SetPrivateStoreListBuy";
 	
+	/* 603
 	private static final int BATCH_LENGTH = 40; // length of the one item
+	 */
+	private static final int BATCH_LENGTH = 44; // length of the one item
 	
 	private Item[] _items = null;
 	
@@ -58,7 +61,12 @@ public final class SetPrivateStoreListBuy extends L2GameClientPacket
 		{
 			int itemId = readD();
 			
+			/* 603 start
 			readD(); // TODO analyse this
+			 */
+			readH();
+			readH();
+			// 603 end
 			
 			long cnt = readQ();
 			long price = readQ();
@@ -68,10 +76,22 @@ public final class SetPrivateStoreListBuy extends L2GameClientPacket
 				_items = null;
 				return;
 			}
+			/* 603 start
 			readD(); // Unk
 			readD(); // Unk
 			readD(); // Unk
 			readD(); // Unk
+			 */
+			readH();
+			readH();
+			readH();
+			readH();
+			readH();
+			readH();
+			readH();
+			readH();
+			readD();
+			// 603 end
 			
 			_items[i] = new Item(itemId, cnt, price);
 		}

@@ -25,10 +25,15 @@ public final class RequestChangeBookMarkSlot extends L2GameClientPacket
 {
 	private static final String _C__D0_51_05_REQUESCHANGEBOOKMARKSLOT = "[C] D0:51:05 RequestChangeBookMarkSlot";
 	
+	private int _unk1; // 603
+	private int _unk2; // 603
+	
 	@Override
 	protected void readImpl()
 	{
 		// There is nothing to read.
+		_unk1 = readD(); // 603
+		_unk2 = readD(); // 603
 	}
 	
 	@Override

@@ -43,13 +43,14 @@ public final class TradeOwnAdd extends AbstractItemPacket
 		writeD(_item.getObjectId());
 		writeD(_item.getItem().getDisplayId());
 		writeQ(_item.getCount());
-		writeH(_item.getItem().getType2()); // item type2
-		writeH(_item.getCustomType1());
+		writeC(_item.getItem().getType2()); // 603 // item type2
+		writeC(_item.getCustomType1()); // 603
 		
-		writeD(_item.getItem().getBodyPart()); // rev 415 slot 0006-lr.ear 0008-neck 0030-lr.finger 0040-head 0080-?? 0100-l.hand 0200-gloves 0400-chest 0800-pants 1000-feet 2000-?? 4000-r.hand 8000-r.hand
-		writeH(_item.getEnchant()); // enchant level
+		writeQ(_item.getItem().getBodyPart()); // 603 // rev 415 slot 0006-lr.ear 0008-neck 0030-lr.finger 0040-head 0080-?? 0100-l.hand 0200-gloves 0400-chest 0800-pants 1000-feet 2000-?? 4000-r.hand 8000-r.hand
+		writeC(_item.getEnchant()); // 603 // enchant level
 		writeH(0x00);
-		writeH(_item.getCustomType2());
+		writeC(_item.getCustomType2()); // 603
+		writeD(0x00); // 603-Appearance
 		
 		// T1
 		writeItemElementalAndEnchant(new ItemInfo(_item));

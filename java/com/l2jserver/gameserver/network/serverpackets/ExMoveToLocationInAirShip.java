@@ -43,7 +43,7 @@ public class ExMoveToLocationInAirShip extends L2GameServerPacket
 	protected void writeImpl()
 	{
 		writeC(0xfe);
-		writeH(0x6D);
+		writeH(0x6E); // 603
 		writeD(_charObjId);
 		writeD(_airShipId);
 		writeD(_destination.getX());

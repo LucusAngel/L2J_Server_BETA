@@ -19,26 +19,32 @@
 package com.l2jserver.gameserver.network.serverpackets;
 
 import com.l2jserver.gameserver.model.L2Clan;
+import com.l2jserver.gameserver.model.actor.instance.L2PcInstance; // 603
 
 public final class PledgeStatusChanged extends L2GameServerPacket
 {
 	private final L2Clan _clan;
+	private final L2PcInstance _activeChar; // 603
+	private final int _pledgeType; // 603
 	
-	public PledgeStatusChanged(L2Clan clan)
+	public PledgeStatusChanged(L2Clan clan, L2PcInstance activeChar) // 603
 	{
 		_clan = clan;
+		_activeChar = activeChar; // 603
+		_pledgeType = activeChar.getPledgeType(); // 603
 	}
 	
 	@Override
 	protected final void writeImpl()
 	{
 		writeC(0xCD);
+		writeD(2); // 603
 		writeD(_clan.getLeaderId());
 		writeD(_clan.getId());
 		writeD(_clan.getCrestId());
 		writeD(_clan.getAllyId());
 		writeD(_clan.getAllyCrestId());
-		writeD(0x00);
-		writeD(0x00);
+		writeD(_clan.getCrestLargeId()); // 603
+		writeD(_pledgeType); // 603
 	}
 }

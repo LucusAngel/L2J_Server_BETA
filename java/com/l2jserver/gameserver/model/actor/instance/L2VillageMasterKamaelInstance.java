@@ -80,6 +80,10 @@ public final class L2VillageMasterKamaelInstance extends L2VillageMasterInstance
 			return false;
 		}
 		
+		//FIXME: validate this (Battlecruiser)
+		/* l2jtw add
 		return pclass.isOfRace(Race.KAMAEL);
+		 */
+		return pclass.isOfRace(Race.KAMAEL) || pclass.isOfRace(null);
 	}
 }

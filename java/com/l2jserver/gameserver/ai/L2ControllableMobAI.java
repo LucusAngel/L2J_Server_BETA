@@ -407,6 +407,7 @@ public class L2ControllableMobAI extends L2AttackableAI
 		}
 		
 		// Check if the target isn't invulnerable
+		// L2JTW commented this check out
 		if (target.isInvul())
 		{
 			return false;

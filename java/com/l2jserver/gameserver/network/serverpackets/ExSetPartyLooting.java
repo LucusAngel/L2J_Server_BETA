@@ -38,7 +38,7 @@ public class ExSetPartyLooting extends L2GameServerPacket
 	protected void writeImpl()
 	{
 		writeC(0xFE);
-		writeH(0xC0);
+		writeH(0xC1); // 603
 		writeD(_result);
 		writeD(_partyDistributionType.getId());
 	}

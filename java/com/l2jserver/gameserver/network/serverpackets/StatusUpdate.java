@@ -108,11 +108,20 @@ public final class StatusUpdate extends L2GameServerPacket
 	{
 		writeC(0x18);
 		writeD(_objectId);
-		writeD(_attributes.size());
+		writeD(0x00); // 603 : 0 or self's objectId
+		writeC(0x00); // 603 // 603
+		writeC(_attributes.size()); // 603
 		
 		for (Attribute temp : _attributes)
 		{
-			writeD(temp.id);
+			writeC(temp.id); // 603
+			if (temp.id == 0x1b) // 603-Test
+			{
+				int VA = temp.value;
+				VA = 0 - VA;
+				writeD(VA);
+			}
+			else // 603-Test
 			writeD(temp.value);
 		}
 	}

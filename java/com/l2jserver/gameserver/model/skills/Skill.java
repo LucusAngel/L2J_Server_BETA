@@ -224,6 +224,7 @@ public final class Skill implements IChanceSkillTrigger, IIdentifiable
 	private final int _channelingSkillId;
 	private final int _channelingTickInitialDelay;
 	private final int _channelingTickInterval;
+	private boolean _showSkillListIcon; // l2jtw add
 	
 	public Skill(StatsSet set)
 	{
@@ -365,6 +366,7 @@ public final class Skill implements IChanceSkillTrigger, IIdentifiable
 		
 		_excludedFromCheck = set.getBoolean("excludedFromCheck", false);
 		_simultaneousCast = set.getBoolean("simultaneousCast", false);
+		set_showSkillListIcon(set.getBoolean("showSkillListIcon", true)); // l2jtw add
 		
 		String capsuled_items = set.getString("capsuled_items_skill", null);
 		if (capsuled_items != null)
@@ -911,6 +913,7 @@ public final class Skill implements IChanceSkillTrigger, IIdentifiable
 	
 	public boolean useSpiritShot()
 	{
+		//FIXME: L2JTW: return _magic == 1 || _magic == 3;
 		return _magic == 1;
 	}
 	
@@ -1865,4 +1868,15 @@ public final class Skill implements IChanceSkillTrigger, IIdentifiable
 	{
 		return _channelingTickInitialDelay;
 	}
+	// l2jtw add start
+	public boolean is_showSkillListIcon()
+	{
+		return _showSkillListIcon;
+	}
+
+	public void set_showSkillListIcon(boolean _showSkillListIcon)
+	{
+		this._showSkillListIcon = _showSkillListIcon;
+	}
+	// l2jtw add end
 }

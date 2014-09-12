@@ -28,7 +28,7 @@ import com.l2jserver.gameserver.security.SecondaryPasswordAuth;
  */
 public class RequestEx2ndPasswordReq extends L2GameClientPacket
 {
-	private static final String _C__D0_AF_REQUESTEX2NDPASSWORDREQ = "[C] D0:AF RequestEx2ndPasswordReq";
+	private static final String _C__D0_A8_REQUESTEX2NDPASSWORDREQ = "[C] D0:A8 RequestEx2ndPasswordReq";
 	
 	private int _changePass;
 	private String _password, _newPassword;
@@ -73,6 +73,6 @@ public class RequestEx2ndPasswordReq extends L2GameClientPacket
 	@Override
 	public String getType()
 	{
-		return _C__D0_AF_REQUESTEX2NDPASSWORDREQ;
+		return _C__D0_A8_REQUESTEX2NDPASSWORDREQ;
 	}
 }

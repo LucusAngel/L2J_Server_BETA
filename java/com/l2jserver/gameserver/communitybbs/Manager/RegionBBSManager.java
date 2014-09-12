@@ -94,6 +94,8 @@ public class RegionBBSManager extends BaseBBSManager
 			else
 			{
 				ShowBoard sb = new ShowBoard("<html><body><br><br><center>the command: " + command + " is not implemented yet</center><br><br></body></html>", "101");
+				//L2JTW MessageTable:
+				//ShowBoard sb = new ShowBoard("<html><body><br><br><center>" + MessageTable.Messages[75].getExtra(1) + command + MessageTable.Messages[75].getExtra(2) + "</center><br><br></body></html>", "101");
 				activeChar.sendPacket(sb);
 				activeChar.sendPacket(new ShowBoard(null, "102"));
 				activeChar.sendPacket(new ShowBoard(null, "103"));

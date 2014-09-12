@@ -36,7 +36,7 @@ public class ExDuelAskStart extends L2GameServerPacket
 	protected void writeImpl()
 	{
 		writeC(0xfe);
-		writeH(0x4c);
+		writeH(0x4d); // 603
 		
 		writeS(_requestorName);
 		writeD(_partyDuel);

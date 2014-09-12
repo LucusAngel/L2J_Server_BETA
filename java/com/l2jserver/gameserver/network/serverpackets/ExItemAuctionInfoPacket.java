@@ -57,7 +57,7 @@ public final class ExItemAuctionInfoPacket extends AbstractItemPacket
 	protected void writeImpl()
 	{
 		writeC(0xFE);
-		writeH(0x68);
+		writeH(0x69); // 603
 		writeC(_refresh ? 0x00 : 0x01);
 		writeD(_currentAuction.getInstanceId());
 		

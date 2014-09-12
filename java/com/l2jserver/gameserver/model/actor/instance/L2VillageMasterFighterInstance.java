@@ -38,7 +38,11 @@ public final class L2VillageMasterFighterInstance extends L2VillageMasterInstanc
 			return false;
 		}
 		
+		//FIXME: validate all those null races (Battlecruiser)
+		/* l2jtw add
 		return pclass.isOfRace(Race.HUMAN) || pclass.isOfRace(Race.ELF);
+		 */
+		return pclass.isOfRace(Race.HUMAN) || pclass.isOfRace(Race.ELF) || pclass.isOfRace(null);
 	}
 	
 	@Override

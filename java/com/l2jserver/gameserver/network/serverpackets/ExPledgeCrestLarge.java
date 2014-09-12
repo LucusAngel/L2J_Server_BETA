@@ -20,24 +20,28 @@ package com.l2jserver.gameserver.network.serverpackets;
 
 import com.l2jserver.gameserver.datatables.CrestTable;
 import com.l2jserver.gameserver.model.L2Crest;
+import com.l2jserver.gameserver.model.L2Clan; // 603
 
 /**
  * @author -Wooden-
  */
 public class ExPledgeCrestLarge extends L2GameServerPacket
 {
+	private final L2Clan _clan; // 603
 	private final int _crestId;
 	private final byte[] _data;
 	
-	public ExPledgeCrestLarge(int crestId)
+	public ExPledgeCrestLarge(L2Clan clan, int crestId) // 603
 	{
+		_clan = clan; // 603
 		_crestId = crestId;
 		final L2Crest crest = CrestTable.getInstance().getCrest(crestId);
 		_data = crest != null ? crest.getData() : null;
 	}
 	
-	public ExPledgeCrestLarge(int crestId, byte[] data)
+	public ExPledgeCrestLarge(L2Clan clan, int crestId, byte[] data) // 603
 	{
+		_clan = clan; // 603
 		_crestId = crestId;
 		_data = data;
 	}
@@ -47,6 +51,7 @@ public class ExPledgeCrestLarge extends L2GameServerPacket
 	{
 		writeC(0xFE);
 		writeH(0x1B);
+		/* 603-Start
 		writeD(0x00);
 		writeD(_crestId);
 		if (_data != null)
@@ -58,5 +63,22 @@ public class ExPledgeCrestLarge extends L2GameServerPacket
 		{
 			writeD(0);
 		}
+		 */
+		writeD(2); // 603
+		writeD(_clan.getId());
+		writeD(_crestId);
+		writeD(0); // _data index 0/1/2/3/4
+		if (_data != null)
+		{
+			writeD(65664); // _data.length-Total 14336*4+8320=65664
+			writeD(_data.length); // _data.length-Split 14336/14336/14336/14336/8320
+			writeB(_data);
+		}
+		else
+		{
+			writeD(0); // guess
+			writeD(0); // guess
+		}
+		// 603-End
 	}
 }

@@ -147,6 +147,8 @@ public class HtmCache
 		if (content == null)
 		{
 			content = "<html><body>My text is missing:<br>" + path + "</body></html>";
+			//L2JTW MessageTable:
+			//content = "<html><body>" + MessageTable.Messages[47].getMessage() + "<br>" + path + "</body></html>";
 			_log.warning("Cache[HTML]: Missing HTML page: " + path);
 		}
 		return content;

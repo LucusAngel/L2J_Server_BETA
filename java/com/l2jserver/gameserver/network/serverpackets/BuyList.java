@@ -43,10 +43,11 @@ public final class BuyList extends L2GameServerPacket
 	protected final void writeImpl()
 	{
 		writeC(0xFE);
-		writeH(0xB7);
+		writeH(0xB8); // 603
 		writeD(0x00);
 		writeQ(_money); // current money
 		writeD(_listId);
+		writeD(0x00); // 603 : GS-comment-024
 		
 		writeH(_list.size());
 		
@@ -54,19 +55,23 @@ public final class BuyList extends L2GameServerPacket
 		{
 			if ((product.getCount() > 0) || !product.hasLimitedStock())
 			{
+				writeC(0); // 603
 				writeD(product.getItemId());
 				writeD(product.getItemId());
-				writeD(0);
+				writeC(0); // 603
 				writeQ(product.getCount() < 0 ? 0 : product.getCount());
-				writeH(product.getItem().getType2());
-				writeH(product.getItem().getType1()); // Custom Type 1
+				writeC(product.getItem().getType2()); // 603
+				writeC(product.getItem().getType1()); // 603 // Custom Type 1
 				writeH(0x00); // isEquipped
-				writeD(product.getItem().getBodyPart()); // Body Part
-				writeH(0x00); // Enchant
-				writeH(0x00); // Custom Type
-				writeD(0x00); // Augment
+				writeQ(product.getItem().getBodyPart()); // 603 // Body Part
+				writeC(0x00); // 603 // Enchant
+				writeC(0x00); // 603 // Custom Type
+				//603 writeD(0x00); // Augment
 				writeD(-1); // Mana
 				writeD(-9999); // Time
+				writeC(0x01); // 603
+				/* 603
+				writeD(0x00); // Augment // 603
 				writeH(0x00); // Element Type
 				writeH(0x00); // Element Power
 				for (byte i = 0; i < 6; i++)
@@ -77,6 +82,8 @@ public final class BuyList extends L2GameServerPacket
 				writeH(0x00);
 				writeH(0x00);
 				writeH(0x00);
+				writeD(0x00); // 603-Appearance
+				 */
 				
 				if ((product.getItemId() >= 3960) && (product.getItemId() <= 4026))
 				{

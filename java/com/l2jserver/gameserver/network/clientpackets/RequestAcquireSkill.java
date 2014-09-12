@@ -100,6 +100,7 @@ public final class RequestAcquireSkill extends L2GameClientPacket
 			return;
 		}
 		
+		/* l2jtw start
 		final L2Npc trainer = activeChar.getLastFolkNPC();
 		if (!(trainer instanceof L2NpcInstance))
 		{
@@ -110,6 +111,9 @@ public final class RequestAcquireSkill extends L2GameClientPacket
 		{
 			return;
 		}
+		 */
+		final L2Npc trainer = null;
+		// l2jtw end
 		
 		final Skill skill = SkillData.getInstance().getSkill(_id, _level);
 		if (skill == null)
@@ -299,6 +303,15 @@ public final class RequestAcquireSkill extends L2GameClientPacket
 				{
 					activeChar.sendPacket(SystemMessageId.SKILL_NOT_FOR_SUBCLASS);
 					Util.handleIllegalPlayerAction(activeChar, "Player " + activeChar.getName() + " is requesting skill Id: " + _id + " level " + _level + " while Sub-Class is active!", IllegalActionPunishmentType.NONE);
+					return;
+				}
+				
+				// Certification Skills - Exploit fix
+				if ((prevSkillLevel == -1) && (_level > 1))
+				{
+					// The previous level skill has not been learned.
+					activeChar.sendPacket(SystemMessageId.PREVIOUS_LEVEL_SKILL_NOT_LEARNED);
+					Util.handleIllegalPlayerAction(activeChar, "Player " + activeChar.getName() + " is requesting skill Id: " + _id + " level " + _level + " without knowing it's previous level!", IllegalActionPunishmentType.NONE);
 					return;
 				}
 				
@@ -527,7 +540,9 @@ public final class RequestAcquireSkill extends L2GameClientPacket
 		}
 		
 		// Notify scripts of the skill learn.
+		/* l2jtw add
 		EventDispatcher.getInstance().notifyEventAsync(new OnPlayerSkillLearn(trainer, player, skill, _skillType), trainer);
+		 */
 	}
 	
 	/**
@@ -537,6 +552,13 @@ public final class RequestAcquireSkill extends L2GameClientPacket
 	 */
 	private void showSkillList(L2Npc trainer, L2PcInstance player)
 	{
+		//FIXME: Refactor me (Battlecruiser)
+		// l2jtw add start
+		if (trainer == null)
+		{
+			return;
+		}
+		// l2jtw add end
 		if ((_skillType == AcquireSkillType.TRANSFORM) || (_skillType == AcquireSkillType.SUBCLASS) || (_skillType == AcquireSkillType.TRANSFER))
 		{
 			// Managed in Datapack.

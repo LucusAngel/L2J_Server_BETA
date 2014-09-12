@@ -996,6 +996,7 @@ public final class Config
 	public static boolean CHECK_KNOWN;
 	public static int GAME_SERVER_LOGIN_PORT;
 	public static String GAME_SERVER_LOGIN_HOST;
+	public static String GAME_SERVER_LOGIN_HOST_ADD; // l2jtw add GameServer IP FIXME: verify what it is
 	public static List<String> GAME_SERVER_SUBNETS;
 	public static List<String> GAME_SERVER_HOSTS;
 	public static String SERVER_VERSION;
@@ -1051,6 +1052,30 @@ public final class Config
 	public static int NORMAL_CONNECTION_TIME;
 	public static int FAST_CONNECTION_TIME;
 	public static int MAX_CONNECTION_PER_IP;
+	
+	//FIXME: some of those are GoD thingy
+	// l2jtw add start
+	/** Properties file for Multi-language configuration */
+	public static final String LANGUAGE_FILE = "./config/language.properties";
+	/** Properties file for configuration */
+	public static final String CUSTOM_FILE = "./config/custom.properties";
+	/** Multi-Language Selection */
+	public static String LANGUAGE;
+	/** Allow Console to show player chat */
+	public static boolean ALT_SHOW_CHAT;
+	/** Min Respawn Delay */
+	public static int MIN_RESPAWN_DELAY;
+	/** Update the status of non-selected target */
+	public static boolean Update_Others;
+	/** Allow Auto Awaking */
+	public static boolean Auto_Awaking;
+	/** Max BOOKMARKSLOT  */
+	public static int MAX_BOOKMARKSLOT;
+	/** Custom Settings */ 
+	public static int STORE_TITLE_SIZE;
+	public static boolean ENTER_WORLD_ANNOUNCE;
+	public static String ENTER_WORLD_ANNOUNCE_MSG;
+	// l2jtw add end
 	
 	// GrandBoss Settings
 	
@@ -1354,7 +1379,7 @@ public final class Config
 			KNIGHT_UNIT_COST = Feature.getInt("CreateKnightUnitCost", 10000);
 			KNIGHT_REINFORCE_COST = Feature.getInt("ReinforceKnightUnitCost", 5000);
 			BALLISTA_POINTS = Feature.getInt("KillBallistaPoints", 30);
-			BLOODALLIANCE_POINTS = Feature.getInt("BloodAlliancePoints", 500);
+			BLOODALLIANCE_POINTS = Feature.getInt("BloodAlliancePoints", 500); //FIXME: L2JTW says that default is 800 in protocol rev 603 (Ertheia)
 			BLOODOATH_POINTS = Feature.getInt("BloodOathPoints", 200);
 			KNIGHTSEPAULETTE_POINTS = Feature.getInt("KnightsEpaulettePoints", 20);
 			REPUTATION_SCORE_PER_KILL = Feature.getInt("ReputationScorePerKill", 1);
@@ -1502,7 +1527,7 @@ public final class Config
 			FEE_DELETE_SUBCLASS_SKILLS = Character.getInt("FeeDeleteSubClassSkills", 10000000);
 			ENABLE_VITALITY = Character.getBoolean("EnableVitality", true);
 			RECOVER_VITALITY_ON_RECONNECT = Character.getBoolean("RecoverVitalityOnReconnect", true);
-			STARTING_VITALITY_POINTS = Character.getInt("StartingVitalityPoints", 20000);
+			STARTING_VITALITY_POINTS = Character.getInt("StartingVitalityPoints", 20000); //FIXME: L2JTW claim that default is 140000 iun protocol rev 603
 			MAX_BONUS_EXP = Character.getDouble("MaxExpBonus", 3.5);
 			MAX_BONUS_SP = Character.getDouble("MaxSpBonus", 3.5);
 			MAX_RUN_SPEED = Character.getInt("MaxRunSpeed", 250);
@@ -2698,6 +2723,32 @@ public final class Config
 			{
 				_log.warning("Could not load HexID file (" + HEXID_FILE + "). Hopefully login will give us one.");
 			}
+			
+			//FIXME: verify this, also GoD+stuff here
+			// l2jtw add start
+			// Mutli Language settings
+			final PropertiesParser languageSettings = new PropertiesParser(LANGUAGE_FILE);
+			
+			LANGUAGE = languageSettings.getString("Language", "en");
+			
+			// Custom Setting
+			final PropertiesParser customSettings = new PropertiesParser(CUSTOM_FILE);
+				
+			ALT_SHOW_CHAT = customSettings.getBoolean("AltShowChat", false);
+			MIN_RESPAWN_DELAY = customSettings.getInt("MinRespawnDelay", 10);
+			if (MIN_RESPAWN_DELAY < 2)
+			{
+				MIN_RESPAWN_DELAY = 2;
+			}
+			Update_Others = customSettings.getBoolean("UpdateOthers", true);
+			Auto_Awaking = customSettings.getBoolean("AutoAwaking", true);
+			MAX_BOOKMARKSLOT = customSettings.getInt("MaxBookMarkSlot", 9);
+			MAX_BOOKMARKSLOT = (MAX_BOOKMARKSLOT / 3) * 3;
+			// Custom Settings Add By Tiger
+			STORE_TITLE_SIZE = customSettings.getInt("StoreTitleSize", 29);
+			ENTER_WORLD_ANNOUNCE = customSettings.getBoolean("EnterWorldAnnounce", false);
+			ENTER_WORLD_ANNOUNCE_MSG = customSettings.getString("EnterWorldAnnounceMsg", "Welcome $player enter the Lineage2 world.");
+			// l2jtw add end
 			
 			// Grand bosses
 			final PropertiesParser GrandBossSettings = new PropertiesParser(GRANDBOSS_CONFIG_FILE);
@@ -4008,6 +4059,7 @@ public final class Config
 					}
 					
 					Node att = n.getAttributes().getNamedItem("address");
+					GAME_SERVER_LOGIN_HOST_ADD = att.getNodeValue(); // l2jtw add GameServer IP (Use ipconfig.xml) FIXME: verify this
 					if (att == null)
 					{
 						_log.log(Level.WARNING, "Failed to load " + IP_CONFIG_FILE + " file - default server address is missing.");
@@ -4081,6 +4133,7 @@ public final class Config
 				_hosts.add(externalIp);
 				_subnets.add("0.0.0.0/0");
 				_log.log(Level.INFO, "Network Config: Adding new subnet: 0.0.0.0/0 address: " + externalIp);
+				GAME_SERVER_LOGIN_HOST_ADD = externalIp; // l2jtw add GameServer IP (Not Use ipconfig.xml) FIXME: verify this
 			}
 			catch (SocketException e)
 			{

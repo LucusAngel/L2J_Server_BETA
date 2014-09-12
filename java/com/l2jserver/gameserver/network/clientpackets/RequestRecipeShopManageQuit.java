@@ -44,9 +44,11 @@ public final class RequestRecipeShopManageQuit extends L2GameClientPacket
 			return;
 		}
 		
+		/* 603 fix
 		player.setPrivateStoreType(PrivateStoreType.NONE);
 		player.broadcastUserInfo();
 		player.standUp();
+		 */
 	}
 	
 	@Override

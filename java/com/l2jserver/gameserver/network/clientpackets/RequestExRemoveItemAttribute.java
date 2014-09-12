@@ -160,6 +160,29 @@ public class RequestExRemoveItemAttribute extends L2GameClientPacket
 					_price = 160000;
 				}
 				break;
+			// 603-Start
+			case R:
+			case R95:
+				if (item.getItem() instanceof L2Weapon)
+				{
+					_price = 400000;
+				}
+				else
+				{
+					_price = 320000;
+				}
+				break;
+			case R99:
+				if (item.getItem() instanceof L2Weapon)
+				{
+					_price = 800000;
+				}
+				else
+				{
+					_price = 640000;
+				}
+				break;
+			// 603-End
 		}
 		
 		return _price;

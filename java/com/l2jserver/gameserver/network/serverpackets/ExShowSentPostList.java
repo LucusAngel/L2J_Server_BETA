@@ -39,7 +39,7 @@ public class ExShowSentPostList extends L2GameServerPacket
 	protected void writeImpl()
 	{
 		writeC(0xFE);
-		writeH(0xAC);
+		writeH(0xAD); // 603
 		writeD((int) (System.currentTimeMillis() / 1000));
 		if ((_outbox != null) && (_outbox.size() > 0))
 		{
@@ -52,8 +52,9 @@ public class ExShowSentPostList extends L2GameServerPacket
 				writeD(msg.isLocked() ? 0x01 : 0x00);
 				writeD(msg.getExpirationSeconds());
 				writeD(msg.isUnread() ? 0x01 : 0x00);
-				writeD(0x01);
+				writeD(0x00); // 603
 				writeD(msg.hasAttachments() ? 0x01 : 0x00);
+				writeD(0x00); // 603
 			}
 		}
 		else

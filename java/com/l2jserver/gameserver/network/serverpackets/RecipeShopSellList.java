@@ -49,7 +49,7 @@ public class RecipeShopSellList extends L2GameServerPacket
 			for (L2ManufactureItem temp : _manufacturer.getManufactureItems().values())
 			{
 				writeD(temp.getRecipeId());
-				writeD(0x00); // unknown
+				writeD(0x01); // 603 // unknown
 				writeQ(temp.getCost());
 			}
 		}

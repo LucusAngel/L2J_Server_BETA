@@ -39,10 +39,10 @@ public class PledgeReceiveWarList extends L2GameServerPacket
 	protected void writeImpl()
 	{
 		writeC(0xfe);
-		writeH(0x3f);
+		writeH(0x40); // 603
 		
-		writeD(_tab); // type : 0 = Declared, 1 = Under Attack
-		writeD(0x00); // page
+		//603 writeD(_tab); // type : 0 = Declared, 1 = Under Attack
+		writeD(0x00); // 603-??? // page
 		writeD(_tab == 0 ? _clan.getWarList().size() : _clan.getAttackerList().size());
 		for (Integer i : _tab == 0 ? _clan.getWarList() : _clan.getAttackerList())
 		{
@@ -53,8 +53,11 @@ public class PledgeReceiveWarList extends L2GameServerPacket
 			}
 			
 			writeS(clan.getName());
-			writeD(_tab); // ??
-			writeD(_tab); // ??
+			writeD(_tab); // 603 : GS-comment-030.1
+			writeD(0); // 603 : GS-comment-030.2
+			writeD(0); // 603 : GS-comment-030.3
+			writeD(0); // 603 : GS-comment-030.4
+			writeD(0); // 603 : GS-comment-030.5
 		}
 	}
 }

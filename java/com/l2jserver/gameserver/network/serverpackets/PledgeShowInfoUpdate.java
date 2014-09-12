@@ -40,6 +40,7 @@ public class PledgeShowInfoUpdate extends L2GameServerPacket
 		writeD(_clan.getCastleId());
 		writeD(_clan.getHideoutId());
 		writeD(_clan.getFortId());
+		writeD(0); // 603
 		writeD(_clan.getRank());
 		writeD(_clan.getReputationScore()); // clan reputation score
 		writeD(0x00); // ?
@@ -48,5 +49,7 @@ public class PledgeShowInfoUpdate extends L2GameServerPacket
 		writeS(_clan.getAllyName()); // c5
 		writeD(_clan.getAllyCrestId()); // c5
 		writeD(_clan.isAtWar() ? 1 : 0); // c5
+		writeD(0); // 603
+		writeD(0); // 603
 	}
 }

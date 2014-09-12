@@ -40,7 +40,11 @@ public class L2ArenaZone extends L2ZoneType
 	{
 		if (character instanceof L2PcInstance)
 		{
+			//FIXME: Validate this! (Battlecruiser)
+			/* Update by pmq
 			if (!character.isInsideZone(ZoneId.PVP))
+			 */
+			if (character.isInsideZone(ZoneId.PVP))
 			{
 				character.sendPacket(SystemMessageId.ENTERED_COMBAT_ZONE);
 			}

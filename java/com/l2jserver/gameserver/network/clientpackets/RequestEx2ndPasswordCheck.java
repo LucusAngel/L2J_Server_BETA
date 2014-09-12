@@ -27,7 +27,7 @@ import com.l2jserver.gameserver.network.serverpackets.Ex2ndPasswordCheck;
  */
 public class RequestEx2ndPasswordCheck extends L2GameClientPacket
 {
-	private static final String _C__D0_AD_REQUESTEX2NDPASSWORDCHECK = "[C] D0:AD RequestEx2ndPasswordCheck";
+	private static final String _C__D0_A6_REQUESTEX2NDPASSWORDCHECK = "[C] D0:A6 RequestEx2ndPasswordCheck";
 	
 	@Override
 	protected void readImpl()
@@ -50,6 +50,6 @@ public class RequestEx2ndPasswordCheck extends L2GameClientPacket
 	@Override
 	public String getType()
 	{
-		return _C__D0_AD_REQUESTEX2NDPASSWORDCHECK;
+		return _C__D0_A6_REQUESTEX2NDPASSWORDCHECK;
 	}
 }

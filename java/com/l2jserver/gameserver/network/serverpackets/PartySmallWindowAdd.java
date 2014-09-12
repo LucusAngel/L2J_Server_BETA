@@ -46,9 +46,12 @@ public final class PartySmallWindowAdd extends L2GameServerPacket
 		writeD(_member.getMaxHp());
 		writeD((int) _member.getCurrentMp());
 		writeD(_member.getMaxMp());
-		writeD(_member.getLevel());
-		writeD(_member.getClassId().getId());
-		writeD(0x00); // ?
-		writeD(0x00); // ?
+		writeD(_member.getVitalityPoints()); // 603
+		writeC(_member.getLevel()); // 603
+		writeH(_member.getClassId().getId()); // 603
+		writeC(0x00); // 603-Member_index? // ?
+		writeH(_member.getRace().ordinal()); // 603
+		//603 writeD(0x00); // ?
+		//603 writeD(0x00); // ?
 	}
 }

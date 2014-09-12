@@ -24,6 +24,7 @@ import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.network.SystemMessageId;
 import com.l2jserver.gameserver.network.communityserver.CommunityServerThread;
 import com.l2jserver.gameserver.network.communityserver.writepackets.WorldInfo;
+import com.l2jserver.gameserver.network.serverpackets.SystemMessage; // 603
 
 public final class RequestAnswerJoinAlly extends L2GameClientPacket
 {
@@ -69,7 +70,16 @@ public final class RequestAnswerJoinAlly extends L2GameClientPacket
 			if (clan.checkAllyJoinCondition(requestor, activeChar))
 			{
 				// TODO: Need correct message id
+				/* 603-Start
 				requestor.sendPacket(SystemMessageId.YOU_HAVE_SUCCEEDED_INVITING_FRIEND);
+				 */
+				L2Clan targetClan = activeChar.getClan();
+				SystemMessage sm = SystemMessage.getSystemMessage(SystemMessageId.S1_CLAN_ALREADY_MEMBER_OF_S2_ALLIANCE);
+				sm.addString(targetClan.getName());
+				sm.addString(clan.getAllyName());
+				requestor.sendPacket(sm);
+				sm = null;
+				// 603-End
 				activeChar.sendPacket(SystemMessageId.YOU_ACCEPTED_ALLIANCE);
 				
 				activeChar.getClan().setAllyId(clan.getAllyId());

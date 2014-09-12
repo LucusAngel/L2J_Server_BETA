@@ -22,12 +22,15 @@ import com.l2jserver.gameserver.datatables.SkillData;
 import com.l2jserver.gameserver.datatables.SkillTreesData;
 import com.l2jserver.gameserver.model.ClanPrivilege;
 import com.l2jserver.gameserver.model.L2SkillLearn;
+/* l2jtw add 
 import com.l2jserver.gameserver.model.actor.L2Npc;
 import com.l2jserver.gameserver.model.actor.instance.L2NpcInstance;
+ */
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.base.AcquireSkillType;
 import com.l2jserver.gameserver.model.skills.Skill;
 import com.l2jserver.gameserver.network.serverpackets.AcquireSkillInfo;
+import com.l2jserver.gameserver.network.serverpackets.ExAcquireSkillInfo; // l2jtw add
 
 /**
  * Request Acquire Skill Info client packet implementation.
@@ -64,6 +67,7 @@ public final class RequestAcquireSkillInfo extends L2GameClientPacket
 			return;
 		}
 		
+		/* l2jtw add
 		final L2Npc trainer = activeChar.getLastFolkNPC();
 		if (!(trainer instanceof L2NpcInstance))
 		{
@@ -74,6 +78,7 @@ public final class RequestAcquireSkillInfo extends L2GameClientPacket
 		{
 			return;
 		}
+		 */
 		
 		final Skill skill = SkillData.getInstance().getSkill(_id, _level);
 		if (skill == null)
@@ -115,11 +120,16 @@ public final class RequestAcquireSkillInfo extends L2GameClientPacket
 			}
 			case CLASS:
 			{
+				/* l2jtw start
 				if (trainer.getTemplate().canTeach(activeChar.getLearningClass()))
 				{
 					final int customSp = s.getCalculatedLevelUpSp(activeChar.getClassId(), activeChar.getLearningClass());
 					sendPacket(new AcquireSkillInfo(_skillType, s, customSp));
 				}
+				 */
+				final int customSp = s.getCalculatedLevelUpSp(activeChar.getClassId(), activeChar.getLearningClass());
+				sendPacket(new ExAcquireSkillInfo(_skillType, s, customSp));
+				// l2jtw add end
 				break;
 			}
 			case PLEDGE:

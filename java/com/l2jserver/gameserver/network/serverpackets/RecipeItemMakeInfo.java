@@ -53,7 +53,7 @@ public class RecipeItemMakeInfo extends L2GameServerPacket
 			writeD(recipe.isDwarvenRecipe() ? 0 : 1); // 0 = Dwarven - 1 = Common
 			writeD((int) _activeChar.getCurrentMp());
 			writeD(_activeChar.getMaxMp());
-			writeD(_success ? 1 : 0); // item creation success/failed
+			writeD(_success ? 1 : 0); // item creation success/failed // GS-comment-031
 		}
 		else
 		{

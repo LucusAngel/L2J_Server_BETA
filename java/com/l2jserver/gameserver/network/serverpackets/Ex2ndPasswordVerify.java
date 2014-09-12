@@ -40,7 +40,7 @@ public class Ex2ndPasswordVerify extends L2GameServerPacket
 	{
 		writeC(0xFE);
 		// writeH(0x109); GOD
-		writeH(0xe6);
+		writeH(0x106); // 603
 		writeD(_mode);
 		writeD(_wrongTentatives);
 	}

@@ -20,12 +20,16 @@ package com.l2jserver.gameserver.network.clientpackets;
 
 import com.l2jserver.Config;
 import com.l2jserver.gameserver.ai.CtrlIntention;
+import com.l2jserver.gameserver.datatables.SkillData; // 603-TEST
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.effects.L2EffectType;
+import com.l2jserver.gameserver.model.skills.BuffInfo; // 603-TEST
 import com.l2jserver.gameserver.model.skills.Skill;
 import com.l2jserver.gameserver.model.skills.targets.L2TargetType;
 import com.l2jserver.gameserver.network.SystemMessageId;
 import com.l2jserver.gameserver.network.serverpackets.ActionFailed;
+import com.l2jserver.gameserver.instancemanager.AwakingManager; // 603
+import com.l2jserver.gameserver.ThreadPoolManager; // 603-TEST
 
 public final class RequestMagicSkillUse extends L2GameClientPacket
 {
@@ -59,6 +63,21 @@ public final class RequestMagicSkillUse extends L2GameClientPacket
 		{
 			// Player doesn't know this skill, maybe it's the display Id.
 			skill = activeChar.getCustomSkill(_magicId);
+			// 603-TEST Start
+			if ((_magicId == 1566) || (_magicId == 1567) || (_magicId == 1568) || (_magicId == 1569))
+			{
+				BuffInfo info = activeChar.getEffectList().getBuffInfoBySkillId(1570);
+				if (info != null)
+				{
+					activeChar.sendPacket(SystemMessageId.YOU_CANNOT_CHANGE_THE_CLASS_BECAUSE_OF_IDENTITY_CRISIS);
+					return;
+				}
+				else
+				{
+					skill = SkillData.getInstance().getSkill(_magicId, 1);
+				}
+			}
+			// 603-TEST End
 			if (skill == null)
 			{
 				activeChar.sendPacket(ActionFailed.STATIC_PACKET);
@@ -88,11 +107,21 @@ public final class RequestMagicSkillUse extends L2GameClientPacket
 		}
 		
 		// players mounted on pets cannot use any toggle skills
+		//FIXME: validate me (Battlecruiser)
+		/* Update by rocknow
 		if (skill.isToggle() && activeChar.isMounted())
+		 */
+		if (skill.isToggle() && activeChar.isMounted() && skill.getId() != 7029)
 		{
 			return;
 		}
 		
+		// 603-TEST Start
+		if ((skill.getId() == 1566) || (skill.getId() == 1567) || (skill.getId() == 1568) || (skill.getId() == 1569))
+		{
+			ThreadPoolManager.getInstance().scheduleGeneral(new ClassChangeTask(activeChar, skill.getId() - 1566), 4300);
+		}
+		// 603-TEST End
 		// Stop if use self-buff (except if on AirShip or Boat).
 		if ((skill.isContinuous() && !skill.isDebuff() && (skill.getTargetType() == L2TargetType.SELF)) && (!activeChar.isInAirShip() || !activeChar.isInBoat()))
 		{
@@ -101,7 +130,23 @@ public final class RequestMagicSkillUse extends L2GameClientPacket
 		
 		activeChar.useMagic(skill, _ctrlPressed, _shiftPressed);
 	}
-	
+	// 603-TEST Start
+	class ClassChangeTask implements Runnable
+	{
+		L2PcInstance player;
+		int classIndex;
+		public ClassChangeTask(L2PcInstance player, int classIndex)
+		{
+			this.player = player;
+			this.classIndex = classIndex;
+		}
+		@Override
+		public void run()
+		{
+			AwakingManager.getInstance().ClassChange(player, classIndex);
+		}
+	}
+	// 603-TEST End
 	@Override
 	public String getType()
 	{

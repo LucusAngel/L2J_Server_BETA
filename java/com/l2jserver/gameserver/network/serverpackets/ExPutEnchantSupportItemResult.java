@@ -37,7 +37,7 @@ public class ExPutEnchantSupportItemResult extends L2GameServerPacket
 	protected void writeImpl()
 	{
 		writeC(0xFE);
-		writeH(0x82);
+		writeH(0x83); // 603
 		writeD(_result);
 	}
 }

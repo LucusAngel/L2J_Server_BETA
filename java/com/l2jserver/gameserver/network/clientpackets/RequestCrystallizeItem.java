@@ -119,7 +119,11 @@ public final class RequestCrystallizeItem extends L2GameClientPacket
 			return;
 		}
 		
+		//FIXME: validate this (Battlecruiser)
+		/* rocknow-temp fix
 		if (!itemToRemove.getItem().isCrystallizable() || (itemToRemove.getItem().getCrystalCount() <= 0) || (itemToRemove.getItem().getCrystalType() == CrystalType.NONE))
+		 */
+		if ((itemToRemove.getItem().getCrystalCount() <= 0) || (itemToRemove.getItem().getCrystalType() == CrystalType.NONE))
 		{
 			_log.warning(activeChar.getName() + " (" + activeChar.getObjectId() + ") tried to crystallize " + itemToRemove.getItem().getId());
 			return;
@@ -168,6 +172,26 @@ public final class RequestCrystallizeItem extends L2GameClientPacket
 				}
 				break;
 			}
+			// 603-Start
+			case R:
+			{
+				if (skillLevel <= 5)
+					canCrystallize = false;
+				break;
+			}
+			case R95:
+			{
+				if (skillLevel <= 6)
+					canCrystallize = false;
+				break;
+			}
+			case R99:
+			{
+				if (skillLevel <= 7)
+					canCrystallize = false;
+				break;
+			}
+			// 603-End
 		}
 		
 		if (!canCrystallize)
@@ -222,7 +246,13 @@ public final class RequestCrystallizeItem extends L2GameClientPacket
 		activeChar.sendPacket(sm);
 		
 		sm = SystemMessage.getSystemMessage(SystemMessageId.EARNED_S2_S1_S);
-		sm.addItemName(createditem);
+		//FIXME: Validate this (Battlecruiser)
+		// rocknow-temp fix-Start
+		if (crystalAmount == 0)
+			sm.addItemName(crystalId);
+		else
+			sm.addItemName(createditem);
+		// rocknow-temp fix-End
 		sm.addLong(crystalAmount);
 		activeChar.sendPacket(sm);
 		

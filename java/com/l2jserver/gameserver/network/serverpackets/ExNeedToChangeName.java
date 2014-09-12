@@ -41,7 +41,7 @@ public class ExNeedToChangeName extends L2GameServerPacket
 	protected void writeImpl()
 	{
 		writeC(0xFE);
-		writeH(0x69);
+		writeH(0x6A); // 603
 		writeD(_type);
 		writeD(_subType);
 		writeS(_name);

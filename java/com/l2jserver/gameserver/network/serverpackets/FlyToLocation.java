@@ -35,7 +35,17 @@ public final class FlyToLocation extends L2GameServerPacket
 		THROW_UP,
 		THROW_HORIZONTAL,
 		DUMMY, // no effect
+		/* l2jtw start
 		CHARGE;
+		 */
+		CHARGE,
+		THROW_DOWN,
+		LIFT_UP,
+		UNKNOW6,
+		UNKNOW7,
+		UNKNOW8,
+		UNKNOW9;
+		// l2jtw end
 	}
 	
 	public FlyToLocation(L2Character cha, int destX, int destY, int destZ, FlyType type)
@@ -67,5 +77,8 @@ public final class FlyToLocation extends L2GameServerPacket
 		writeD(_chaY);
 		writeD(_chaZ);
 		writeD(_type.ordinal());
+		writeD(0); // 603
+		writeD(0); // 603
+		writeD(0); // 603
 	}
 }

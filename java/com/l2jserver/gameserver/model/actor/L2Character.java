@@ -152,6 +152,7 @@ import com.l2jserver.gameserver.network.serverpackets.StatusUpdate;
 import com.l2jserver.gameserver.network.serverpackets.StopMove;
 import com.l2jserver.gameserver.network.serverpackets.SystemMessage;
 import com.l2jserver.gameserver.network.serverpackets.TeleportToLocation;
+import com.l2jserver.gameserver.network.serverpackets.ExTeleportToLocation; // 603
 import com.l2jserver.gameserver.pathfinding.AbstractNodeLoc;
 import com.l2jserver.gameserver.pathfinding.PathFinding;
 import com.l2jserver.gameserver.taskmanager.AttackStanceTaskManager;
@@ -592,6 +593,22 @@ public abstract class L2Character extends L2Object implements ISkillsHolder, IDe
 			}
 		}
 	}
+	// 603-Start
+	public void broadcastPacket(L2GameServerPacket mov, boolean sendToSelf)
+	{
+		Collection<L2PcInstance> plrs = getKnownList().getKnownPlayers().values();
+		{
+			for (L2PcInstance player : plrs)
+			{
+				if (!sendToSelf && player == this)
+					continue;
+				
+				if (player != null)
+					player.sendPacket(mov);
+			}
+		}
+	}
+	// 603-End
 	
 	/**
 	 * Send a packet to the L2Character AND to all L2PcInstance in the radius (max knownlist radius) from the L2Character.<br>
@@ -672,6 +689,28 @@ public abstract class L2Character extends L2Object implements ISkillsHolder, IDe
 		
 		// Go through the StatusListener
 		// Send the Server->Client packet StatusUpdate with current HP and MP
+		//FIXME: validate me (looks like HP bars on nearby characters, Battlecruiser)
+		if (Config.Update_Others) // by rocknow
+		{
+			Set<L2Character> sentCharacter = new javolution.util.FastSet<>();
+			
+			for (L2Character temp : getStatus().getStatusListener())
+			{
+				if (temp != null && sentCharacter.add(temp))
+				{
+					temp.sendPacket(su);
+				}
+			}
+			for (L2Character temp : getKnownList().getKnownPlayers().values())
+			{
+				if (temp != null && isInsideRadius(temp, 600, true, false) && sentCharacter.add(temp))
+				{
+					temp.sendPacket(su);
+				}
+			}
+		}
+		else // by rocknow
+		{
 		for (L2Character temp : getStatus().getStatusListener())
 		{
 			if (temp != null)
@@ -679,6 +718,7 @@ public abstract class L2Character extends L2Object implements ISkillsHolder, IDe
 				temp.sendPacket(su);
 			}
 		}
+		} // by rocknow
 	}
 	
 	/**
@@ -688,6 +728,14 @@ public abstract class L2Character extends L2Object implements ISkillsHolder, IDe
 	{
 		// default implementation
 	}
+	
+	//FIXME: is this needed? (Battlecruiser)
+	// l2jtw add start
+	public void sendMessage(double text)
+	{
+		// default implementation
+	}
+	// l2jtw add end
 	
 	/**
 	 * Teleport a L2Character and its pet if necessary.<br>
@@ -750,6 +798,7 @@ public abstract class L2Character extends L2Object implements ISkillsHolder, IDe
 		
 		// remove the object from its old location
 		decayMe();
+		broadcastPacket(new ExTeleportToLocation(this, x, y, z, heading)); // 603
 		
 		// Set the x,y,z position of the L2Object and if necessary modify its _worldRegion
 		setXYZ(x, y, z);
@@ -1402,6 +1451,8 @@ public abstract class L2Character extends L2Object implements ISkillsHolder, IDe
 			// Calculate physical damages of hit 1
 			damage1 = (int) Formulas.calcPhysDam(this, target, null, shld1, crit1, attack.hasSoulshot());
 			damage1 /= 2;
+			//FIXME: validate this (Battlecruiser)
+			damage1 = Math.max(1, damage1); // l2jtw add
 		}
 		
 		// Check if hit 2 isn't missed
@@ -1416,6 +1467,8 @@ public abstract class L2Character extends L2Object implements ISkillsHolder, IDe
 			// Calculate physical damages of hit 2
 			damage2 = (int) Formulas.calcPhysDam(this, target, null, shld2, crit2, attack.hasSoulshot());
 			damage2 /= 2;
+			//FIXME: Validate this (Battlecruiser)
+			damage2 = Math.max(1, damage2); // l2jtw add
 		}
 		
 		// Create a new hit task with Medium priority for hit 1
@@ -1758,6 +1811,13 @@ public abstract class L2Character extends L2Object implements ISkillsHolder, IDe
 					target = (L2Character) getTarget();
 				}
 		}
+		//FIXME: validate this (Battlecruiser)
+		// l2jtw add start : GS-comment-042
+		if ((isMonster()) && (target.isPlayer()) && (skill.getEffectPoint() >= 0))
+		{
+			return;
+		}
+		// l2jtw add end 
 		beginCast(skill, simultaneously, target, targets);
 	}
 	
@@ -1840,6 +1900,8 @@ public abstract class L2Character extends L2Object implements ISkillsHolder, IDe
 				skillTime = Formulas.calcAtkSpd(this, skill, skillTime);
 			}
 			// Calculate the Casting Time of Magic Skills (reduced in 40% if using SPS/BSPS)
+			//L2JTW: if ((skill.isMagic() || skill.isDance()) && (isChargedShot(ShotType.SPIRITSHOTS) || isChargedShot(ShotType.BLESSED_SPIRITSHOTS)))
+			//Validate this! (Battlecruiser)
 			if (skill.isMagic() && (isChargedShot(ShotType.SPIRITSHOTS) || isChargedShot(ShotType.BLESSED_SPIRITSHOTS)))
 			{
 				skillTime = (int) (0.6 * skillTime);
@@ -1918,6 +1980,7 @@ public abstract class L2Character extends L2Object implements ISkillsHolder, IDe
 		{
 			getStatus().reduceMp(initmpcons);
 			StatusUpdate su = new StatusUpdate(this);
+			su.addAttribute(StatusUpdate.MAX_MP, getMaxMp()); // 603 : GS-comment-013
 			su.addAttribute(StatusUpdate.CUR_MP, (int) getCurrentMp());
 			sendPacket(su);
 		}
@@ -1951,7 +2014,10 @@ public abstract class L2Character extends L2Object implements ISkillsHolder, IDe
 			{
 				if (!destroyItemByItemId("Consume", skill.getItemConsumeId(), skill.getItemConsumeCount(), null, true))
 				{
+					/* Update by rocknow
 					getActingPlayer().sendPacket(SystemMessageId.NOT_ENOUGH_ITEMS);
+					 */
+					getActingPlayer().sendPacket(SystemMessageId.THERE_ARE_NOT_ENOUGH_NECESSARY_ITEMS_TO_USE_THE_SKILL);
 					abortCast();
 					return;
 				}
@@ -2027,7 +2093,10 @@ public abstract class L2Character extends L2Object implements ISkillsHolder, IDe
 			// Send a Server->Client packet SetupGauge with the color of the gauge and the casting time
 			if (isPlayer() && !simultaneously)
 			{
+				/* 603
 				sendPacket(new SetupGauge(SetupGauge.BLUE, skillTime));
+				 */
+				sendPacket(new SetupGauge(0, skillTime));
 			}
 			
 			if (skill.isChanneling() && (skill.getChannelingSkillId() > 0))
@@ -3529,6 +3598,30 @@ public abstract class L2Character extends L2Object implements ISkillsHolder, IDe
 	{
 		return _effectList.isAffectedBySkill(skillId);
 	}
+	//FIXME: validate this
+	// l2jtw add start
+	public List<Integer> getEffectIdList()
+	{
+		List<Integer> el = new FastList<>();
+		int ae = getAbnormalVisualEffects();
+		int se = getAbnormalVisualEffectSpecial();
+		for(AbnormalVisualEffect e : AbnormalVisualEffect.values())
+		{
+			if(e.getId() == 0)
+			{
+				continue;
+			}
+			if(e != AbnormalVisualEffect.STEALTH || isGM())
+			{
+				if(((e.getId() <= 32 ?  ae : se) & e.getMask()) != 0)
+				{
+					el.add(e.getId());
+				}
+			}
+		}
+		return el;
+	}
+	// l2jtw add end
 	
 	// TODO: NEED TO ORGANIZE AND MOVE TO PROPER PLACE
 	/** This class permit to the L2Character AI to obtain informations and uses L2Character method */
@@ -5867,6 +5960,7 @@ public abstract class L2Character extends L2Object implements ISkillsHolder, IDe
 				}
 				
 				getStatus().reduceMp(mpConsume);
+				su.addAttribute(StatusUpdate.MAX_MP, getMaxMp()); // 603 : GS-comment-013
 				su.addAttribute(StatusUpdate.CUR_MP, (int) getCurrentMp());
 				isSendStatus = true;
 			}
@@ -5885,6 +5979,7 @@ public abstract class L2Character extends L2Object implements ISkillsHolder, IDe
 				
 				getStatus().reduceHp(consumeHp, this, true);
 				
+				su.addAttribute(StatusUpdate.MAX_HP, getMaxHp()); // 603 : GS-comment-013
 				su.addAttribute(StatusUpdate.CUR_HP, (int) getCurrentHp());
 				isSendStatus = true;
 			}

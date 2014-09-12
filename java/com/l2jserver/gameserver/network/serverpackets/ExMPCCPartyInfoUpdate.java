@@ -46,7 +46,7 @@ public class ExMPCCPartyInfoUpdate extends L2GameServerPacket
 	protected void writeImpl()
 	{
 		writeC(0xFE);
-		writeH(0x5B);
+		writeH(0x5C); // 603
 		writeS(_name);
 		writeD(_LeaderOID);
 		writeD(_memberCount);

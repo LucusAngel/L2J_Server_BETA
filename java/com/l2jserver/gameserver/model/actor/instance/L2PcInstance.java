@@ -83,8 +83,10 @@ import com.l2jserver.gameserver.datatables.ItemTable;
 import com.l2jserver.gameserver.datatables.NpcData;
 import com.l2jserver.gameserver.datatables.PetDataTable;
 import com.l2jserver.gameserver.datatables.RecipeData;
+import com.l2jserver.gameserver.datatables.SkillReplaceTable; // l2jtw add
 import com.l2jserver.gameserver.datatables.SkillData;
 import com.l2jserver.gameserver.datatables.SkillTreesData;
+import com.l2jserver.gameserver.datatables.TransformData; // DP-comment-045
 import com.l2jserver.gameserver.enums.HtmlActionScope;
 import com.l2jserver.gameserver.enums.IllegalActionPunishmentType;
 import com.l2jserver.gameserver.enums.InstanceType;
@@ -101,6 +103,7 @@ import com.l2jserver.gameserver.handler.IItemHandler;
 import com.l2jserver.gameserver.handler.ItemHandler;
 import com.l2jserver.gameserver.idfactory.IdFactory;
 import com.l2jserver.gameserver.instancemanager.AntiFeedManager;
+import com.l2jserver.gameserver.instancemanager.AwakingManager; // 603
 import com.l2jserver.gameserver.instancemanager.CastleManager;
 import com.l2jserver.gameserver.instancemanager.CoupleManager;
 import com.l2jserver.gameserver.instancemanager.CursedWeaponsManager;
@@ -269,6 +272,7 @@ import com.l2jserver.gameserver.network.serverpackets.ChangeWaitType;
 import com.l2jserver.gameserver.network.serverpackets.CharInfo;
 import com.l2jserver.gameserver.network.serverpackets.ConfirmDlg;
 import com.l2jserver.gameserver.network.serverpackets.EtcStatusUpdate;
+import com.l2jserver.gameserver.network.serverpackets.ExAcquirableSkillListByClass; // 603
 import com.l2jserver.gameserver.network.serverpackets.ExAutoSoulShot;
 import com.l2jserver.gameserver.network.serverpackets.ExBrExtraUserInfo;
 import com.l2jserver.gameserver.network.serverpackets.ExDominionWarStart;
@@ -283,6 +287,7 @@ import com.l2jserver.gameserver.network.serverpackets.ExSetCompassZoneCode;
 import com.l2jserver.gameserver.network.serverpackets.ExStartScenePlayer;
 import com.l2jserver.gameserver.network.serverpackets.ExStorageMaxCount;
 import com.l2jserver.gameserver.network.serverpackets.ExUseSharedGroupItem;
+import com.l2jserver.gameserver.network.serverpackets.FriendList; // l2jtw add
 import com.l2jserver.gameserver.network.serverpackets.FlyToLocation.FlyType;
 import com.l2jserver.gameserver.network.serverpackets.FriendStatusPacket;
 import com.l2jserver.gameserver.network.serverpackets.GameGuardQuery;
@@ -336,6 +341,7 @@ import com.l2jserver.gameserver.util.FloodProtectors;
 import com.l2jserver.gameserver.util.Util;
 import com.l2jserver.util.EnumIntBitmask;
 import com.l2jserver.util.Rnd;
+import com.l2jserver.gameserver.model.L2CoreMessage;
 
 /**
  * This class represents all player characters in the world.<br>
@@ -399,6 +405,7 @@ public final class L2PcInstance extends L2Playable
 	public static final int ID_NONE = -1;
 	
 	public static final int REQUEST_TIMEOUT = 15;
+	public int jumpTrackId = 0; // l2jtw add
 	
 	private final List<IEventListener> _eventListeners = new FastList<IEventListener>().shared();
 	
@@ -2428,7 +2435,10 @@ public final class L2PcInstance extends L2Playable
 				{
 					_clan.addReputationScore(Config.JOIN_ACADEMY_MAX_REP_SCORE, true);
 				}
+				/* 603
 				else if (getLvlJoinedAcademy() >= 39)
+				 */
+				else if (getLvlJoinedAcademy() >= 76)
 				{
 					_clan.addReputationScore(Config.JOIN_ACADEMY_MIN_REP_SCORE, true);
 				}
@@ -2453,8 +2463,17 @@ public final class L2PcInstance extends L2Playable
 				getSubClasses().get(_classIndex).setClassId(Id);
 			}
 			setTarget(this);
+			//FIXME: Inspect this (Battlecruiser)
+			/* GS-comment-045
 			broadcastPacket(new MagicSkillUse(this, 5103, 1, 1000, 0));
+			 */
 			setClassTemplate(Id);
+			setLearningClass(getClassId()); // l2jtw add : GS-comment-047
+			// GS-comment-045 Start
+			TransformData.getInstance().transformPlayer(502, this);
+			ThreadPoolManager.getInstance().scheduleGeneral(() -> this.untransform(), 200);
+			ThreadPoolManager.getInstance().scheduleGeneral(() -> broadcastPacket(new MagicSkillUse(this, 5103, 1, 0, 0)), 1200);
+			// GS-comment-045 End
 			if (getClassId().level() == 3)
 			{
 				sendPacket(SystemMessageId.THIRD_CLASS_TRANSFER);
@@ -2476,6 +2495,7 @@ public final class L2PcInstance extends L2Playable
 			}
 			
 			// Add AutoGet skills and normal skills and/or learnByFS depending on configurations.
+			AwakingManager.getInstance().AwakingRemoveSkills(this); // 603
 			rewardSkills();
 			
 			if (!canOverrideCond(PcCondOverride.SKILL_CONDITIONS) && Config.DECREASE_SKILL_LEVEL)
@@ -2935,6 +2955,12 @@ public final class L2PcInstance extends L2Playable
 		_onlineTime = time;
 		_onlineBeginTime = System.currentTimeMillis();
 	}
+	// 603-Start
+	public long getOnlineTime()
+	{
+		return _onlineTime;
+	}
+	// 603-End
 	
 	/**
 	 * Return the PcInventory Inventory of the L2PcInstance contained in _inventory.
@@ -4186,8 +4212,11 @@ public final class L2PcInstance extends L2Playable
 		{
 			return false;
 		}
-		
+		//FIXME: inspect this (Battlecruiser)
+		/* Update by rocknow
 		if (isMounted() || inObserverMode())
+		 */
+		if ((skill.getId() != 7029 && isMounted()) || inObserverMode())
 		{
 			return false;
 		}
@@ -4358,7 +4387,11 @@ public final class L2PcInstance extends L2Playable
 	@Override
 	public final void broadcastPacket(L2GameServerPacket mov)
 	{
+		//FIXME: inspect this (Battlecruiser)
+		/* l2jtw add
 		if (!(mov instanceof CharInfo))
+		 */
+		if (!(mov instanceof CharInfo || mov instanceof TargetSelected))
 		{
 			sendPacket(mov);
 		}
@@ -6290,7 +6323,17 @@ public final class L2PcInstance extends L2Playable
 		}
 		
 		// Adjust item quantity
+		// infinite arrow packs
+		// FIXME: Unhardocde me (Battlecruiser)
+		/* 603-Start
 		if (arrows.getCount() > 1)
+		 */
+		if (arrows.getItem().getId() >= 32249 && arrows.getItem().getId() <= 32262)
+		{
+			return;
+		}
+		else if (arrows.getCount() > 1)
+		// 603-End
 		{
 			synchronized (arrows)
 			{
@@ -7792,6 +7835,21 @@ public final class L2PcInstance extends L2Playable
 		{
 			storeSkill(newSkill, oldSkill, -1);
 		}
+		// GoD+ skill replacing thingy
+		// l2jtw add start
+		for (Skill existSkill : getAllSkills())
+		{
+			for (Integer skillid : SkillReplaceTable.getInstance().getReplaceSkills(existSkill.getId()))
+			{
+				int level = getSkillLevel(skillid);
+				if (level != -1)
+				{
+					Skill delskill = SkillData.getInstance().getSkill(skillid, level);
+					removeSkill(delskill);
+				}
+			}
+		}
+		// l2jtw add end
 		return oldSkill;
 	}
 	
@@ -8306,13 +8364,27 @@ public final class L2PcInstance extends L2Playable
 			{
 				continue;
 			}
-			
+			// Awaken chas no limits? (Battlecruiser)
+			// l2jtw add start
+			if (isAwaken())
+			{
+				_hennaINT += h.getStatINT();
+				_hennaMEN += h.getStatMEN();
+				_hennaSTR += h.getStatSTR();
+				_hennaCON += h.getStatCON();
+				_hennaWIT += h.getStatWIT();
+				_hennaDEX += h.getStatDEX();
+			}
+			else
+			{
 			_hennaINT += ((_hennaINT + h.getStatINT()) > 5) ? 5 - _hennaINT : h.getStatINT();
 			_hennaSTR += ((_hennaSTR + h.getStatSTR()) > 5) ? 5 - _hennaSTR : h.getStatSTR();
 			_hennaMEN += ((_hennaMEN + h.getStatMEN()) > 5) ? 5 - _hennaMEN : h.getStatMEN();
 			_hennaCON += ((_hennaCON + h.getStatCON()) > 5) ? 5 - _hennaCON : h.getStatCON();
 			_hennaWIT += ((_hennaWIT + h.getStatWIT()) > 5) ? 5 - _hennaWIT : h.getStatWIT();
 			_hennaDEX += ((_hennaDEX + h.getStatDEX()) > 5) ? 5 - _hennaDEX : h.getStatDEX();
+			}
+			// l2jtw add end
 		}
 	}
 	
@@ -9649,6 +9721,13 @@ public final class L2PcInstance extends L2Playable
 		sendPacket(SystemMessage.sendString(message));
 	}
 	
+	
+	// FIXME: inspect this further (Battlecruiser)
+	public void sendMessage(L2CoreMessage message)
+	{
+		message.sendMessage(this);
+	}
+	
 	public void enterObserverMode(Location loc)
 	{
 		setLastLocation();
@@ -10141,6 +10220,13 @@ public final class L2PcInstance extends L2Playable
 			{
 				continue;
 			}
+			// FIXME: validate this (Battlecruiser)
+			// l2jtw add start
+			if (!s.is_showSkillListIcon())
+			{
+				continue;
+			}
+			// l2jtw add end
 			
 			if ((_transformation != null) && (!hasTransformSkill(s.getId()) && !s.allowOnTransform()))
 			{
@@ -10174,7 +10260,14 @@ public final class L2PcInstance extends L2Playable
 		}
 		
 		sendPacket(sl);
+		sendPacket(new ExAcquirableSkillListByClass(this)); // 603
 	}
+	// 603-Start
+	public void sendExAcquirableSkillListByClass(L2PcInstance player)
+	{
+		player.sendPacket(new ExAcquirableSkillListByClass(player));
+	}
+	// 603-End
 	
 	/**
 	 * 1. Add the specified class ID as a subclass (up to the maximum number of <b>three</b>) for this character.<BR>
@@ -10559,7 +10652,11 @@ public final class L2PcInstance extends L2Playable
 	{
 		if (_taskWarnUserTakeBreak == null)
 		{
+			// FIXME: validate this (3h-> 1h) Battlecruiser
+			/* Update by rocknow
 			_taskWarnUserTakeBreak = ThreadPoolManager.getInstance().scheduleGeneralAtFixedRate(new WarnUserTakeBreakTask(this), 7200000, 7200000);
+			 */
+			_taskWarnUserTakeBreak = ThreadPoolManager.getInstance().scheduleGeneralAtFixedRate(new WarnUserTakeBreakTask(this), 3600000, 3600000);
 		}
 	}
 	
@@ -12684,6 +12781,7 @@ public final class L2PcInstance extends L2Playable
 			sm.addPcName(this);
 			sm.addCharName(target);
 			sm.addInt(damage);
+			sm.addDamage(target.getObjectId(), this.getObjectId(), damage * -1); // 603 (by otfnir)
 		}
 		sendPacket(sm);
 	}
@@ -13347,6 +13445,7 @@ public final class L2PcInstance extends L2Playable
 					sendPacket(new RelationChanged(activeChar.getSummon(), relation2, activeChar.isAutoAttackable(this)));
 				}
 			}
+			activeChar.sendPacket(new CharInfo(this)); // 603
 		}
 		
 		switch (getPrivateStoreType())
@@ -13364,6 +13463,7 @@ public final class L2PcInstance extends L2Playable
 				activeChar.sendPacket(new RecipeShopMsg(this));
 				break;
 		}
+		activeChar.sendPacket(new CharInfo(this)); // 603
 	}
 	
 	public void showQuestMovie(int id)
@@ -13498,6 +13598,7 @@ public final class L2PcInstance extends L2Playable
 			if (friend != null)
 			{
 				friend.sendPacket(pkt);
+				friend.sendPacket(new FriendList(friend)); // 603
 			}
 		}
 	}
@@ -13861,7 +13962,11 @@ public final class L2PcInstance extends L2Playable
 			learn = SkillTreesData.getInstance().getClassSkill(e.getKey(), e.getValue().getLevel() % 100, getClassId());
 			if (learn != null)
 			{
+				//FIXME: validate this
+				/* 603 : Removing skill for player's level too low
 				int lvlDiff = e.getKey() == CommonSkill.EXPERTISE.getId() ? 0 : 9;
+				 */
+				int lvlDiff = e.getKey() == CommonSkill.EXPERTISE.getId() ? 0 : 5;
 				if (getLevel() < (learn.getGetLevel() - lvlDiff))
 				{
 					deacreaseSkillLevel(e.getValue(), lvlDiff);
@@ -14485,4 +14590,44 @@ public final class L2PcInstance extends L2Playable
 	{
 		return (_actionMask & act.getMask()) == act.getMask();
 	}
+	// 603-Start
+	public boolean isAwaken()
+	{
+		if ((getActiveClass() >= 139 && getActiveClass() <= 181) || (getActiveClass() >= 188))
+			return true;
+		return false;
+	}
+	
+	public int getAwakenSubClassCount()
+	{
+		int countOfSubClassAwaking = 0;
+		for (SubClass sc : getSubClasses().values())
+		{
+			if (sc.getClassDefinition().isOfLevel(ClassLevel.Awaken))
+				countOfSubClassAwaking += 1;
+		}
+		return countOfSubClassAwaking;
+	}
+	// 603-End
+	
+	//FIXME: is that needed? (Battlecruiser)
+	// l2jtw add start
+	public boolean hasFeather()
+	{
+		return (!(getInventory().getItemByItemId(10649) == null && getInventory().getItemByItemId(13300) == null)); 
+	}
+	
+	public boolean useFeather()
+	{
+		if (getInventory().destroyItemByItemId("useFeather", 10649, 1, this, null) != null)
+		{
+			return true;
+		}
+		if (getInventory().destroyItemByItemId("useFeather", 13300, 1, this, null) != null)
+		{
+			return true;
+		}
+		return false; 
+	}
+	// l2jtw add end
 }

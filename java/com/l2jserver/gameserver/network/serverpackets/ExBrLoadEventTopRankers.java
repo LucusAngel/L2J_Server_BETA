@@ -42,7 +42,7 @@ public class ExBrLoadEventTopRankers extends L2GameServerPacket
 	protected final void writeImpl()
 	{
 		writeC(0xFE);
-		writeH(0xBD);
+		writeH(0xBE); // 603
 		writeD(_eventId);
 		writeD(_day);
 		writeD(_count);

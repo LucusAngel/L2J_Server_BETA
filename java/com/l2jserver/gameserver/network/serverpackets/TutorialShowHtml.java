@@ -46,6 +46,7 @@ public final class TutorialShowHtml extends AbstractHtmlPacket
 	protected void writeImpl()
 	{
 		writeC(0xA6);
+		writeD(0x01); // 603
 		writeS(getHtml());
 	}
 	

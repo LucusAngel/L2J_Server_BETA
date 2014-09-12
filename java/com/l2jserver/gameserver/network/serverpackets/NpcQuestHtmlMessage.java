@@ -38,7 +38,7 @@ public final class NpcQuestHtmlMessage extends AbstractHtmlPacket
 	protected final void writeImpl()
 	{
 		writeC(0xFE);
-		writeH(0x8D);
+		writeH(0x8E); // 603
 		writeD(getNpcObjId());
 		writeS(getHtml());
 		writeD(_questId);

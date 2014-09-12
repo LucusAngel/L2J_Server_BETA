@@ -85,7 +85,7 @@ public class ExSendUIEvent extends L2GameServerPacket
 	protected void writeImpl()
 	{
 		writeC(0xFE);
-		writeH(0x8E);
+		writeH(0x8F); // 603
 		writeD(_objectId);
 		writeD(_type ? 1 : 0); // 0 = show, 1 = hide (there is 2 = pause and 3 = resume also but they don't work well you can only pause count down and you cannot resume it because resume hides the counter).
 		writeD(0);// unknown

@@ -36,7 +36,7 @@ public class ExCursedWeaponList extends L2GameServerPacket
 	protected void writeImpl()
 	{
 		writeC(0xfe);
-		writeH(0x46);
+		writeH(0x47); // 603
 		
 		writeD(_cursedWeaponIds.size());
 		for (int i : _cursedWeaponIds)

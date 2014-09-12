@@ -18,6 +18,7 @@
  */
 package com.l2jserver.gameserver.model.actor.instance;
 
+import java.util.Arrays; // l2jtw add
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Future;
@@ -67,6 +68,7 @@ public final class L2CubicInstance implements IIdentifiable
 	public static final int SMART_CUBIC_ARCANALORD = 12;
 	public static final int SMART_CUBIC_ELEMENTALMASTER = 13;
 	public static final int SMART_CUBIC_SPECTRALMASTER = 14;
+	public static final int KNIGHT_CUBIC = 15; // l2jtw add
 	
 	// Max range of cubic skills
 	// TODO: Check/fix the max range
@@ -158,6 +160,10 @@ public final class L2CubicInstance implements IIdentifiable
 				_skills.add(SkillData.getInstance().getSkill(4049, 8));
 				_skills.add(SkillData.getInstance().getSkill(5115, 4));
 				break;
+			case KNIGHT_CUBIC: // l2jtw add
+				_skills.add(SkillData.getInstance().getSkill(11292, 8));
+				_skills.add(SkillData.getInstance().getSkill(10056, 8));
+				break;
 		}
 		_disappearTask = ThreadPoolManager.getInstance().scheduleGeneral(new CubicDisappear(this), _cubicDuration); // disappear
 	}
@@ -185,6 +191,7 @@ public final class L2CubicInstance implements IIdentifiable
 			case SMART_CUBIC_SPECTRALMASTER:
 			case SMART_CUBIC_EVATEMPLAR:
 			case SMART_CUBIC_SHILLIENTEMPLAR:
+			case KNIGHT_CUBIC: // l2jtw add
 				_actionTask = ThreadPoolManager.getInstance().scheduleEffectAtFixedRate(new CubicAction(this, _cubicSkillChance), 0, _cubicDelay);
 				break;
 			case LIFE_CUBIC:

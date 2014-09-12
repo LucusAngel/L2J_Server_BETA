@@ -39,7 +39,7 @@ public class ExPutIntensiveResultForVariationMake extends L2GameServerPacket
 	protected void writeImpl()
 	{
 		writeC(0xFE);
-		writeH(0x54);
+		writeH(0x55); // 603
 		writeD(_refinerItemObjId);
 		writeD(_lifestoneItemId);
 		writeD(_gemstoneItemId);

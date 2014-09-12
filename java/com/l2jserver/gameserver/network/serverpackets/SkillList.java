@@ -59,8 +59,10 @@ public final class SkillList extends L2GameServerPacket
 			writeD(temp.passive ? 1 : 0);
 			writeD(temp.level);
 			writeD(temp.id);
+			writeD(-1); // 603
 			writeC(temp.disabled ? 1 : 0);
 			writeC(temp.enchanted ? 1 : 0);
 		}
+		writeD(0x00); // 603 Need Not?
 	}
 }

@@ -71,20 +71,22 @@ public final class AcquireSkillList extends L2GameServerPacket
 			return;
 		}
 		
-		writeC(0x90);
-		writeD(_skillType.ordinal());
-		writeD(_skills.size());
+		writeC(0xFE); // 603
+		writeH(0xFA); // 603
+		writeH(_skillType.ordinal()); // 603
+		writeH(_skills.size()); // 603
 		
 		for (Skill temp : _skills)
 		{
 			writeD(temp.id);
-			writeD(temp.nextLevel);
-			writeD(temp.maxLevel);
-			writeD(temp.spCost);
-			writeD(temp.requirements);
+			writeH(temp.nextLevel); // 603
+			writeH(temp.maxLevel); // 603
+			writeC(temp.requirements); // 603
+			writeQ(temp.spCost); // 603
+			writeC(1); // 603
 			if (_skillType == AcquireSkillType.SUBPLEDGE)
 			{
-				writeD(0); // TODO: ?
+				writeH(0); // TODO: ?
 			}
 		}
 	}

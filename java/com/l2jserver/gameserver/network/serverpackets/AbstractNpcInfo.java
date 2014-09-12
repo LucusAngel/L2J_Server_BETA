@@ -143,64 +143,70 @@ public abstract class AbstractNpcInfo extends L2GameServerPacket
 		@Override
 		protected void writeImpl()
 		{
-			writeC(0x0c);
+			writeC(0x0C);
 			writeD(_npc.getObjectId());
+			writeC(0x00);
+			writeC(0x25);
+			writeC(0x00);
+			writeC(0xED);
+			if (_rhand > 0 || _chest > 0 || _lhand > 0)
+				writeC(0xFE);
+			else
+				writeC(0xBE);
+			writeC(0x4E);
+			writeC(0xA2);
+			writeC(0x0C);
+			int len_npc_title = 0; // 603
+			if (_title != null)
+				len_npc_title = _title.length(); // 603
+			writeC(7 + len_npc_title*2); // 603
+			writeC(_isAttackable ? 1 : 0);
+			writeH(0);
+			writeH(0);
+			writeS(_title);
+			if (_rhand > 0 || _chest > 0 || _lhand > 0)
+				writeH(68);
+			else
+				writeH(56);
 			writeD(_idTemplate + 1000000); // npctype id
-			writeD(_isAttackable ? 1 : 0);
 			writeD(_x);
 			writeD(_y);
 			writeD(_z);
 			writeD(_heading);
-			writeD(0x00);
 			writeD(_mAtkSpd);
 			writeD(_pAtkSpd);
-			writeD(_runSpd);
-			writeD(_walkSpd);
-			writeD(_swimRunSpd);
-			writeD(_swimWalkSpd);
-			writeD(_flyRunSpd);
-			writeD(_flyWalkSpd);
-			writeD(_flyRunSpd);
-			writeD(_flyWalkSpd);
-			writeF(_moveMultiplier);
-			writeF(_npc.getAttackSpeedMultiplier());
-			writeF(_collisionRadius);
-			writeF(_collisionHeight);
-			writeD(_rhand); // right hand weapon
-			writeD(_chest);
-			writeD(_lhand); // left hand weapon
-			writeC(1); // name above char 1=true ... ??
+			putFloat((float)_moveMultiplier);
+			putFloat(_npc.getAttackSpeedMultiplier());
+			if (_rhand > 0 || _chest > 0 || _lhand > 0)
+			{
+				writeD(_rhand);
+				writeD(_chest);
+				writeD(_lhand);
+			}
+			writeC(1);
 			writeC(_npc.isRunning() ? 1 : 0);
-			writeC(_npc.isInCombat() ? 1 : 0);
-			writeC(_npc.isAlikeDead() ? 1 : 0);
-			writeC(_isSummoned ? 2 : 0); // invisible ?? 0=false 1=true 2=summoned (only works if model has a summon animation)
-			writeD(-1); // High Five NPCString ID
-			writeS(_name);
-			writeD(-1); // High Five NPCString ID
-			writeS(_title);
-			writeD(0x00); // Title color 0=client default
-			writeD(0x00); // pvp flag
-			writeD(0x00); // karma
-			
-			writeD(_npc.isInvisible() ? _npc.getAbnormalVisualEffects() | AbnormalVisualEffect.STEALTH.getMask() : _npc.getAbnormalVisualEffects());
-			writeD(_clanId); // clan id
-			writeD(_clanCrest); // crest id
-			writeD(_allyId); // ally id
-			writeD(_allyCrest); // all crest
-			
 			writeC(_npc.isInsideZone(ZoneId.WATER) ? 1 : _npc.isFlying() ? 2 : 0); // C2
-			writeC(_npc.getTeam().getId());
-			
-			writeF(_collisionRadius);
-			writeF(_collisionHeight);
-			writeD(_enchantEffect); // C4
 			writeD(_npc.isFlying() ? 1 : 0); // C6
-			writeD(0x00);
-			writeD(_npc.getColorEffect()); // CT1.5 Pet form and skills, Color effect
-			writeC(_npc.isTargetable() ? 0x01 : 0x00);
-			writeC(_npc.isShowName() ? 0x01 : 0x00);
-			writeD(_npc.getAbnormalVisualEffectSpecial());
-			writeD(_displayEffect);
+			writeC(0);
+			writeC(0);
+			writeH(0);
+			writeD((int)_npc.getCurrentHp());
+			writeD(_npc.getMaxHp());
+			
+			writeC(
+			(_npc.isInCombat() ? 1 : 0) + 
+			(_npc.isAlikeDead() ? 2 : 0) + 
+			(_npc.isTargetable() ? 4 : 0) + 
+			(_npc.isShowName() ? 8 : 0));
+			
+			java.util.List<Integer> el = _npc.getEffectIdList();
+			if (_npc.isInvisible() && !el.contains(21))
+				el.add(21);
+			writeH(el.size());
+			for(int i : el)
+			{
+			   writeH(i);
+			}
 		}
 	}
 	
@@ -229,64 +235,56 @@ public abstract class AbstractNpcInfo extends L2GameServerPacket
 		@Override
 		protected void writeImpl()
 		{
-			writeC(0x0c);
+			writeC(0x0C);
 			writeD(_trap.getObjectId());
+			writeC(0x00);
+			writeC(0x25);
+			writeC(0x00);
+			writeC(0xED);
+			writeC(0xBE);
+			writeC(0x4E);
+			writeC(0xA2);
+			writeC(0x0C);
+			int len_trap_title = 0; // 603
+			if (_title != null)
+				len_trap_title = _title.length(); // 603
+			writeC(7 + len_trap_title*2); // 603
+			writeC(_isAttackable ? 1 : 0);
+			writeH(0);
+			writeH(0);
+			writeS(_title);
+			writeH(56);
 			writeD(_idTemplate + 1000000); // npctype id
-			writeD(_isAttackable ? 1 : 0);
 			writeD(_x);
 			writeD(_y);
 			writeD(_z);
 			writeD(_heading);
-			writeD(0x00);
 			writeD(_mAtkSpd);
 			writeD(_pAtkSpd);
-			writeD(_runSpd);
-			writeD(_walkSpd);
-			writeD(_swimRunSpd);
-			writeD(_swimWalkSpd);
-			writeD(_flyRunSpd);
-			writeD(_flyWalkSpd);
-			writeD(_flyRunSpd);
-			writeD(_flyWalkSpd);
-			writeF(_moveMultiplier);
-			writeF(_trap.getAttackSpeedMultiplier());
-			writeF(_collisionRadius);
-			writeF(_collisionHeight);
-			writeD(_rhand); // right hand weapon
-			writeD(_chest);
-			writeD(_lhand); // left hand weapon
-			writeC(1); // name above char 1=true ... ??
+			putFloat((float)_moveMultiplier);
+			putFloat(_trap.getAttackSpeedMultiplier());
 			writeC(1);
-			writeC(_trap.isInCombat() ? 1 : 0);
-			writeC(_trap.isAlikeDead() ? 1 : 0);
-			writeC(_isSummoned ? 2 : 0); // invisible ?? 0=false 1=true 2=summoned (only works if model has a summon animation)
-			writeD(-1); // High Five NPCString ID
-			writeS(_name);
-			writeD(-1); // High Five NPCString ID
-			writeS(_title);
-			writeD(0x00); // title color 0 = client default
-			
-			writeD(_trap.getPvpFlag());
-			writeD(_trap.getKarma());
-			
-			writeD(_trap.isInvisible() ? _trap.getAbnormalVisualEffects() | AbnormalVisualEffect.STEALTH.getMask() : _trap.getAbnormalVisualEffects());
-			writeD(0x00); // clan id
-			writeD(0x00); // crest id
-			writeD(0000); // C2
-			writeD(0000); // C2
-			writeC(0000); // C2
-			
-			writeC(_trap.getTeam().getId());
-			
-			writeF(_collisionRadius);
-			writeF(_collisionHeight);
-			writeD(0x00); // C4
-			writeD(0x00); // C6
-			writeD(0x00);
-			writeD(0);// CT1.5 Pet form and skills
-			writeC(0x01);
-			writeC(0x01);
-			writeD(0x00);
+			writeC(1);
+			writeC(0);
+			writeD(0);
+			writeC(0);
+			writeC(0);
+			writeH(0);
+			writeD((int)_trap.getCurrentHp());
+			writeD(_trap.getMaxHp());
+			writeC(
+			(_trap.isInCombat() ? 1 : 0) + 
+			(_trap.isAlikeDead() ? 2 : 0) + 
+			(_trap.isTargetable() ? 4 : 0) + 
+			8);
+			java.util.List<Integer> el = _trap.getEffectIdList();
+			if (_trap.isInvisible() && !el.contains(21))
+				el.add(21);
+			writeH(el.size());
+			for(int i : el)
+			{
+			   writeH(i);
+			}
 		}
 	}
 	
@@ -331,66 +329,105 @@ public abstract class AbstractNpcInfo extends L2GameServerPacket
 					gmSeeInvis = true;
 				}
 			}
-			
-			writeC(0x0c);
+			if (_summon.getSummonType() == 2)
+			{
+				writeC(0xFE);
+				writeH(0x15E);
+			}
+			else if (_summon.getSummonType() == 1)
+			{
+				writeC(0x8B);
+			}
+			else
+			{
+				_log.warning("unknow pet/summer");
+				return;
+			}
 			writeD(_summon.getObjectId());
+			writeC(_isSummoned ? 2 : _val); // 603-TEST //  0=teleported  1=default   2=summoned
+			writeC(0x25);
+			writeC(_isAttackable ? 1 : 0);
+			
+			if (_summon.getSummonType() == 2)
+			{
+				writeC(0xFD);
+				writeC(0xBF);
+				writeC(0x5F);
+				writeC(0xF3);
+				writeC(0xEC);
+			}
+			else if (_summon.getSummonType() == 1)
+			{
+				writeC(0xED);
+				writeC(0xBF);
+				writeC(0x4F);
+				writeC(0x02);
+				writeC(0x6C);
+			}
+			int len_npc_title = 0; // 603
+			if (_title != null)
+				len_npc_title = _title.length(); // 603
+			writeC(7 + len_npc_title*2); // 603
+			writeC(0x00);
+			writeC(0x00);
+			writeC(0x00);
+			writeC(0x00);
+			writeC(0x00);
+			writeS(_title);
+			int len_npc_name = 0; // 603
+			if (_name != null)
+				len_npc_name = _name.length(); // 603
+			if (_summon.getSummonType() == 2)
+				writeH(88 + len_npc_name*2);
+			else if (_summon.getSummonType() == 1)
+				writeH(58);
 			writeD(_idTemplate + 1000000); // npctype id
-			writeD(_isAttackable ? 1 : 0);
 			writeD(_x);
 			writeD(_y);
 			writeD(_z);
 			writeD(_heading);
-			writeD(0x00);
 			writeD(_mAtkSpd);
 			writeD(_pAtkSpd);
-			writeD(_runSpd);
-			writeD(_walkSpd);
-			writeD(_swimRunSpd);
-			writeD(_swimWalkSpd);
-			writeD(_flyRunSpd);
-			writeD(_flyWalkSpd);
-			writeD(_flyRunSpd);
-			writeD(_flyWalkSpd);
-			writeF(_moveMultiplier);
-			writeF(_summon.getAttackSpeedMultiplier());
-			writeF(_collisionRadius);
-			writeF(_collisionHeight);
-			writeD(_rhand); // right hand weapon
-			writeD(_chest);
-			writeD(_lhand); // left hand weapon
-			writeC(0x01); // name above char 1=true ... ??
-			writeC(0x01); // always running 1=running 0=walking
-			writeC(_summon.isInCombat() ? 1 : 0);
-			writeC(_summon.isAlikeDead() ? 1 : 0);
-			writeC(_val); // invisible ?? 0=false 1=true 2=summoned (only works if model has a summon animation)
-			writeD(-1); // High Five NPCString ID
-			writeS(_name);
-			writeD(-1); // High Five NPCString ID
-			writeS(_title);
-			writeD(0x01);// Title color 0=client default
+			putFloat((float)_moveMultiplier);
+			putFloat(_summon.getAttackSpeedMultiplier());
+			writeC(1);
+			writeC(_summon.isRunning() ? 1 : 0);
 			
-			writeD(_summon.getPvpFlag());
-			writeD(_summon.getKarma());
-			
-			writeD(gmSeeInvis ? _summon.getAbnormalVisualEffects() | AbnormalVisualEffect.STEALTH.getMask() : _summon.getAbnormalVisualEffects());
-			
-			writeD(0x00); // clan id
-			writeD(0x00); // crest id
-			writeD(0x00); // C2
-			writeD(0x00); // C2
-			writeC(_summon.isInsideZone(ZoneId.WATER) ? 1 : _summon.isFlying() ? 2 : 0); // C2
-			
-			writeC(_summon.getTeam().getId());
-			
-			writeF(_collisionRadius);
-			writeF(_collisionHeight);
-			writeD(_enchantEffect); // C4
-			writeD(0x00); // C6
+			if (_summon.getSummonType() == 2)
+				writeD(0x00);
+			writeH(0x00);
+			writeH(_form);
 			writeD(0x00);
-			writeD(_form); // CT1.5 Pet form and skills
-			writeC(0x01);
-			writeC(0x01);
-			writeD(_summon.getAbnormalVisualEffectSpecial());
+			writeD(0x00);
+			writeH(0x00);
+			
+			if (_summon.getSummonType() == 2)
+			{
+				writeD((int)_summon.getCurrentHp());
+				writeD((int)_summon.getCurrentMp());
+				writeD(_summon.getMaxHp());
+				writeD(_summon.getMaxMp());
+				writeS(_name);
+				writeD(-1);
+				writeD(-1);
+			}
+			
+			writeC(_summon.getPvpFlag());
+			int Karma = 0 - _summon.getKarma();
+			writeD(Karma);
+			writeC(
+			(_summon.isInCombat() ? 1 : 0) + 
+			(_summon.isAlikeDead() ? 2 : 0) + 
+			(_summon.isTargetable() ? 4 : 0) + 
+			8 );
+			java.util.List<Integer> el = _summon.getEffectIdList();
+			if (gmSeeInvis && !el.contains(21))
+				el.add(21);
+			writeH(el.size());
+			for(int i : el)
+			{
+			   writeH(i);
+			}
 		}
 	}
 }

@@ -48,7 +48,7 @@ public class ExQuestItemList extends AbstractItemPacket
 	protected void writeImpl()
 	{
 		writeC(0xFE);
-		writeH(0xC6);
+		writeH(0xC7); // 603
 		writeH(_items.size());
 		for (L2ItemInstance item : _items)
 		{

@@ -40,6 +40,7 @@ public final class L2TerritoryWardInstance extends L2Attackable
 	@Override
 	public boolean isAutoAttackable(L2Character attacker)
 	{
+		//L2JTW skips this check
 		if (isInvul())
 		{
 			return false;

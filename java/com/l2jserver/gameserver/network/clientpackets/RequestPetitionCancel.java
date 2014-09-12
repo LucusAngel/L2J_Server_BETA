@@ -40,11 +40,13 @@ public final class RequestPetitionCancel extends L2GameClientPacket
 	private static final String _C__8A_REQUEST_PETITIONCANCEL = "[C] 8A RequestPetitionCancel";
 	
 	// private int _unknown;
+	private String _unk; // 603
 	
 	@Override
 	protected void readImpl()
 	{
 		// _unknown = readD(); This is pretty much a trigger packet.
+		_unk = readS(); // 603
 	}
 	
 	@Override

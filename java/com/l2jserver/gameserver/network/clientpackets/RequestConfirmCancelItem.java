@@ -120,6 +120,17 @@ public final class RequestConfirmCancelItem extends L2GameClientPacket
 			case S84:
 				price = 920000;
 				break;
+			// 603-Start
+			case R:
+				price = 1840000;
+				break;
+			case R95:
+				price = 3680000;
+				break;
+			case R99:
+				price = 7360000;
+				break;
+			// 603-End
 			// TODO: S84 TOP price 3.2M
 			// any other item type is not augmentable
 			default:

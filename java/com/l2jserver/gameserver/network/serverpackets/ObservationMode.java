@@ -36,8 +36,8 @@ public class ObservationMode extends L2GameServerPacket
 		writeD(_loc.getX());
 		writeD(_loc.getY());
 		writeD(_loc.getZ());
-		writeC(0x00); // ?
-		writeC(0xc0); // ?
-		writeC(0x00); // ?
+		//603 writeC(0x00); // ?
+		writeD(0xc0); // 603 // ?
+		writeD(0x00); // 603 // ?
 	}
 }

@@ -83,6 +83,7 @@ public final class NpcHtmlMessage extends AbstractHtmlPacket
 		writeD(getNpcObjId());
 		writeS(getHtml());
 		writeD(_itemId);
+		writeD(0); // 603
 	}
 	
 	@Override

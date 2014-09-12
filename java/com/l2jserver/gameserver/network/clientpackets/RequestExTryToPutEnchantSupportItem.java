@@ -78,7 +78,10 @@ public class RequestExTryToPutEnchantSupportItem extends L2GameClientPacket
 				return;
 			}
 			activeChar.setActiveEnchantSupportItemId(support.getObjectId());
+			/* 603
 			activeChar.sendPacket(new ExPutEnchantSupportItemResult(_supportObjectId));
+			 */
+			activeChar.sendPacket(new ExPutEnchantSupportItemResult(1));
 		}
 	}
 	

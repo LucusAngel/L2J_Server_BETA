@@ -43,7 +43,7 @@ public class ExCubeGameRemovePlayer extends L2GameServerPacket
 	protected void writeImpl()
 	{
 		writeC(0xfe);
-		writeH(0x97);
+		writeH(0x98); // 603
 		writeD(0x02);
 		
 		writeD(0xffffffff);

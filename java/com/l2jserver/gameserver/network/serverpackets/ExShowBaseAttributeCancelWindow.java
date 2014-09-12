@@ -36,7 +36,7 @@ public class ExShowBaseAttributeCancelWindow extends L2GameServerPacket
 	protected void writeImpl()
 	{
 		writeC(0xFE);
-		writeH(0x74);
+		writeH(0x75); // 603
 		writeD(_items.length);
 		for (L2ItemInstance item : _items)
 		{
@@ -84,6 +84,38 @@ public class ExShowBaseAttributeCancelWindow extends L2GameServerPacket
 					_price = 160000;
 				}
 				break;
+			// 603-Start
+			case R:
+				if (item.getItem() instanceof L2Weapon)
+				{
+					_price = 250000;
+				}
+				else
+				{
+					_price = 240000;
+				}
+				break;
+			case R95:
+				if (item.getItem() instanceof L2Weapon)
+				{
+					_price = 400000;
+				}
+				else
+				{
+					_price = 320000;
+				}
+				break;
+			case R99:
+				if (item.getItem() instanceof L2Weapon)
+				{
+					_price = 800000;
+				}
+				else
+				{
+					_price = 640000;
+				}
+				break;
+			// 603-End
 		}
 		
 		return _price;

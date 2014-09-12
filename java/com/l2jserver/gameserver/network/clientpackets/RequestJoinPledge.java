@@ -76,7 +76,11 @@ public final class RequestJoinPledge extends L2GameClientPacket
 		
 		final String pledgeName = activeChar.getClan().getName();
 		final String subPledgeName = (activeChar.getClan().getSubPledge(_pledgeType) != null ? activeChar.getClan().getSubPledge(_pledgeType).getName() : null);
+		final String askjoinName = activeChar.getName(); // 603
+		/* 603
 		target.sendPacket(new AskJoinPledge(activeChar.getObjectId(), subPledgeName, _pledgeType, pledgeName));
+		 */
+		target.sendPacket(new AskJoinPledge(activeChar.getObjectId(), subPledgeName, _pledgeType, pledgeName, askjoinName));
 	}
 	
 	public int getPledgeType()

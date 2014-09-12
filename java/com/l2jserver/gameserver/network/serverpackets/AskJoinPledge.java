@@ -24,13 +24,15 @@ public final class AskJoinPledge extends L2GameServerPacket
 	private final String _subPledgeName;
 	private final int _pledgeType;
 	private final String _pledgeName;
+	private final String _askjoinName; // 603
 	
-	public AskJoinPledge(int requestorObjId, String subPledgeName, int pledgeType, String pledgeName)
+	public AskJoinPledge(int requestorObjId, String subPledgeName, int pledgeType, String pledgeName, String askjoinName) // 603
 	{
 		_requestorObjId = requestorObjId;
 		_subPledgeName = subPledgeName;
 		_pledgeType = pledgeType;
 		_pledgeName = pledgeName;
+		_askjoinName = askjoinName; // 603
 	}
 	
 	@Override
@@ -38,14 +40,24 @@ public final class AskJoinPledge extends L2GameServerPacket
 	{
 		writeC(0x2c);
 		writeD(_requestorObjId);
+		// 603-Start
+		writeS(_askjoinName);
+		writeS(_pledgeName);
+		if (_pledgeType != 0)
+		{
+			writeD(_pledgeType);
+		}
+		// 603-End
 		if (_subPledgeName != null)
 		{
 			writeS(_pledgeType > 0 ? _subPledgeName : _pledgeName);
 		}
+		/*
 		if (_pledgeType != 0)
 		{
 			writeD(_pledgeType);
 		}
 		writeS(_pledgeName);
+		 */
 	}
 }

@@ -196,7 +196,65 @@ public enum ClassId implements IIdentifiable
 	femaleSoulhound(0x85, false, Race.KAMAEL, femaleSoulbreaker),
 	trickster(0x86, false, Race.KAMAEL, arbalester),
 	inspector(0x87, false, Race.KAMAEL, warder), // DS: yes, both male/female inspectors use skills from warder
-	judicator(0x88, false, Race.KAMAEL, inspector);
+	judicator(0x88, false, Race.KAMAEL, inspector),
+	
+	dummyEntry35(0x89, false, null, null),
+	dummyEntry36(0x8a, false, null, null),
+	
+	// Awakening
+	sigelKnight(139, false, Race.HUMAN, phoenixKnight),
+	tyrrWarrior(140, false, Race.HUMAN, duelist),
+	othellRogue(141, false, Race.HUMAN, adventurer),
+	yulArcher(142, false, Race.HUMAN, sagittarius),
+	feohWizard(143, true, Race.HUMAN, soultaker),
+	issEnchanter(144, false, Race.KAMAEL, judicator),
+	wynnSummoner(145, true, Race.HUMAN, arcanaLord),
+	aeoreHealer(146, true, Race.HUMAN, cardinal),
+	
+	dummyEntry37(0x93, false, null, null),
+	
+	SigelPhoenixKnight(148, false, Race.HUMAN, phoenixKnight),
+	SigelHellKnight(149, false, Race.HUMAN, hellKnight),
+	SigelEvaTemplar(150, false, Race.ELF, evaTemplar),
+	SigelShillienTemplar(151, false, Race.DARK_ELF, shillienTemplar),
+	TyrrDuelist(152, false, Race.HUMAN, duelist),
+	TyrrDreadnought(153, false, Race.HUMAN, dreadnought),
+	TyrrTitan(154, false, Race.ORC, titan),
+	TyrrGrandKhavatari(155, false, Race.ORC, grandKhavatari),
+	TyrrMaestro(156, false, Race.DWARF, maestro),
+	TyrrDoombringer(157, false, Race.KAMAEL, doombringer),
+	OthellAdventurer(158, false, Race.HUMAN, adventurer),
+	OthellWindRider(159, false, Race.ELF, windRider),
+	OthellGhostHunter(160, false, Race.DARK_ELF, ghostHunter),
+	OthellFortuneSeeker(161, false, Race.DWARF, fortuneSeeker),
+	YulSagittarius(162, false, Race.HUMAN, sagittarius),
+	YulMoonlightSentinel(163, false, Race.ELF, moonlightSentinel),
+	YulGhostSentinel(164, false, Race.DARK_ELF, ghostSentinel),
+	YulTrickster(165, false, Race.KAMAEL, trickster),
+	FeohArchmage(166, true, Race.HUMAN, archmage),
+	FeohSoultaker(167, true, Race.HUMAN, soultaker),
+	FeohMysticMuse(168, true, Race.ELF, mysticMuse),
+	FeohStormScreamer(169, true, Race.DARK_ELF, stormScreamer),
+	FeohSoulhound(170, true, Race.KAMAEL, maleSoulhound),
+	IssHierophant(171, false, Race.HUMAN, hierophant),
+	IssSwordMuse(172, false, Race.ELF, swordMuse),
+	IssSpectralDancer(173, false, Race.DARK_ELF, spectralDancer),
+	IssDominator(174, false, Race.ORC, dominator),
+	IssDoomcryer(175, false, Race.ORC, doomcryer),
+	WynnArcanaLord(176, true, true, Race.HUMAN, arcanaLord),
+	WynnElementalMaster(177, true, true, Race.ELF, elementalMaster),
+	WynnSpectralMaster(178, true, true, Race.DARK_ELF, spectralMaster),
+	AeoreCardinal(179, true, Race.HUMAN, cardinal),
+	AeoreEvaSaint(180, true, Race.ELF, evaSaint),
+	AeoreShillienSaint(181, true, Race.DARK_ELF, shillienSaint),
+	ErtheiaFighter(182, false, Race.ERTHEIA, null),
+	ErtheiaWizard(183, true, Race.ERTHEIA, null),
+	Marauder(184, false, Race.ERTHEIA, ErtheiaFighter),
+	CloudBreaker(185, true, Race.ERTHEIA, ErtheiaWizard),
+	Ripper(186, false, Race.ERTHEIA, Marauder),
+	Stratomancer(187, true, Race.ERTHEIA, CloudBreaker),
+	Eviscerator(188, false, Race.ERTHEIA, Ripper),
+	SayhaSeer(189, true, Race.ERTHEIA, Stratomancer);
 	
 	/** The Identifier of the Class */
 	private final int _id;
@@ -318,6 +376,13 @@ public enum ClassId implements IIdentifiable
 		{
 			return 0;
 		}
+		//FIXME: refactor me
+		// 603 temp fix start
+		else if (_parent == ErtheiaFighter || _parent == ErtheiaWizard)
+		{
+			return 2;
+		}
+		// 603 temp fix end
 		
 		return 1 + _parent.level();
 	}

@@ -64,32 +64,58 @@ public class GMViewCharacterInfo extends L2GameServerPacket
 		writeD(_activeChar.getINT());
 		writeD(_activeChar.getWIT());
 		writeD(_activeChar.getMEN());
+		//looks like the two new stats (Battlecruiser)
+		writeD(0); // 603-New-1
+		writeD(0); // 603-New-2
 		writeD(_activeChar.getMaxHp());
 		writeD((int) _activeChar.getCurrentHp());
 		writeD(_activeChar.getMaxMp());
 		writeD((int) _activeChar.getCurrentMp());
-		writeD(_activeChar.getSp());
+		writeQ(_activeChar.getSp()); // 603
 		writeD(_activeChar.getCurrentLoad());
 		writeD(_activeChar.getMaxLoad());
-		writeD(_activeChar.getPkKills());
+		writeD(0); // 603
 		
 		for (int slot : getPaperdollOrder())
 		{
 			writeD(_activeChar.getInventory().getPaperdollObjectId(slot));
 		}
+		writeD(0); // 603
+		writeD(0); // 603
+		writeD(0); // 603
+		writeD(0); // 603
+		writeD(0); // 603
+		writeD(0); // 603
+		writeD(0); // 603
 		
 		for (int slot : getPaperdollOrder())
 		{
 			writeD(_activeChar.getInventory().getPaperdollItemDisplayId(slot));
 		}
+		writeD(0); // 603
+		writeD(0); // 603
+		writeD(0); // 603
+		writeD(0); // 603
+		writeD(0); // 603
+		writeD(0); // 603
+		writeD(0); // 603
 		
 		for (int slot : getPaperdollOrder())
 		{
 			writeD(_activeChar.getInventory().getPaperdollAugmentationId(slot));
 		}
+		writeD(0); // 603
+		writeD(0); // 603
+		writeD(0); // 603
+		writeD(0); // 603
+		writeD(0); // 603
+		writeD(0); // 603
+		writeD(0); // 603
 		
-		writeD(_activeChar.getInventory().getTalismanSlots()); // CT2.3
-		writeD(_activeChar.getInventory().canEquipCloak() ? 1 : 0); // CT2.3
+		writeC(_activeChar.getInventory().getTalismanSlots()); // 603 // CT2.3
+		writeC(_activeChar.getInventory().canEquipCloak() ? 1 : 0); // 603 // CT2.3
+		writeD(0x00); // 603
+		writeH(0x00); // 603
 		writeD(_activeChar.getPAtk(null));
 		writeD(_activeChar.getPAtkSpd());
 		writeD(_activeChar.getPDef(null));
@@ -99,12 +125,16 @@ public class GMViewCharacterInfo extends L2GameServerPacket
 		writeD(_activeChar.getMAtk(null, null));
 		
 		writeD(_activeChar.getMAtkSpd());
-		writeD(_activeChar.getPAtkSpd());
+		writeD(0x00); // 603
 		
 		writeD(_activeChar.getMDef(null, null));
+		writeD(_activeChar.getEvasionRate(null)); // 603-Magic tEvasionRate
+		writeD(_activeChar.getAccuracy()); // 603-Magic Accuracy
+		writeD(_activeChar.getMCriticalHit(null, null)); // 603-Magic MCriticalHit
 		
 		writeD(_activeChar.getPvpFlag()); // 0-non-pvp 1-pvp = violett name
-		writeD(_activeChar.getKarma());
+		int Karma = 0 - _activeChar.getKarma(); // 603-Test
+		writeD(Karma); // 603-Test
 		
 		writeD(_runSpd);
 		writeD(_walkSpd);
@@ -161,5 +191,7 @@ public class GMViewCharacterInfo extends L2GameServerPacket
 		}
 		writeD(_activeChar.getFame());
 		writeD(_activeChar.getVitalityPoints());
+		writeD(0); // 603
+		writeD(0); // 603
 	}
 }

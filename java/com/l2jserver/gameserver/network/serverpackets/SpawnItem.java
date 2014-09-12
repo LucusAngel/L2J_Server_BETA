@@ -65,6 +65,6 @@ public final class SpawnItem extends L2GameServerPacket
 		writeD(_stackable);
 		writeQ(_count);
 		writeD(0x00); // c2
-		writeD(0x00); // freya unk
+		//603 writeD(0x00); // freya unk
 	}
 }

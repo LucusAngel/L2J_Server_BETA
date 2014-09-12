@@ -54,7 +54,7 @@ public class RecipeBookItemList extends L2GameServerPacket
 			for (int i = 0; i < _recipes.length; i++)
 			{
 				writeD(_recipes[i].getId());
-				writeD(i + 1);
+				writeD(1); // 603
 			}
 		}
 	}

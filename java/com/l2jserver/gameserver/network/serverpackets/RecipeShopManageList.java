@@ -63,9 +63,11 @@ public class RecipeShopManageList extends L2GameServerPacket
 	protected final void writeImpl()
 	{
 		writeC(0xDE);
-		writeD(_seller.getObjectId());
-		writeD((int) _seller.getAdena());
+		//603 writeD(_seller.getObjectId());
+		//603 writeD((int) _seller.getAdena());
 		writeD(_isDwarven ? 0x00 : 0x01);
+		writeD((int) _seller.getCurrentMp()); // 603
+		writeD(_seller.getMaxMp()); // 603
 		
 		if (_recipes == null)
 		{
@@ -79,7 +81,7 @@ public class RecipeShopManageList extends L2GameServerPacket
 			{
 				L2RecipeList temp = _recipes[i];
 				writeD(temp.getId());
-				writeD(i + 1);
+				writeD(1); // 603
 			}
 		}
 		
@@ -93,7 +95,7 @@ public class RecipeShopManageList extends L2GameServerPacket
 			for (L2ManufactureItem item : _seller.getManufactureItems().values())
 			{
 				writeD(item.getRecipeId());
-				writeD(0x00);
+				writeD(0x01); // 603
 				writeQ(item.getCost());
 			}
 		}

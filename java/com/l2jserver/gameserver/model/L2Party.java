@@ -354,7 +354,15 @@ public class L2Party extends AbstractPlayerGroup
 		// open the CCInformationwindow
 		if (isInCommandChannel())
 		{
+			//FIXME: Validate this (Battlecruiser)
+			/* rocknow-fix-Start
 			player.sendPacket(ExOpenMPCC.STATIC_PACKET);
+			 */
+			List<L2PcInstance> ccMembers;
+			ccMembers = getCommandChannel().getMembers();
+			for (L2PcInstance ccp : ccMembers)
+				ccp.sendPacket(ExOpenMPCC.STATIC_PACKET);
+			// rocknow-fix-End
 		}
 		
 		if (_positionBroadcastTask == null)

@@ -38,7 +38,7 @@ public class ExSubPledgeSkillAdd extends L2GameServerPacket
 	public void writeImpl()
 	{
 		writeC(0xFE);
-		writeH(0x76);
+		writeH(0x77); // 603
 		writeD(_type);
 		writeD(_skillId);
 		writeD(_skillLevel);

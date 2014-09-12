@@ -48,4 +48,11 @@ public class InventoryUpdate extends AbstractInventoryUpdate
 		writeC(0x21);
 		writeItems();
 	}
+	
+	@Override
+	public void runImpl() // 603
+	{
+		getClient().sendPacket(new ExAdenaInvenCount(getClient().getActiveChar()));
+		getClient().sendPacket(new ExUserInfoInvenWeight(getClient().getActiveChar()));
+	}
 }

@@ -34,7 +34,7 @@ public class ExVitalityPointInfo extends L2GameServerPacket
 	protected void writeImpl()
 	{
 		writeC(0xFE);
-		writeH(0xA0);
+		writeH(0xA1); // 603
 		writeD(_vitalityPoints);
 	}
 }

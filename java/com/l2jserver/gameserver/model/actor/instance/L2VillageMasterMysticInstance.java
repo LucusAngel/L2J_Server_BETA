@@ -38,7 +38,11 @@ public final class L2VillageMasterMysticInstance extends L2VillageMasterInstance
 			return false;
 		}
 		
+		//FIXME: validate this (Battlecruiser)
+		/* l2jtw add
 		return pclass.isOfRace(Race.HUMAN) || pclass.isOfRace(Race.ELF);
+		 */
+		return pclass.isOfRace(Race.HUMAN) || pclass.isOfRace(Race.ELF) || pclass.isOfRace(null);
 	}
 	
 	@Override

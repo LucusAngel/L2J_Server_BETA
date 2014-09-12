@@ -43,6 +43,10 @@ public class FuncMaxHpMul extends Func
 	@Override
 	public void calc(Env env)
 	{
+		//FIXME: Validate this (Battlecruiser)
+		/* rocknow Test : GS-comment-016
 		env.mulValue(BaseStats.CON.calcBonus(env.getCharacter()));
+		 */
+		env.mulValue(BaseStats.CON.calcBonus(env.getCharacter()) / 1.7);
 	}
 }

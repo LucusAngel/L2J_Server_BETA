@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="L2J_Server_BETA" default="build" basedir=".">
+<project name="L2J_Server_EXPERIMENTAL" default="build" basedir=".">
 	<description>
 		This script will build the L2J Server.
 
@@ -194,7 +194,7 @@
 	</target>
 
 	<target name="build" depends="jar" description="Create the Zip file.">
-		<zip destfile="${build}/L2J_Server_BETA.zip" basedir="${build.dist}" level="9" />
+		<zip destfile="${build}/L2J_Server_EXPERIMENTAL.zip" basedir="${build.dist}" level="9" />
 	</target>
 
 	<target name="checkRequirements" description="Check Requirements.">

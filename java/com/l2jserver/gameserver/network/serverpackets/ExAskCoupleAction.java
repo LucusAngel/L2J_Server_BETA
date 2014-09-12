@@ -36,7 +36,7 @@ public class ExAskCoupleAction extends L2GameServerPacket
 	protected void writeImpl()
 	{
 		writeC(0xFE);
-		writeH(0xBB);
+		writeH(0xBC); // 603
 		writeD(_actionId);
 		writeD(_charObjId);
 	}

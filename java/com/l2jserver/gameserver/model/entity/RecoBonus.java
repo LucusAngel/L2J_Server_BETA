@@ -135,6 +135,21 @@ public final class RecoBonus
 			45,
 			50
 		}
+		// l2jtw add start - add level 90 to 99 data
+		,
+		{
+			5,
+			10,
+			15,
+			20,
+			25,
+			30,
+			35,
+			40,
+			45,
+			50
+		}
+		// l2jtw add end
 	};
 	
 	public static int getRecoBonus(L2PcInstance activeChar)

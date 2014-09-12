@@ -36,7 +36,7 @@ public class ExChangeNpcState extends L2GameServerPacket
 	protected void writeImpl()
 	{
 		writeC(0xFE);
-		writeH(0xBE);
+		writeH(0xBF); // 603
 		writeD(_objId);
 		writeD(_state);
 	}

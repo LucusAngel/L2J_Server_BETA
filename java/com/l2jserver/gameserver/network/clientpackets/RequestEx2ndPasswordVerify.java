@@ -26,7 +26,7 @@ import com.l2jserver.gameserver.datatables.SecondaryAuthData;
  */
 public class RequestEx2ndPasswordVerify extends L2GameClientPacket
 {
-	private static final String _C__D0_AE_REQUESTEX2NDPASSWORDVERIFY = "[C] D0:AE RequestEx2ndPasswordVerify";
+	private static final String _C__D0_A7_REQUESTEX2NDPASSWORDVERIFY = "[C] D0:A7 RequestEx2ndPasswordVerify";
 	
 	private String _password;
 	
@@ -50,6 +50,6 @@ public class RequestEx2ndPasswordVerify extends L2GameClientPacket
 	@Override
 	public String getType()
 	{
-		return _C__D0_AE_REQUESTEX2NDPASSWORDVERIFY;
+		return _C__D0_A7_REQUESTEX2NDPASSWORDVERIFY;
 	}
 }

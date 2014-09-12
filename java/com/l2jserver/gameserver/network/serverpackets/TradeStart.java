@@ -44,6 +44,8 @@ public final class TradeStart extends AbstractItemPacket
 		
 		writeC(0x14);
 		writeD(_activeChar.getActiveTradeList().getPartner().getObjectId());
+		writeC(0x01); // 603
+		writeC(_activeChar.getActiveTradeList().getPartner().getLevel()); // 603
 		writeH(_itemList.length);
 		for (L2ItemInstance item : _itemList)
 		{

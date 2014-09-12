@@ -58,6 +58,7 @@ public final class BuyListSeed extends L2GameServerPacket
 		writeC(0xe9);
 		
 		writeQ(_money); // current money
+		writeD(0x00); // 603 : GS-comment-024
 		writeD(_manorId); // manor id
 		
 		if ((_list != null) && (_list.size() > 0))
@@ -65,19 +66,23 @@ public final class BuyListSeed extends L2GameServerPacket
 			writeH(_list.size()); // list length
 			for (Seed s : _list)
 			{
+				writeC(0); // 603
 				writeD(s._itemId);
 				writeD(s._itemId);
-				writeD(0x00);
+				writeC(0x00); // 603
 				writeQ(s._count); // item count
-				writeH(0x05); // Custom Type 2
-				writeH(0x00); // Custom Type 1
+				writeC(0x05); // 603 // Custom Type 2
+				writeC(0x00); // 603 // Custom Type 1
 				writeH(0x00); // Equipped
-				writeD(0x00); // Body Part
-				writeH(0x00); // Enchant
-				writeH(0x00); // Custom Type
-				writeD(0x00); // Augment
+				writeQ(0x00); // 603 // Body Part
+				writeC(0x00); // 603 // Enchant
+				writeC(0x00); // 603 // Custom Type
+				// 603 writeD(0x00); // Augment
 				writeD(-1); // Mana
 				writeD(-9999); // Time
+				writeC(0x01); // 603
+				/* 603
+				writeD(0x00); // Augment // 603
 				writeH(0x00); // Element Type
 				writeH(0x00); // Element Power
 				for (byte i = 0; i < 6; i++)
@@ -88,6 +93,8 @@ public final class BuyListSeed extends L2GameServerPacket
 				writeH(0x00);
 				writeH(0x00);
 				writeH(0x00);
+				writeD(0x00); // 603-Appearance
+				 */
 				writeQ(s._price); // price
 			}
 			_list.clear();

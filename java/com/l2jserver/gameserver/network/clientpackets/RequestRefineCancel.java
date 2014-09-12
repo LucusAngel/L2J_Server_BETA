@@ -118,6 +118,17 @@ public final class RequestRefineCancel extends L2GameClientPacket
 			case S84:
 				price = 920000;
 				break;
+			// 603-Start
+			case R:
+				price = 1320000;
+				break;
+			case R95:
+				price = 1720000;
+				break;
+			case R99:
+				price = 2010000;
+				break;
+			// 603-End
 			// any other item type is not augmentable
 			default:
 				activeChar.sendPacket(new ExVariationCancelResult(0));

@@ -411,7 +411,7 @@ public class ExServerPrimitive extends L2GameServerPacket
 		
 		for (Line line : _lines)
 		{
-			writeC(2); // Its the type in this case Line
+			//603 writeC(2); // Its the type in this case Line
 			writeS(line.getName());
 			int color = line.getColor();
 			writeD((color >> 16) & 0xFF); // R

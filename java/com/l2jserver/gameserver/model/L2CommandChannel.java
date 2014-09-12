@@ -178,6 +178,17 @@ public class L2CommandChannel extends AbstractPlayerGroup
 	@Override
 	public int getLevel()
 	{
+		//FIXME: Refactor me, validate this (Battlecruiser)
+		// l2jtw add start
+		int _channelLvl = 0;
+		for (L2Party pty : _parties)
+		{
+			if (pty.getLevel() > _channelLvl)
+			{
+				_channelLvl = pty.getLevel();
+			}
+		}
+		// l2jtw add end
 		return _channelLvl;
 	}
 	

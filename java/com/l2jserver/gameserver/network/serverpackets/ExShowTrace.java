@@ -46,7 +46,7 @@ public final class ExShowTrace extends L2GameServerPacket
 	protected void writeImpl()
 	{
 		writeC(0xFE);
-		writeH(0x67);
+		writeH(0x68); // 603
 		
 		writeH(0); // type broken in H5
 		writeD(0); // time broken in H5

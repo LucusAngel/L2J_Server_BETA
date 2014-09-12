@@ -28,6 +28,6 @@ public class ExDominionWarEnd extends L2GameServerPacket
 	protected void writeImpl()
 	{
 		writeC(0xFE);
-		writeH(0xA4);
+		writeH(0xA5); // 603
 	}
 }

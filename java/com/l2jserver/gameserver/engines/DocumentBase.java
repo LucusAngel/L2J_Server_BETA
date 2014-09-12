@@ -170,6 +170,7 @@ public abstract class DocumentBase
 		{
 			_log.log(Level.SEVERE, "Error loading file " + _file, e);
 		}
+		//L2JTW sets _file and _tables to null here
 		return doc;
 	}
 	
@@ -1127,8 +1128,8 @@ public abstract class DocumentBase
 					cond = joinAnd(cond, new ConditionTargetInvSize(size));
 					break;
 				}
-				}
 			}
+		}
 		
 		
 		if (cond == null)

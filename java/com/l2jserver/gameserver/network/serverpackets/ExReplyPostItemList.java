@@ -40,7 +40,7 @@ public class ExReplyPostItemList extends AbstractItemPacket
 	protected void writeImpl()
 	{
 		writeC(0xFE);
-		writeH(0xB2);
+		writeH(0xB3); // 603
 		writeD(_itemList.length);
 		for (L2ItemInstance item : _itemList)
 		{

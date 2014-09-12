@@ -35,6 +35,6 @@ public class FriendAddRequest extends L2GameServerPacket
 	{
 		writeC(0x83);
 		writeS(_requestorName);
-		writeD(0x00);
+		//603 writeD(0x00);
 	}
 }

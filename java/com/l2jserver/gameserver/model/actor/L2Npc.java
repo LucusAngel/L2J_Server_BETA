@@ -88,6 +88,7 @@ import com.l2jserver.gameserver.model.zone.type.L2TownZone;
 import com.l2jserver.gameserver.network.SystemMessageId;
 import com.l2jserver.gameserver.network.serverpackets.AbstractNpcInfo;
 import com.l2jserver.gameserver.network.serverpackets.ActionFailed;
+import com.l2jserver.gameserver.network.serverpackets.ExAbnormalStatusUpdateFromTargetPacket; // 603
 import com.l2jserver.gameserver.network.serverpackets.ExChangeNpcState;
 import com.l2jserver.gameserver.network.serverpackets.MagicSkillUse;
 import com.l2jserver.gameserver.network.serverpackets.NpcHtmlMessage;
@@ -564,6 +565,12 @@ public class L2Npc extends L2Character
 			else
 			{
 				player.sendPacket(new AbstractNpcInfo.NpcInfo(this, player));
+				// 603 add start
+				if (player.getTargetId() == this.getObjectId())
+				{
+					player.sendPacket(new ExAbnormalStatusUpdateFromTargetPacket(this.getObjectId()));
+				}
+				// 603 add end
 			}
 		}
 	}

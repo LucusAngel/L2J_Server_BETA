@@ -51,10 +51,11 @@ public class ShopPreviewList extends L2GameServerPacket
 	protected final void writeImpl()
 	{
 		writeC(0xF5);
-		writeC(0xC0); // ?
-		writeC(0x13); // ?
-		writeC(0x00); // ?
-		writeC(0x00); // ?
+		writeD(0x00); // 603-???
+		//603 writeC(0xC0); // ?
+		//603 writeC(0x13); // ?
+		//603 writeC(0x00); // ?
+		//603 writeC(0x00); // ?
 		writeQ(_money); // current money
 		writeD(_listId);
 		
@@ -77,11 +78,11 @@ public class ShopPreviewList extends L2GameServerPacket
 				
 				if (product.getItem().getType1() != L2Item.TYPE1_ITEM_QUESTITEM_ADENA)
 				{
-					writeH(product.getItem().getBodyPart()); // rev 415 slot 0006-lr.ear 0008-neck 0030-lr.finger 0040-head 0080-?? 0100-l.hand 0200-gloves 0400-chest 0800-pants 1000-feet 2000-?? 4000-r.hand 8000-r.hand
+					writeQ(product.getItem().getBodyPart()); // 603 // rev 415 slot 0006-lr.ear 0008-neck 0030-lr.finger 0040-head 0080-?? 0100-l.hand 0200-gloves 0400-chest 0800-pants 1000-feet 2000-?? 4000-r.hand 8000-r.hand
 				}
 				else
 				{
-					writeH(0x00); // rev 415 slot 0006-lr.ear 0008-neck 0030-lr.finger 0040-head 0080-?? 0100-l.hand 0200-gloves 0400-chest 0800-pants 1000-feet 2000-?? 4000-r.hand 8000-r.hand
+					writeQ(0x00); // 603 // rev 415 slot 0006-lr.ear 0008-neck 0030-lr.finger 0040-head 0080-?? 0100-l.hand 0200-gloves 0400-chest 0800-pants 1000-feet 2000-?? 4000-r.hand 8000-r.hand
 				}
 				
 				writeQ(Config.WEAR_PRICE);

@@ -34,7 +34,7 @@ public class ExRedSky extends L2GameServerPacket
 	protected void writeImpl()
 	{
 		writeC(0xFE);
-		writeH(0x41);
+		writeH(0x42); // 603
 		writeD(_duration);
 	}
 }

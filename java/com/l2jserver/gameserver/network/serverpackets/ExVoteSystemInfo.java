@@ -46,7 +46,7 @@ public class ExVoteSystemInfo extends L2GameServerPacket
 	protected void writeImpl()
 	{
 		writeC(0xFE);
-		writeH(0xC9);
+		writeH(0xCA); // 603
 		writeD(_recomLeft);
 		writeD(_recomHave);
 		writeD(_bonusTime);

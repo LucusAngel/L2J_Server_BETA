@@ -65,6 +65,7 @@ public class ExPartyRoomMember extends L2GameServerPacket
 				}
 			}
 			writeD(0x00); // TODO: Instance datas there is more if that is not 0!
+				//for{writeD(0);} // 603 : GS-comment-028.3
 		}
 	}
 }

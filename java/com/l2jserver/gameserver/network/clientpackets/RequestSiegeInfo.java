@@ -26,10 +26,13 @@ public class RequestSiegeInfo extends L2GameClientPacket
 {
 	private static final String _C__58_REQUESTSIEGEINFO = "[C] 58 RequestSiegeInfo";
 	
+	private int _unk; // 603
+	
 	@Override
 	protected void readImpl()
 	{
 		// trigger
+		_unk = readD(); // 603
 	}
 	
 	@Override

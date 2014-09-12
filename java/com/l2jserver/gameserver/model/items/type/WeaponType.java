@@ -42,7 +42,12 @@ public enum WeaponType implements ItemType
 	CROSSBOW(TraitType.CROSSBOW),
 	FLAG(TraitType.NONE),
 	OWNTHING(TraitType.NONE),
+	/* 603 start
 	DUALDAGGER(TraitType.DUALDAGGER);
+	 */
+	DUALDAGGER(TraitType.DUALDAGGER),
+	DUALBLUNT(TraitType.DUALBLUNT);
+	// 603 end
 	
 	private final int _mask;
 	private final TraitType _traitType;

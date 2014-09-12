@@ -43,7 +43,7 @@ public final class HennaItemRemoveInfo extends L2GameServerPacket
 		writeD(_henna.getDyeItemId()); // item id of dye
 		writeQ(_henna.getCancelCount()); // total amount of dye require
 		writeQ(_henna.getCancelFee()); // total amount of Adena require to remove symbol
-		writeD(_henna.isAllowedClass(_activeChar.getClassId()) ? 0x01 : 0x00); // able to remove or not
+		writeD(0); // 603 // able to remove or not
 		writeQ(_activeChar.getAdena());
 		writeD(_activeChar.getINT()); // current INT
 		writeC(_activeChar.getINT() - _henna.getStatINT()); // equip INT
@@ -57,5 +57,11 @@ public final class HennaItemRemoveInfo extends L2GameServerPacket
 		writeC(_activeChar.getDEX() - _henna.getStatDEX()); // equip DEX
 		writeD(_activeChar.getWIT()); // current WIT
 		writeC(_activeChar.getWIT() - _henna.getStatWIT()); // equip WIT
+		//looks like the new stats (Battlecruiser)
+		writeD(0); // 603-current New-1
+		writeC(0); // 603-equip New-1
+		writeD(0); // 603-current New-2
+		writeC(0); // 603-equip New-2
+		writeD(0x00); // 603
 	}
 }

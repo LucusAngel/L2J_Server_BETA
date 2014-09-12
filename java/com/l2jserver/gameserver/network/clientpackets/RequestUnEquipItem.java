@@ -38,6 +38,7 @@ public class RequestUnEquipItem extends L2GameClientPacket
 	private static final String _C__16_REQUESTUNEQUIPITEM = "[C] 16 RequestUnequipItem";
 	
 	private int _slot;
+	private long _slot_Q; // 603-temp fix
 	
 	/**
 	 * Packet type id 0x16 format: cd
@@ -45,7 +46,12 @@ public class RequestUnEquipItem extends L2GameClientPacket
 	@Override
 	protected void readImpl()
 	{
+		/* 603-temp fix
 		_slot = readD();
+		 */
+		_slot_Q = readQ();
+		_slot = (int) _slot_Q;
+		// end
 	}
 	
 	@Override

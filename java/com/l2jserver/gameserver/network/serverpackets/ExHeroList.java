@@ -40,7 +40,7 @@ public class ExHeroList extends L2GameServerPacket
 	protected void writeImpl()
 	{
 		writeC(0xFE);
-		writeH(0x79);
+		writeH(0x7a); // 603
 		writeD(_heroList.size());
 		
 		for (Integer heroId : _heroList.keySet())

@@ -42,6 +42,7 @@ import com.l2jserver.gameserver.network.serverpackets.MoveToPawn;
 import com.l2jserver.gameserver.network.serverpackets.StopMove;
 import com.l2jserver.gameserver.network.serverpackets.StopRotation;
 import com.l2jserver.gameserver.taskmanager.AttackStanceTaskManager;
+import com.l2jserver.util.Rnd; // l2jtw add : GS-comment-005
 
 /**
  * Mother class of all objects AI in the world.<br>
@@ -103,6 +104,34 @@ public abstract class AbstractAI implements Ctrl
 					setIntention(AI_INTENTION_IDLE);
 					return;
 				}
+				//FIXME: verify what it actually does
+				// l2jtw add start : GS-comment-005
+				if (_actor instanceof L2Summon)
+				{
+					L2PcInstance owner = ((L2Summon) _actor).getOwner();
+					for(L2Object _object :((L2Summon)_actor).getKnownList().getKnownObjects().values())
+					{
+						if(!(_object instanceof L2Character) || _object == owner)
+						{
+							continue;
+						}
+						int ar = _actor.getTemplate().getCollisionRadius();
+						int tr = ((L2Character) _object).getTemplate().getCollisionRadius();
+						if (Rnd.get(100) < 30 && _actor.isInsideRadius(_object, ar+tr, false, false))
+						{
+							int newX, newY;
+							int a = Rnd.get(360);
+							double ang = Math.PI / 180 * a;
+							int fr = followTarget.getTemplate().getCollisionRadius();
+							
+							newX = followTarget.getX() + (int) ((fr+39) * Math.cos(ang));
+							newY = followTarget.getY() + (int) ((fr+39) * Math.sin(ang));
+							moveTo(newX, newY, _object.getZ());
+							return;
+						}
+					}
+				}
+				// l2jtw add end
 				
 				if (!_actor.isInsideRadius(followTarget, _range, true, false))
 				{

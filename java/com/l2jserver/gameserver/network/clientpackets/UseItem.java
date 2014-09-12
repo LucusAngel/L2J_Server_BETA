@@ -250,6 +250,7 @@ public final class UseItem extends L2GameClientPacket
 					}
 					
 					// Don't allow other Race to Wear Kamael exclusive Weapons.
+					/* 603
 					if (!item.isEquipped() && item.isWeapon() && !activeChar.canOverrideCond(PcCondOverride.ITEM_CONDITIONS))
 					{
 						L2Weapon wpn = (L2Weapon) item.getItem();
@@ -284,8 +285,10 @@ public final class UseItem extends L2GameClientPacket
 							}
 						}
 					}
+					 */
 					break;
 				}
+				/* 603
 				case L2Item.SLOT_CHEST:
 				case L2Item.SLOT_BACK:
 				case L2Item.SLOT_GLOVES:
@@ -301,6 +304,7 @@ public final class UseItem extends L2GameClientPacket
 					}
 					break;
 				}
+				 */
 				case L2Item.SLOT_DECO:
 				{
 					if (!item.isEquipped() && (activeChar.getInventory().getTalismanSlots() == 0))

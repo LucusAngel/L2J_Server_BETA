@@ -23,15 +23,20 @@ import com.l2jserver.gameserver.model.MacroCmd;
 
 public class SendMacroList extends L2GameServerPacket
 {
-	private final int _rev;
+	public final static int DELETE = 0; // l2jtw add
+	public final static int ADD = 1; // l2jtw add
+	public final static int EDIT = 2; // l2jtw add
+	private final int _op;
 	private final int _count;
 	private final Macro _macro;
+	private final int _id; // l2jtw add
 	
-	public SendMacroList(int rev, int count, Macro macro)
+	public SendMacroList(int op, int count, Macro macro, int id) // l2jtw add
 	{
-		_rev = rev;
+		_op = op; // l2jtw add
 		_count = count;
 		_macro = macro;
+		_id = _macro == null ? id : _macro.getId(); // l2jtw add
 	}
 	
 	@Override
@@ -39,8 +44,8 @@ public class SendMacroList extends L2GameServerPacket
 	{
 		writeC(0xE8);
 		
-		writeD(_rev); // macro change revision (changes after each macro edition)
-		writeC(0x00); // unknown
+		writeC(_op); // 603
+		writeD(_id); // 603
 		writeC(_count); // count of Macros
 		writeC(_macro != null ? 1 : 0); // unknown
 		

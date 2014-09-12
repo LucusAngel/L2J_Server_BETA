@@ -36,7 +36,7 @@ public class ExBrPremiumState extends L2GameServerPacket
 	protected void writeImpl()
 	{
 		writeC(0xFE);
-		writeH(0xD9);
+		writeH(0xDA); // 603
 		writeD(_objId);
 		writeC(_state);
 	}

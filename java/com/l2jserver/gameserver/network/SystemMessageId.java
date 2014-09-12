@@ -7402,7 +7402,10 @@ public final class SystemMessageId
 	 * ID: 1269<br>
 	 * Message: The new sub class has been added.
 	 */
+	/* 603
 	public static final SystemMessageId ADD_NEW_SUBCLASS;
+	 */
+	public static final SystemMessageId ADD_NEW_SUBCLASS_S1;
 	
 	/**
 	 * ID: 1270<br>
@@ -15187,7 +15190,13 @@ public final class SystemMessageId
 	 * Message: You have $s1 match(es) remaining that you can participate in this week ($s2 1 vs 1 Class matches, $s3 1 vs 1 matches, & $s4 3 vs 3 Team matches).
 	 */
 	public static final SystemMessageId YOU_HAVE_S1_MATCHES_REMAINING_THAT_YOU_CAN_PARTECIPATE_IN_THIS_WEEK_S2_CLASSED_S3_NON_CLASSED_S4_TEAM;
-	
+	// 603 start
+	/**
+	 * ID: 3574<br>
+	 * Message: You cannot change the class because of identity crisis.
+	 */
+	public static final SystemMessageId YOU_CANNOT_CHANGE_THE_CLASS_BECAUSE_OF_IDENTITY_CRISIS; // 603
+	// 603 end
 	/**
 	 * ID: 6004<br>
 	 * Message: Enchant failed. The enchant level for the corresponding item will be exactly retained.
@@ -15570,7 +15579,10 @@ public final class SystemMessageId
 		INCORRECT_ITEM_PRICE = new SystemMessageId(348);
 		PRIVATE_STORE_ALREADY_CLOSED = new SystemMessageId(349);
 		ITEM_OUT_OF_STOCK = new SystemMessageId(350);
+		/* rocknow-Fix : GS-comment-017
 		NOT_ENOUGH_ITEMS = new SystemMessageId(351);
+		 */
+		NOT_ENOUGH_ITEMS = new SystemMessageId(701);
 		INCORRECT_ITEM = new SystemMessageId(352);
 		CANNOT_PURCHASE = new SystemMessageId(353);
 		CANCEL_ENCHANT = new SystemMessageId(354);
@@ -16445,7 +16457,7 @@ public final class SystemMessageId
 		EXCHANGE_HAS_ENDED = new SystemMessageId(1266);
 		CONTRIB_SCORE_INCREASED_S1 = new SystemMessageId(1267);
 		ADD_SUBCLASS_CONFIRM = new SystemMessageId(1268);
-		ADD_NEW_SUBCLASS = new SystemMessageId(1269);
+		ADD_NEW_SUBCLASS_S1 = new SystemMessageId(1269); // 603
 		SUBCLASS_TRANSFER_COMPLETED = new SystemMessageId(1270);
 		DAWN_CONFIRM = new SystemMessageId(1271);
 		DUSK_CONFIRM = new SystemMessageId(1272);
@@ -17738,6 +17750,7 @@ public final class SystemMessageId
 		MP_BECAME_0_ARCANE_SHIELD_DISAPPEARING = new SystemMessageId(3256);
 		CANNOT_USE_SKILL_WITHOUT_SERVITOR = new SystemMessageId(3260);
 		YOU_HAVE_S1_MATCHES_REMAINING_THAT_YOU_CAN_PARTECIPATE_IN_THIS_WEEK_S2_CLASSED_S3_NON_CLASSED_S4_TEAM = new SystemMessageId(3261);
+		YOU_CANNOT_CHANGE_THE_CLASS_BECAUSE_OF_IDENTITY_CRISIS = new SystemMessageId(3574); // 603
 		SAFE_ENCHANT_FAILED = new SystemMessageId(6004);
 		YOU_CANNOT_BOOKMARK_THIS_LOCATION_BECAUSE_YOU_DO_NOT_HAVE_A_MY_TELEPORT_FLAG = new SystemMessageId(6501);
 		THOMAS_D_TURKEY_APPEARED = new SystemMessageId(6503);

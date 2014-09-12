@@ -38,7 +38,7 @@ public class Ex2ndPasswordAck extends L2GameServerPacket
 	{
 		writeC(0xFE);
 		// writeH(0x109); GOD
-		writeH(0xE7);
+		writeH(0x107); // 603
 		writeC(0x00);
 		writeD(_response == WRONG_PATTERN ? 0x01 : 0x00);
 		writeD(0x00);

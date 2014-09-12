@@ -33,6 +33,6 @@ public class ShowPCCafeCouponShowUI extends L2GameServerPacket
 	protected void writeImpl()
 	{
 		writeC(0xfe);
-		writeH(0x44);
+		writeH(0x45); // 603
 	}
 }

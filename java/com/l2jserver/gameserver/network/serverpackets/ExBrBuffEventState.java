@@ -43,7 +43,7 @@ public class ExBrBuffEventState extends L2GameServerPacket
 	protected void writeImpl()
 	{
 		writeC(0xFE);
-		writeH(0xDB);
+		writeH(0xDC); // 603
 		writeD(_type);
 		writeD(_value);
 		writeD(_state);

@@ -45,8 +45,8 @@ public class GmViewQuestInfo extends L2GameServerPacket
 		
 		if (questList.length == 0)
 		{
-			writeC(0);
-			writeH(0);
+			//603 writeC(0);
+			//603 writeH(0);
 			writeH(0);
 			return;
 		}
@@ -67,5 +67,7 @@ public class GmViewQuestInfo extends L2GameServerPacket
 			
 			writeD(qs.getInt("cond")); // stage of quest progress
 		}
+		writeH(0); // 603
+			//for(ddQQ) // 603
 	}
 }

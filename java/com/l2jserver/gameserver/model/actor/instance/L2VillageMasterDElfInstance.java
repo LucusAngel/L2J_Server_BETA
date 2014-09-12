@@ -36,7 +36,10 @@ public final class L2VillageMasterDElfInstance extends L2VillageMasterInstance
 		{
 			return false;
 		}
-		
+		//FIXME: validate this (Battlecruiser)
+		/* l2jtw add
 		return pclass.isOfRace(Race.DARK_ELF);
+		 */
+		return pclass.isOfRace(Race.DARK_ELF) || pclass.isOfRace(null);
 	}
 }

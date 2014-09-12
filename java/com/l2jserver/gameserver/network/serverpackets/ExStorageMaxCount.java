@@ -65,5 +65,7 @@ public class ExStorageMaxCount extends L2GameServerPacket
 		writeD(_recipe);
 		writeD(_inventoryExtraSlots); // Belt inventory slots increase count
 		writeD(_inventoryQuestItems);
+		writeD(40); // 603
+		writeD(40); // 603
 	}
 }

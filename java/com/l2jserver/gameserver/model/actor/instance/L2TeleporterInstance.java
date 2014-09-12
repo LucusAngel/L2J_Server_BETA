@@ -122,6 +122,8 @@ public final class L2TeleporterInstance extends L2Npc
 				else
 				{
 					player.sendMessage("You don't have the sufficient access level to teleport there.");
+					//FIXME: USE SM?
+					//player.sendPacket(SystemMessageId.YOU_ARE_NOT_AUTHORIZED_TO_DO_THAT);
 				}
 				return;
 			}

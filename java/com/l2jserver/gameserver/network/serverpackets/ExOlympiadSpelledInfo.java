@@ -46,7 +46,7 @@ public class ExOlympiadSpelledInfo extends L2GameServerPacket
 	protected final void writeImpl()
 	{
 		writeC(0xFE);
-		writeH(0x7B);
+		writeH(0x7C); // 603
 		writeD(_playerId);
 		writeD(_effects.size());
 		for (BuffInfo info : _effects)
@@ -55,7 +55,8 @@ public class ExOlympiadSpelledInfo extends L2GameServerPacket
 			{
 				writeD(info.getSkill().getId());
 				writeH(info.getSkill().getLevel());
-				writeD(info.getTime());
+				writeD(0); // 603
+				writeH(info.getTime()); // 603
 			}
 		}
 	}

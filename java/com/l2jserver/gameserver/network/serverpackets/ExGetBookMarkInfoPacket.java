@@ -37,7 +37,7 @@ public class ExGetBookMarkInfoPacket extends L2GameServerPacket
 	protected final void writeImpl()
 	{
 		writeC(0xFE);
-		writeH(0x84);
+		writeH(0x85); // 603
 		writeD(0x00); // Dummy
 		writeD(player.getBookmarkslot());
 		writeD(player.getTeleportBookmarks().size());

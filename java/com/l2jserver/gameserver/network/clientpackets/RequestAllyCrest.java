@@ -29,11 +29,15 @@ public final class RequestAllyCrest extends L2GameClientPacket
 	private static final String _C__92_REQUESTALLYCREST = "[C] 92 RequestAllyCrest";
 	
 	private int _crestId;
+	private int _unk1; // 603
+	private int _unk2; // 603
 	
 	@Override
 	protected void readImpl()
 	{
 		_crestId = readD();
+		_unk1 = readD(); // 603
+		_unk2 = readD(); // 603
 	}
 	
 	@Override

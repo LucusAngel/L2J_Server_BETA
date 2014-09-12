@@ -44,10 +44,10 @@ public class ExBrExtraUserInfo extends L2GameServerPacket
 	@Override
 	protected final void writeImpl()
 	{
-		writeC(0xFE);
-		writeH(0xDA);
-		writeD(_charObjId);
-		writeD(_abnormalVisualEffectsEvent);
-		writeC(_lectureMark);
+		//603 writeC(0xFE);
+		//603 writeH(0xDB);
+		//603 writeD(_charObjId);
+		//603 writeD(_abnormalVisualEffectsEvent);
+		//603 writeC(_lectureMark);
 	}
 }

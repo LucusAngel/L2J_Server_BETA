@@ -44,7 +44,7 @@ public class ExCubeGameChangePoints extends L2GameServerPacket
 	protected void writeImpl()
 	{
 		writeC(0xfe);
-		writeH(0x98);
+		writeH(0x99); // 603
 		writeD(0x02);
 		
 		writeD(_timeLeft);

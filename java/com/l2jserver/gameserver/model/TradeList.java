@@ -79,6 +79,10 @@ public class TradeList
 	
 	public void setTitle(String title)
 	{
+		//FXIME: Inspect this (Battlecruiser)
+		// Function Mod By Tiger 2010/01/19
+		if (title.length() >= Config.STORE_TITLE_SIZE)
+			title = title.substring(0, Config.STORE_TITLE_SIZE);
 		_title = title;
 	}
 	

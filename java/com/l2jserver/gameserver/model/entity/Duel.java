@@ -97,6 +97,7 @@ public class Duel
 			broadcastToTeam2(sm);
 		}
 		// Schedule duel start
+		savePlayerConditions(); // 603
 		ThreadPoolManager.getInstance().scheduleGeneral(new ScheduleStartDuelTask(this), 3000);
 	}
 	
@@ -242,7 +243,10 @@ public class Duel
 					// players need to be teleportet first
 					// TODO: stadia manager needs a function to return an unused stadium for duels
 					// currently only teleports to the same stadium
+					/* 603
 					_duel.teleportPlayers(-83760, -238825, -3331);
+					 */
+					_duel.teleportPlayers(149478, 46718, -3412);
 					
 					// give players 20 seconds to complete teleport and get ready (its ought to be 30 on offical..)
 					ThreadPoolManager.getInstance().scheduleGeneral(this, 20000);
@@ -355,7 +359,9 @@ public class Duel
 	public void startDuel()
 	{
 		// Save player Conditions
+		/* 603
 		savePlayerConditions();
+		 */
 		
 		if ((_playerA == null) || (_playerB == null) || _playerA.isInDuel() || _playerB.isInDuel())
 		{
@@ -368,6 +374,16 @@ public class Duel
 		
 		if (_partyDuel)
 		{
+			// 603-Start
+			// Send duel Start packets
+			ExDuelReady ready = new ExDuelReady(1);
+			ExDuelStart start = new ExDuelStart(1);
+			
+			broadcastToTeam1(ready);
+			broadcastToTeam2(ready);
+			broadcastToTeam1(start);
+			broadcastToTeam2(start);
+			// 603-End
 			// set isInDuel() state
 			// cancel all active trades, just in case? xD
 			for (L2PcInstance temp : _playerA.getParty().getMembers())
@@ -387,6 +403,7 @@ public class Duel
 				broadcastToTeam1(new ExDuelUpdateUserInfo(temp));
 			}
 			
+			/* 603 Close
 			// Send duel Start packets
 			ExDuelReady ready = new ExDuelReady(1);
 			ExDuelStart start = new ExDuelStart(1);
@@ -395,14 +412,17 @@ public class Duel
 			broadcastToTeam2(ready);
 			broadcastToTeam1(start);
 			broadcastToTeam2(start);
+			 */
 		}
 		else
 		{
+			/* 603 Close
 			// set isInDuel() state
 			_playerA.setIsInDuel(_duelId);
 			_playerA.setTeam(Team.BLUE);
 			_playerB.setIsInDuel(_duelId);
 			_playerB.setTeam(Team.RED);
+			 */
 			
 			// Send duel Start packets
 			ExDuelReady ready = new ExDuelReady(0);
@@ -412,6 +432,13 @@ public class Duel
 			broadcastToTeam2(ready);
 			broadcastToTeam1(start);
 			broadcastToTeam2(start);
+			// 603-Start
+			// set isInDuel() state
+			_playerA.setIsInDuel(_duelId);
+			_playerA.setTeam(Team.BLUE);
+			_playerB.setIsInDuel(_duelId);
+			_playerB.setTeam(Team.RED);
+			// 603-End
 			
 			broadcastToTeam1(new ExDuelUpdateUserInfo(_playerB));
 			broadcastToTeam2(new ExDuelUpdateUserInfo(_playerA));

@@ -42,7 +42,7 @@ public class ExEnchantSkillResult extends L2GameServerPacket
 	protected void writeImpl()
 	{
 		writeC(0xFE);
-		writeH(0xA7);
+		writeH(0xA8); // 603
 		writeD(_enchanted ? 1 : 0);
 	}
 }

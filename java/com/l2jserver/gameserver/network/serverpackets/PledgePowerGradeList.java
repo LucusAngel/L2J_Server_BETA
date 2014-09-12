@@ -33,7 +33,7 @@ public class PledgePowerGradeList extends L2GameServerPacket
 	protected final void writeImpl()
 	{
 		writeC(0xFE);
-		writeH(0x3c);
+		writeH(0x3d); // 603
 		writeD(_privs.length);
 		for (RankPrivs temp : _privs)
 		{

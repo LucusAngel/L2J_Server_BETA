@@ -105,9 +105,25 @@ public class Die extends L2GameServerPacket
 			writeD(0x00); // 6d 02 00 00 00 - to castle
 			writeD(0x00); // 6d 03 00 00 00 - to siege HQ
 			writeD(_sweepable ? 0x01 : 0x00); // sweepable (blue glow)
+			/* l2jtw start
 			writeD(_access.allowFixedRes() ? 0x01 : 0x00); // 6d 04 00 00 00 - to FIXED
+			 */
+			if (_activeChar instanceof L2PcInstance)
+			{
+				writeD(_access.allowFixedRes() ||  ((L2PcInstance) _activeChar).hasFeather()? 0x01: 0x00);                  // 6d 04 00 00 00 - to FIXED
+			}
+			else
+			{
+				writeD(0);
+			}
+			// l2jtw end
 			writeD(0x00); // 6d 05 00 00 00 - to fortress
 		}
+		writeD(0x00); // 603
+		writeD(0x00); // 603
+		writeC(0x00); // 603
+		writeD(0x00); // 603
+		writeD(0x00); // 603
 		// TODO: protocol 152
 		//@formatter:off
 		/*

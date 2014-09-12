@@ -46,7 +46,8 @@ public enum ZoneId
 	ALTERED(19),
 	NO_BOOKMARK(20),
 	NO_ITEM_DROP(21),
-	NO_RESTART(22);
+	NO_RESTART(22),
+	JUMP(23); // 603
 	
 	private final int _id;
 	

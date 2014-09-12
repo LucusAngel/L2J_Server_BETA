@@ -24,12 +24,13 @@ import com.l2jserver.gameserver.model.items.instance.L2ItemInstance;
 public final class WareHouseWithdrawalList extends AbstractItemPacket
 {
 	public static final int PRIVATE = 1;
-	public static final int CLAN = 4;
+	public static final int CLAN = 2; // rocknow
 	public static final int CASTLE = 3; // not sure
-	public static final int FREIGHT = 1;
+	public static final int FREIGHT = 4; // rocknow
 	private L2PcInstance _activeChar;
 	private long _playerAdena;
 	private L2ItemInstance[] _items;
+	private L2ItemInstance[] _inventory_items; // 603
 	/**
 	 * <ul>
 	 * <li>0x01-Private Warehouse</li>
@@ -46,6 +47,7 @@ public final class WareHouseWithdrawalList extends AbstractItemPacket
 		_whType = type;
 		
 		_playerAdena = _activeChar.getAdena();
+		_inventory_items = _activeChar.getInventory().getItems(); // 603
 		if (_activeChar.getActiveWarehouse() == null)
 		{
 			_log.warning("error while sending withdraw request to: " + _activeChar.getName());
@@ -62,11 +64,26 @@ public final class WareHouseWithdrawalList extends AbstractItemPacket
 		writeH(_whType);
 		writeQ(_playerAdena);
 		writeH(_items.length);
+		if (_whType == 1 || _whType == 2) // 603
+		{
+			if (_items.length > 0)
+			{
+				writeH(0x01); // 603 : GS-comment-033
+				writeD(0x1063);
+			}
+			else
+			{
+				writeH(0x00); // 603
+			}
+		}
+		writeD(_inventory_items.length); // 603
 		
 		for (L2ItemInstance item : _items)
 		{
 			writeItem(item);
 			writeD(item.getObjectId());
+			writeD(0x00); // 603 TEST
+			writeD(0x00); // 603 TEST
 		}
 	}
 }

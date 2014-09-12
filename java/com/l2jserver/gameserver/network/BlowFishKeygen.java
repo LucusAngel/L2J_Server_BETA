@@ -39,6 +39,8 @@ public class BlowFishKeygen
 			for (int j = 0; j < CRYPT_KEYS[i].length; j++)
 			{
 				CRYPT_KEYS[i][j] = (byte) Rnd.get(255);
+				//L2JTW: CRYPT_KEYS[i][j] = (byte) 0;
+				//Validate this! (Battlecruiser)				
 			}
 			
 			// the last 8 bytes are static

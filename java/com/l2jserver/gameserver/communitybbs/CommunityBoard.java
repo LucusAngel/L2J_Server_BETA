@@ -85,6 +85,8 @@ public class CommunityBoard
 				else
 				{
 					ShowBoard sb = new ShowBoard("<html><body><br><br><center>the command: " + command + " is not implemented yet</center><br><br></body></html>", "101");
+					//L2JTW MessageTable:
+					//ShowBoard sb = new ShowBoard("<html><body><br><br><center>" + MessageTable.Messages[50].getExtra(1) + command + MessageTable.Messages[50].getExtra(2) + "</center><br><br></body></html>", "101");
 					activeChar.sendPacket(sb);
 					activeChar.sendPacket(new ShowBoard(null, "102"));
 					activeChar.sendPacket(new ShowBoard(null, "103"));
@@ -132,6 +134,9 @@ public class CommunityBoard
 				else
 				{
 					ShowBoard sb = new ShowBoard("<html><body><br><br><center>the command: " + url + " is not implemented yet</center><br><br></body></html>", "101");
+					//L2JTW MessageTable:
+					//ShowBoard sb = new ShowBoard("<html><body><br><br><center>" + MessageTable.Messages[50].getExtra(1) + url + MessageTable.Messages[50].getExtra(2) + "</center><br><br></body></html>", "101");
+
 					activeChar.sendPacket(sb);
 					activeChar.sendPacket(new ShowBoard(null, "102"));
 					activeChar.sendPacket(new ShowBoard(null, "103"));

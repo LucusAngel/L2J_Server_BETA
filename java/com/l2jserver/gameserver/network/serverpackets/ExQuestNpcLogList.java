@@ -48,7 +48,7 @@ public class ExQuestNpcLogList extends L2GameServerPacket
 	protected void writeImpl()
 	{
 		writeC(0xFE);
-		writeH(0xC5);
+		writeH(0xC6); // 603
 		writeD(_questId);
 		writeC(_npcs.size());
 		for (NpcHolder holder : _npcs)

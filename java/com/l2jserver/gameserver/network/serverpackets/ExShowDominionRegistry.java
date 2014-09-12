@@ -64,7 +64,7 @@ public class ExShowDominionRegistry extends L2GameServerPacket
 	protected void writeImpl()
 	{
 		writeC(0xfe);
-		writeH(0x90);
+		writeH(0x91); // 603
 		writeD(MINID + _castleId); // Current Territory Id
 		if (TerritoryWarManager.getInstance().getTerritory(_castleId) == null)
 		{

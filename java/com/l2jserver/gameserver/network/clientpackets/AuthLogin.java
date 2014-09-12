@@ -50,6 +50,9 @@ public final class AuthLogin extends L2GameClientPacket
 		_playKey1 = readD();
 		_loginKey1 = readD();
 		_loginKey2 = readD();
+		readD(); // 603
+		readQ(); // 603
+		readD(); // 603
 	}
 	
 	@Override

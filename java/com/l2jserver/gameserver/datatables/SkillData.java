@@ -76,6 +76,7 @@ public final class SkillData
 			// only non-enchanted skills
 			final int maxLvl = getMaxLevel(skillId);
 			if ((maxLvl > 0) || (skillLvl > maxLvl))
+			//L2JTW has just if (skillLvl > maxLvl)
 			{
 				_skillMaxLevel.put(skillId, skillLvl);
 			}

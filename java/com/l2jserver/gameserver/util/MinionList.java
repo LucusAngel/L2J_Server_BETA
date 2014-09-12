@@ -207,6 +207,7 @@ public class MinionList
 	 */
 	public void onAssist(L2Character caller, L2Character attacker)
 	{
+		//L2JTW: if ((attacker == null) || (!attacker.isPlayer()))
 		if (attacker == null)
 		{
 			return;

@@ -71,7 +71,10 @@ public final class RequestGiveItemToPet extends L2GameClientPacket
 		
 		if (player.getPrivateStoreType() != PrivateStoreType.NONE)
 		{
+			/*
 			player.sendMessage("You cannot exchange items while trading.");
+			 */
+			player.sendPacket(SystemMessageId.ITEMS_CANNOT_BE_DISCARDED_OR_DESTROYED_WHILE_OPERATING_PRIVATE_STORE_OR_WORKSHOP);
 			return;
 		}
 		

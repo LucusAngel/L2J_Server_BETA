@@ -39,7 +39,7 @@ public class ExCursedWeaponLocation extends L2GameServerPacket
 	protected void writeImpl()
 	{
 		writeC(0xfe);
-		writeH(0x47);
+		writeH(0x48); // 603
 		
 		if (!_cursedWeaponInfo.isEmpty())
 		{
@@ -57,7 +57,7 @@ public class ExCursedWeaponLocation extends L2GameServerPacket
 		else
 		{
 			writeD(0);
-			writeD(0);
+			//603 writeD(0);
 		}
 	}
 	

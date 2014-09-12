@@ -39,7 +39,7 @@ public class ExReplyDominionInfo extends L2GameServerPacket
 	protected void writeImpl()
 	{
 		writeC(0xfe);
-		writeH(0x92);
+		writeH(0x93); // 603
 		FastList<Territory> territoryList = TerritoryWarManager.getInstance().getAllTerritories();
 		writeD(territoryList.size()); // Territory Count
 		for (Territory t : territoryList)

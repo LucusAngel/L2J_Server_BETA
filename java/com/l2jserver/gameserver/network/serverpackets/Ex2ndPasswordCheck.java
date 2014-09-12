@@ -39,7 +39,7 @@ public class Ex2ndPasswordCheck extends L2GameServerPacket
 	{
 		writeC(0xFE);
 		// writeH(0x109); GOD
-		writeH(0xe5);
+		writeH(0x105); // 603
 		writeD(_windowType);
 		writeD(0x00);
 	}

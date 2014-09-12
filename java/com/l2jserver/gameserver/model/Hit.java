@@ -23,23 +23,29 @@ package com.l2jserver.gameserver.model;
  */
 public class Hit
 {
-	private static final int HITFLAG_USESS = 0x10;
-	private static final int HITFLAG_CRIT = 0x20;
-	private static final int HITFLAG_SHLD = 0x40;
-	private static final int HITFLAG_MISS = 0x80;
+	//FIXME: Validate this!!! (Battlecruiser)
+	private static final int HITFLAG_USESS = 0x80; // l2jtw add
+	private static final int HITFLAG_CRIT = 0x40; // l2jtw add
+	private static final int HITFLAG_SHLD = 0x20; // l2jtw add
+	private static final int HITFLAG_MISS = 0x10; // l2jtw add
 	
 	private final int _targetId;
 	private final int _damage;
+	private final int _ssGrade; // l2jtw add
 	private int _flags = 0;
 	
 	public Hit(L2Object target, int damage, boolean miss, boolean crit, byte shld, boolean soulshot, int ssGrade)
 	{
 		_targetId = target.getObjectId();
 		_damage = damage;
+		_ssGrade = ssGrade; // l2jtw add
 		
 		if (soulshot)
 		{
+			/* l2jtw add
 			_flags |= HITFLAG_USESS | ssGrade;
+			 */
+			_flags |= HITFLAG_USESS;
 		}
 		
 		if (crit)
@@ -72,4 +78,10 @@ public class Hit
 	{
 		return _flags;
 	}
+	// l2jtw add start
+	public int getSSGrade()
+	{
+		return _ssGrade;
+	}
+	// l2jtw add end
 }

@@ -21,6 +21,8 @@ package com.l2jserver.gameserver.network.clientpackets;
 import com.l2jserver.Config;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.util.Util;
+import com.l2jserver.gameserver.util.Broadcast; // 603
+import com.l2jserver.gameserver.network.serverpackets.RecipeShopMsg; // 603
 
 /**
  * This class ... cS
@@ -55,10 +57,15 @@ public class RequestRecipeShopMessageSet extends L2GameClientPacket
 			return;
 		}
 		
+		/* 603 fix
 		if (player.hasManufactureShop())
 		{
 			player.setStoreName(_name);
 		}
+		 */
+		player.setStoreName(_name);
+		Broadcast.toSelfAndKnownPlayers(player, new RecipeShopMsg(player));
+		// 603 fix end
 	}
 	
 	@Override

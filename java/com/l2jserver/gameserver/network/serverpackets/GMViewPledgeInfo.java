@@ -37,6 +37,7 @@ public class GMViewPledgeInfo extends L2GameServerPacket
 	protected final void writeImpl()
 	{
 		writeC(0x96);
+		writeD(0x00); // 603
 		writeS(_activeChar.getName());
 		writeD(_clan.getId());
 		writeD(0x00);
@@ -51,6 +52,7 @@ public class GMViewPledgeInfo extends L2GameServerPacket
 		writeD(_clan.getReputationScore());
 		writeD(0x00);
 		writeD(0x00);
+		writeD(0x00); // 603
 		
 		writeD(_clan.getAllyId()); // c2
 		writeS(_clan.getAllyName()); // c2

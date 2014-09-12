@@ -42,6 +42,7 @@ import com.l2jserver.gameserver.model.L2SkillLearn;
 import com.l2jserver.gameserver.model.actor.templates.L2NpcTemplate;
 import com.l2jserver.gameserver.model.base.AcquireSkillType;
 import com.l2jserver.gameserver.model.base.ClassId;
+import com.l2jserver.gameserver.model.base.ClassLevel; // l2jtw add
 import com.l2jserver.gameserver.model.base.PlayerClass;
 import com.l2jserver.gameserver.model.base.SubClass;
 import com.l2jserver.gameserver.model.entity.Castle;
@@ -365,6 +366,14 @@ public class L2VillageMasterInstance extends L2NpcInstance
 					html.setFile(player.getHtmlPrefix(), getSubClassMenu(player.getRace()));
 					break;
 				case 1: // Add Subclass - Initial
+					// l2jtw temp fix start + MessageTable.Messages[763]
+					if (player.getAwakenSubClassCount() > 1)
+					{
+						//FIXME: Get this message (Battlecruiser)
+						player.sendMessage(763);
+						return;
+					}
+					// l2jtw temp fix end
 					// Avoid giving player an option to add a new sub class, if they have max sub-classes already.
 					if (player.getTotalSubClasses() >= Config.MAX_SUBCLASS)
 					{
@@ -404,6 +413,14 @@ public class L2VillageMasterInstance extends L2NpcInstance
 					}
 					break;
 				case 2: // Change Class - Initial
+					// l2jtw temp fix start + MessageTable.Messages[763]
+					if (!player.isSubClassActive() && player.getAwakenSubClassCount() > 1)
+					{
+						//FIXME: get this message (Battlecruiser)
+						player.sendMessage(763);
+						return;
+					}
+					// l2jtw temp fix end
 					if (player.getSubClasses().isEmpty())
 					{
 						html.setFile(player.getHtmlPrefix(), "data/html/villagemaster/SubClass_ChangeNo.htm");
@@ -491,6 +508,14 @@ public class L2VillageMasterInstance extends L2NpcInstance
 					}
 					break;
 				case 4: // Add Subclass - Action (Subclass 4 x[x])
+					// l2jtw temp fix start + MessageTable.Messages[763]
+					if (player.getAwakenSubClassCount() > 1)
+					{
+						//FIXME: get this message (Battlecruiser)
+						player.sendMessage(763);
+						return;
+					}
+					// l2jtw temp fix end
 					/**
 					 * If the character is less than level 75 on any of their previously chosen classes then disallow them to change to their most recently added sub-class choice.
 					 */
@@ -549,7 +574,13 @@ public class L2VillageMasterInstance extends L2NpcInstance
 						
 						html.setFile(player.getHtmlPrefix(), "data/html/villagemaster/SubClass_AddOk.htm");
 						
+						/* 603-Start
 						player.sendPacket(SystemMessageId.ADD_NEW_SUBCLASS); // Subclass added.
+						 */
+						SystemMessage sm = SystemMessage.getSystemMessage(SystemMessageId.ADD_NEW_SUBCLASS_S1);
+						sm.addString(ClassListData.getInstance().getClass(paramOne).getClassName());
+						player.sendPacket(sm); // Subclass added.
+						// 603-End
 					}
 					else
 					{
@@ -557,6 +588,14 @@ public class L2VillageMasterInstance extends L2NpcInstance
 					}
 					break;
 				case 5: // Change Class - Action
+					// l2jtw temp fix start + MessageTable.Messages[763]
+					if (!player.isSubClassActive() && player.getAwakenSubClassCount() > 1)
+					{
+						//FIXME: get this message (Battlecruiser)
+						player.sendMessage(763);
+						return;
+					}
+					// l2jtw temp fix end
 					/**
 					 * If the character is less than level 75 on any of their previously chosen classes then disallow them to change to their most recently added sub-class choice. Note: paramOne = classIndex
 					 */
@@ -594,8 +633,19 @@ public class L2VillageMasterInstance extends L2NpcInstance
 						}
 					}
 					
+					/* l2jtw start
 					player.setActiveClass(paramOne);
 					player.sendPacket(SystemMessageId.SUBCLASS_TRANSFER_COMPLETED); // Transfer completed.
+					 */
+					//FIXME: validate me (Battlecruiser)
+					int oldClassId = player.getClassIndex() == 0 ? player.getBaseClass() : player.getSubClasses().get(player.getClassIndex()).getClassId();
+					int newClassId = paramOne == 0 ? player.getBaseClass() : player.getSubClasses().get(paramOne).getClassId();
+					player.setActiveClass(paramOne);
+					player.sendPacket(SystemMessage.getSystemMessage(SystemMessageId.SUBCLASS_TRANSFER_COMPLETED)
+						.addSystemString(ClassListData.getInstance().getClass(oldClassId).getClassClientId())
+						.addSystemString(ClassListData.getInstance().getClass(newClassId).getClassClientId())
+						); // Transfer completed.
+					// l2jtw end
 					return;
 				case 6: // Change/Cancel Subclass - Choice
 					// validity check
@@ -661,7 +711,13 @@ public class L2VillageMasterInstance extends L2NpcInstance
 						html.setFile(player.getHtmlPrefix(), "data/html/villagemaster/SubClass_ModifyOk.htm");
 						html.replace("%name%", ClassListData.getInstance().getClass(paramTwo).getClientCode());
 						
+						/* 603-Start
 						player.sendPacket(SystemMessageId.ADD_NEW_SUBCLASS); // Subclass added.
+						 */
+						SystemMessage sm = SystemMessage.getSystemMessage(SystemMessageId.ADD_NEW_SUBCLASS_S1);
+						sm.addString(ClassListData.getInstance().getClass(paramTwo).getClassName());
+						player.sendPacket(sm); // Subclass added.
+						// 603-End
 					}
 					else
 					{
@@ -737,7 +793,21 @@ public class L2VillageMasterInstance extends L2NpcInstance
 		final int baseClassId;
 		if (baseCID.level() > 2)
 		{
+			/* 603 start
 			baseClassId = baseCID.getParent().ordinal();
+			 */
+			if (baseCID.level() > 3)
+			{
+				int baseClassId3 = 0;
+				baseClassId3 = baseCID.getParent().ordinal();
+				ClassId baseCID3 = ClassId.getClassId(baseClassId3);
+				baseClassId = baseCID3.getParent().ordinal();
+			}
+			else
+			{
+				baseClassId = baseCID.getParent().ordinal();
+			}
+			// 603 end
 		}
 		else
 		{
@@ -822,7 +892,21 @@ public class L2VillageMasterInstance extends L2NpcInstance
 		final int baseClassId;
 		if (baseCID.level() > 2)
 		{
+			/* 603 start
 			baseClassId = baseCID.getParent().ordinal();
+			 */
+			if (baseCID.level() > 3)
+			{
+				int baseClassId3 = 0;
+				baseClassId3 = baseCID.getParent().ordinal();
+				ClassId baseCID3 = ClassId.getClassId(baseClassId3);
+				baseClassId = baseCID3.getParent().ordinal();
+			}
+			else
+			{
+				baseClassId = baseCID.getParent().ordinal();
+			}
+			// 603 end
 		}
 		else
 		{

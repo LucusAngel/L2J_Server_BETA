@@ -50,6 +50,7 @@ public final class RequestRestartPoint extends L2GameClientPacket
 	protected void readImpl()
 	{
 		_requestedPointType = readD();
+		// XXX = (YYY == XXX) ? readD() : null; // 603
 	}
 	
 	class DeathTask implements Runnable
@@ -232,7 +233,10 @@ public final class RequestRestartPoint extends L2GameClientPacket
 			}
 			case 5: // Fixed or Player is a festival participant
 			{
+				/* GS-comment-046
 				if (!activeChar.isGM() && !activeChar.isFestivalParticipant())
+				 */
+				if (!activeChar.isGM() && !activeChar.isFestivalParticipant() && !activeChar.useFeather())
 				{
 					_log.warning("Player [" + activeChar.getName() + "] called RestartPointPacket - Fixed and he isn't festival participant!");
 					return;
