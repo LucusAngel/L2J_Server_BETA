@@ -23,7 +23,6 @@ import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
 import com.l2jserver.Config;
-import com.l2jserver.gameserver.datatables.MessageTable;
 import com.l2jserver.gameserver.network.serverpackets.KeyPacket;
 import com.l2jserver.gameserver.network.serverpackets.L2GameServerPacket;
 
@@ -71,8 +70,6 @@ public final class ProtocolVersion extends L2GameClientPacket
 				getClient()
 			});
 			_logAccounting.log(record);
-			// FIXME: recover from messageTable
-			_log.fine(getClient() + MessageTable.Messages[2].getExtra(1) + MessageTable.Messages[2].getExtra(4) + MessageTable.Messages[2].getExtra(2) + _version + MessageTable.Messages[2].getExtra(3) + MessageTable.Messages[2].getExtra(6));
 			KeyPacket pk = new KeyPacket(getClient().enableCrypt(), 0);
 			getClient().setProtocolOk(false);
 			getClient().close(pk);
@@ -86,7 +83,6 @@ public final class ProtocolVersion extends L2GameClientPacket
 				getClient()
 			});
 			_logAccounting.log(record);
-			_log.fine(getClient() + MessageTable.Messages[2].getExtra(1) + MessageTable.Messages[2].getExtra(5) + MessageTable.Messages[2].getExtra(2) + _version + MessageTable.Messages[2].getExtra(3) + MessageTable.Messages[2].getExtra(6));
 			KeyPacket pk = new KeyPacket(getClient().enableCrypt(), 0);
 			getClient().setProtocolOk(false);
 			getClient().close(pk);
