@@ -19,8 +19,10 @@
 package com.l2jserver.gameserver.network.clientpackets;
 
 import com.l2jserver.Config;
+import com.l2jserver.gameserver.ThreadPoolManager; // 603-TEST
 import com.l2jserver.gameserver.ai.CtrlIntention;
 import com.l2jserver.gameserver.datatables.SkillData; // 603-TEST
+import com.l2jserver.gameserver.instancemanager.AwakingManager; // 603
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.effects.L2EffectType;
 import com.l2jserver.gameserver.model.skills.BuffInfo; // 603-TEST
@@ -28,8 +30,6 @@ import com.l2jserver.gameserver.model.skills.Skill;
 import com.l2jserver.gameserver.model.skills.targets.L2TargetType;
 import com.l2jserver.gameserver.network.SystemMessageId;
 import com.l2jserver.gameserver.network.serverpackets.ActionFailed;
-import com.l2jserver.gameserver.instancemanager.AwakingManager; // 603
-import com.l2jserver.gameserver.ThreadPoolManager; // 603-TEST
 
 public final class RequestMagicSkillUse extends L2GameClientPacket
 {
@@ -72,10 +72,7 @@ public final class RequestMagicSkillUse extends L2GameClientPacket
 					activeChar.sendPacket(SystemMessageId.YOU_CANNOT_CHANGE_THE_CLASS_BECAUSE_OF_IDENTITY_CRISIS);
 					return;
 				}
-				else
-				{
-					skill = SkillData.getInstance().getSkill(_magicId, 1);
-				}
+				skill = SkillData.getInstance().getSkill(_magicId, 1);
 			}
 			// 603-TEST End
 			if (skill == null)
@@ -107,11 +104,11 @@ public final class RequestMagicSkillUse extends L2GameClientPacket
 		}
 		
 		// players mounted on pets cannot use any toggle skills
-		//FIXME: validate me (Battlecruiser)
-		/* Update by rocknow
-		if (skill.isToggle() && activeChar.isMounted())
+		// FIXME: validate me (Battlecruiser)
+		/*
+		 * Update by rocknow if (skill.isToggle() && activeChar.isMounted())
 		 */
-		if (skill.isToggle() && activeChar.isMounted() && skill.getId() != 7029)
+		if (skill.isToggle() && activeChar.isMounted() && (skill.getId() != 7029))
 		{
 			return;
 		}
@@ -130,22 +127,26 @@ public final class RequestMagicSkillUse extends L2GameClientPacket
 		
 		activeChar.useMagic(skill, _ctrlPressed, _shiftPressed);
 	}
+	
 	// 603-TEST Start
 	class ClassChangeTask implements Runnable
 	{
 		L2PcInstance player;
 		int classIndex;
+		
 		public ClassChangeTask(L2PcInstance player, int classIndex)
 		{
 			this.player = player;
 			this.classIndex = classIndex;
 		}
+		
 		@Override
 		public void run()
 		{
 			AwakingManager.getInstance().ClassChange(player, classIndex);
 		}
 	}
+	
 	// 603-TEST End
 	@Override
 	public String getType()

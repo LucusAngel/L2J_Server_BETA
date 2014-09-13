@@ -20,7 +20,6 @@ package com.l2jserver.gameserver.network.serverpackets;
 
 import java.io.PrintStream;
 import java.util.Arrays;
-import java.util.logging.Level;
 
 import com.l2jserver.Config;
 import com.l2jserver.gameserver.datatables.DoorTable;
@@ -399,9 +398,15 @@ public final class SystemMessage extends L2GameServerPacket
 	// 603 (by otfnir)-Start
 	public final SystemMessage addDamage(final int targetObjectID, final int playerObjectID, final int damage)
 	{
-		append(new SMParam(TYPE_DAMAGE, new int[] {targetObjectID, playerObjectID, damage}));
+		append(new SMParam(TYPE_DAMAGE, new int[]
+		{
+			targetObjectID,
+			playerObjectID,
+			damage
+		}));
 		return this;
 	}
+	
 	// 603 (by otfnir)-End
 	public final SystemMessage getLocalizedMessage(final String lang)
 	{

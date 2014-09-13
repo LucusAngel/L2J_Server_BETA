@@ -19,41 +19,40 @@
 package com.l2jserver.gameserver.datatables;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javolution.util.FastMap;
+
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
-
-import javolution.util.FastMap;
 
 import com.l2jserver.gameserver.engines.DocumentParser;
 
 /**
  * @author a
- *
  */
 public class SkillReplaceTable extends DocumentParser
 {
 	private final Map<Integer, List<Integer>> _skillReplaceData = new FastMap<>();
-
+	
 	public SkillReplaceTable()
 	{
 		load();
 	}
-
+	
 	public static SkillReplaceTable getInstance()
 	{
 		return SingletonHolder._instance;
 	}
-
+	
 	private static class SingletonHolder
 	{
 		protected static final SkillReplaceTable _instance = new SkillReplaceTable();
 	}
-
-	/* (non-Javadoc)
+	
+	/*
+	 * (non-Javadoc)
 	 * @see com.l2jserver.gameserver.engines.DocumentParser#load()
 	 */
 	@Override
@@ -63,8 +62,9 @@ public class SkillReplaceTable extends DocumentParser
 		_skillReplaceData.clear();
 		parseDatapackFile("data/stats/skillReplace.xml");
 	}
-
-	/* (non-Javadoc)
+	
+	/*
+	 * (non-Javadoc)
 	 * @see com.l2jserver.gameserver.engines.DocumentParser#parseDocument()
 	 */
 	@Override
@@ -72,22 +72,31 @@ public class SkillReplaceTable extends DocumentParser
 	{
 		// TODO Auto-generated method stub
 		Node list = getCurrentDocument().getFirstChild();
-		for (Node node = list.getFirstChild(); node != null; node = node.getNextSibling()){
+		for (Node node = list.getFirstChild(); node != null; node = node.getNextSibling())
+		{
 			List<Integer> l = new java.util.ArrayList<>();
-			for (Node rnode = node.getFirstChild(); rnode != null; rnode = rnode.getNextSibling()){
-				 NamedNodeMap a = rnode.getAttributes();
-				 if (a == null) continue;
+			for (Node rnode = node.getFirstChild(); rnode != null; rnode = rnode.getNextSibling())
+			{
+				NamedNodeMap a = rnode.getAttributes();
+				if (a == null)
+				{
+					continue;
+				}
 				l.add(parseInteger(a, "id"));
 			}
-			 NamedNodeMap a = node.getAttributes();
-			 if (a == null) continue;
+			NamedNodeMap a = node.getAttributes();
+			if (a == null)
+			{
+				continue;
+			}
 			_skillReplaceData.put(parseInteger(a, "id"), l);
 		}
 	}
 	
-	public List<Integer> getReplaceSkills(int skillid){
+	public List<Integer> getReplaceSkills(int skillid)
+	{
 		List<Integer> l = _skillReplaceData.get(skillid);
-		return (l == null ? new java.util.ArrayList<Integer>(): l);
+		return (l == null ? new ArrayList<>() : l);
 	}
 	
 }

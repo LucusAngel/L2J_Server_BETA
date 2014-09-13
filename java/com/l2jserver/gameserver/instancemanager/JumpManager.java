@@ -51,8 +51,9 @@ public class JumpManager
 	private static final Logger _log = Logger.getLogger(JumpManager.class.getName());
 	private final Map<Integer, Track> _tracks = new HashMap<>();
 	
-   public class Track extends HashMap<Integer, JumpWay>
+	public class Track extends HashMap<Integer, JumpWay>
 	{
+		private static final long serialVersionUID = 5379923889189764276L;
 		public int x = 0;
 		public int y = 0;
 		public int z = 0;

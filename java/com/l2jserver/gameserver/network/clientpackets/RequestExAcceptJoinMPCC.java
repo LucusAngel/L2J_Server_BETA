@@ -31,6 +31,7 @@ public final class RequestExAcceptJoinMPCC extends L2GameClientPacket
 {
 	private static final String _C__D0_07_REQUESTEXASKJOINMPCC = "[C] D0:07 RequestExAcceptJoinMPCC";
 	private int _response;
+	@SuppressWarnings("unused")
 	private int _unk; // 603
 	
 	@Override
@@ -72,9 +73,9 @@ public final class RequestExAcceptJoinMPCC extends L2GameClientPacket
 			}
 			else
 			{
-				//FIXME: validate this
-				/* l2jtw add
-				requestor.sendMessage("The player declined to join your Command Channel.");
+				// FIXME: validate this
+				/*
+				 * l2jtw add requestor.sendMessage("The player declined to join your Command Channel.");
 				 */
 				sm = SystemMessage.getSystemMessage(SystemMessageId.C1_DECLINED_CHANNEL_INVITATION);
 				sm.addString(player.getName());

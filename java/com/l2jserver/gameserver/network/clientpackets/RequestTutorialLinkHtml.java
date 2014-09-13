@@ -28,6 +28,7 @@ public class RequestTutorialLinkHtml extends L2GameClientPacket
 {
 	private static final String _C__85_REQUESTTUTORIALLINKHTML = "[C] 85 RequestTutorialLinkHtml";
 	
+	// FIXME: Unused
 	private int _id; // 603
 	private String _bypass;
 	

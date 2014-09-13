@@ -18,7 +18,6 @@
  */
 package com.l2jserver.gameserver.model.actor.instance;
 
-import java.util.Arrays; // l2jtw add
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Future;
@@ -48,6 +47,8 @@ import com.l2jserver.gameserver.model.stats.Stats;
 import com.l2jserver.gameserver.model.zone.ZoneId;
 import com.l2jserver.gameserver.network.SystemMessageId;
 import com.l2jserver.util.Rnd;
+
+// l2jtw add
 
 public final class L2CubicInstance implements IIdentifiable
 {

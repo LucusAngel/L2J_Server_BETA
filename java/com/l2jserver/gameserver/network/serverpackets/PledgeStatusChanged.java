@@ -24,6 +24,7 @@ import com.l2jserver.gameserver.model.actor.instance.L2PcInstance; // 603
 public final class PledgeStatusChanged extends L2GameServerPacket
 {
 	private final L2Clan _clan;
+	// FIXME: Unused?
 	private final L2PcInstance _activeChar; // 603
 	private final int _pledgeType; // 603
 	

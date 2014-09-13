@@ -30,7 +30,6 @@ import com.l2jserver.gameserver.model.actor.instance.L2MonsterInstance;
 import com.l2jserver.gameserver.model.actor.instance.L2NpcInstance;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.actor.instance.L2TrapInstance;
-import com.l2jserver.gameserver.model.skills.AbnormalVisualEffect;
 import com.l2jserver.gameserver.model.zone.ZoneId;
 
 public abstract class AbstractNpcInfo extends L2GameServerPacket
@@ -73,6 +72,7 @@ public abstract class AbstractNpcInfo extends L2GameServerPacket
 	public static class NpcInfo extends AbstractNpcInfo
 	{
 		private final L2Npc _npc;
+		// FIXME: Unused
 		private int _clanCrest = 0;
 		private int _allyCrest = 0;
 		private int _allyId = 0;
@@ -149,25 +149,35 @@ public abstract class AbstractNpcInfo extends L2GameServerPacket
 			writeC(0x25);
 			writeC(0x00);
 			writeC(0xED);
-			if (_rhand > 0 || _chest > 0 || _lhand > 0)
+			if ((_rhand > 0) || (_chest > 0) || (_lhand > 0))
+			{
 				writeC(0xFE);
+			}
 			else
+			{
 				writeC(0xBE);
+			}
 			writeC(0x4E);
 			writeC(0xA2);
 			writeC(0x0C);
 			int len_npc_title = 0; // 603
 			if (_title != null)
+			{
 				len_npc_title = _title.length(); // 603
-			writeC(7 + len_npc_title*2); // 603
+			}
+			writeC(7 + (len_npc_title * 2)); // 603
 			writeC(_isAttackable ? 1 : 0);
 			writeH(0);
 			writeH(0);
 			writeS(_title);
-			if (_rhand > 0 || _chest > 0 || _lhand > 0)
+			if ((_rhand > 0) || (_chest > 0) || (_lhand > 0))
+			{
 				writeH(68);
+			}
 			else
+			{
 				writeH(56);
+			}
 			writeD(_idTemplate + 1000000); // npctype id
 			writeD(_x);
 			writeD(_y);
@@ -175,9 +185,9 @@ public abstract class AbstractNpcInfo extends L2GameServerPacket
 			writeD(_heading);
 			writeD(_mAtkSpd);
 			writeD(_pAtkSpd);
-			putFloat((float)_moveMultiplier);
+			putFloat((float) _moveMultiplier);
 			putFloat(_npc.getAttackSpeedMultiplier());
-			if (_rhand > 0 || _chest > 0 || _lhand > 0)
+			if ((_rhand > 0) || (_chest > 0) || (_lhand > 0))
 			{
 				writeD(_rhand);
 				writeD(_chest);
@@ -190,22 +200,20 @@ public abstract class AbstractNpcInfo extends L2GameServerPacket
 			writeC(0);
 			writeC(0);
 			writeH(0);
-			writeD((int)_npc.getCurrentHp());
+			writeD((int) _npc.getCurrentHp());
 			writeD(_npc.getMaxHp());
 			
-			writeC(
-			(_npc.isInCombat() ? 1 : 0) + 
-			(_npc.isAlikeDead() ? 2 : 0) + 
-			(_npc.isTargetable() ? 4 : 0) + 
-			(_npc.isShowName() ? 8 : 0));
+			writeC((_npc.isInCombat() ? 1 : 0) + (_npc.isAlikeDead() ? 2 : 0) + (_npc.isTargetable() ? 4 : 0) + (_npc.isShowName() ? 8 : 0));
 			
 			java.util.List<Integer> el = _npc.getEffectIdList();
 			if (_npc.isInvisible() && !el.contains(21))
-				el.add(21);
-			writeH(el.size());
-			for(int i : el)
 			{
-			   writeH(i);
+				el.add(21);
+			}
+			writeH(el.size());
+			for (int i : el)
+			{
+				writeH(i);
 			}
 		}
 	}
@@ -247,8 +255,10 @@ public abstract class AbstractNpcInfo extends L2GameServerPacket
 			writeC(0x0C);
 			int len_trap_title = 0; // 603
 			if (_title != null)
+			{
 				len_trap_title = _title.length(); // 603
-			writeC(7 + len_trap_title*2); // 603
+			}
+			writeC(7 + (len_trap_title * 2)); // 603
 			writeC(_isAttackable ? 1 : 0);
 			writeH(0);
 			writeH(0);
@@ -261,7 +271,7 @@ public abstract class AbstractNpcInfo extends L2GameServerPacket
 			writeD(_heading);
 			writeD(_mAtkSpd);
 			writeD(_pAtkSpd);
-			putFloat((float)_moveMultiplier);
+			putFloat((float) _moveMultiplier);
 			putFloat(_trap.getAttackSpeedMultiplier());
 			writeC(1);
 			writeC(1);
@@ -270,20 +280,18 @@ public abstract class AbstractNpcInfo extends L2GameServerPacket
 			writeC(0);
 			writeC(0);
 			writeH(0);
-			writeD((int)_trap.getCurrentHp());
+			writeD((int) _trap.getCurrentHp());
 			writeD(_trap.getMaxHp());
-			writeC(
-			(_trap.isInCombat() ? 1 : 0) + 
-			(_trap.isAlikeDead() ? 2 : 0) + 
-			(_trap.isTargetable() ? 4 : 0) + 
-			8);
+			writeC((_trap.isInCombat() ? 1 : 0) + (_trap.isAlikeDead() ? 2 : 0) + (_trap.isTargetable() ? 4 : 0) + 8);
 			java.util.List<Integer> el = _trap.getEffectIdList();
 			if (_trap.isInvisible() && !el.contains(21))
-				el.add(21);
-			writeH(el.size());
-			for(int i : el)
 			{
-			   writeH(i);
+				el.add(21);
+			}
+			writeH(el.size());
+			for (int i : el)
+			{
+				writeH(i);
 			}
 		}
 	}
@@ -344,7 +352,7 @@ public abstract class AbstractNpcInfo extends L2GameServerPacket
 				return;
 			}
 			writeD(_summon.getObjectId());
-			writeC(_isSummoned ? 2 : _val); // 603-TEST //  0=teleported  1=default   2=summoned
+			writeC(_isSummoned ? 2 : _val); // 603-TEST // 0=teleported 1=default 2=summoned
 			writeC(0x25);
 			writeC(_isAttackable ? 1 : 0);
 			
@@ -366,8 +374,10 @@ public abstract class AbstractNpcInfo extends L2GameServerPacket
 			}
 			int len_npc_title = 0; // 603
 			if (_title != null)
+			{
 				len_npc_title = _title.length(); // 603
-			writeC(7 + len_npc_title*2); // 603
+			}
+			writeC(7 + (len_npc_title * 2)); // 603
 			writeC(0x00);
 			writeC(0x00);
 			writeC(0x00);
@@ -376,11 +386,17 @@ public abstract class AbstractNpcInfo extends L2GameServerPacket
 			writeS(_title);
 			int len_npc_name = 0; // 603
 			if (_name != null)
+			{
 				len_npc_name = _name.length(); // 603
+			}
 			if (_summon.getSummonType() == 2)
-				writeH(88 + len_npc_name*2);
+			{
+				writeH(88 + (len_npc_name * 2));
+			}
 			else if (_summon.getSummonType() == 1)
+			{
 				writeH(58);
+			}
 			writeD(_idTemplate + 1000000); // npctype id
 			writeD(_x);
 			writeD(_y);
@@ -388,13 +404,15 @@ public abstract class AbstractNpcInfo extends L2GameServerPacket
 			writeD(_heading);
 			writeD(_mAtkSpd);
 			writeD(_pAtkSpd);
-			putFloat((float)_moveMultiplier);
+			putFloat((float) _moveMultiplier);
 			putFloat(_summon.getAttackSpeedMultiplier());
 			writeC(1);
 			writeC(_summon.isRunning() ? 1 : 0);
 			
 			if (_summon.getSummonType() == 2)
+			{
 				writeD(0x00);
+			}
 			writeH(0x00);
 			writeH(_form);
 			writeD(0x00);
@@ -403,8 +421,8 @@ public abstract class AbstractNpcInfo extends L2GameServerPacket
 			
 			if (_summon.getSummonType() == 2)
 			{
-				writeD((int)_summon.getCurrentHp());
-				writeD((int)_summon.getCurrentMp());
+				writeD((int) _summon.getCurrentHp());
+				writeD((int) _summon.getCurrentMp());
 				writeD(_summon.getMaxHp());
 				writeD(_summon.getMaxMp());
 				writeS(_name);
@@ -415,18 +433,16 @@ public abstract class AbstractNpcInfo extends L2GameServerPacket
 			writeC(_summon.getPvpFlag());
 			int Karma = 0 - _summon.getKarma();
 			writeD(Karma);
-			writeC(
-			(_summon.isInCombat() ? 1 : 0) + 
-			(_summon.isAlikeDead() ? 2 : 0) + 
-			(_summon.isTargetable() ? 4 : 0) + 
-			8 );
+			writeC((_summon.isInCombat() ? 1 : 0) + (_summon.isAlikeDead() ? 2 : 0) + (_summon.isTargetable() ? 4 : 0) + 8);
 			java.util.List<Integer> el = _summon.getEffectIdList();
 			if (gmSeeInvis && !el.contains(21))
-				el.add(21);
-			writeH(el.size());
-			for(int i : el)
 			{
-			   writeH(i);
+				el.add(21);
+			}
+			writeH(el.size());
+			for (int i : el)
+			{
+				writeH(i);
 			}
 		}
 	}

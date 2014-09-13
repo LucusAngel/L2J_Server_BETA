@@ -27,7 +27,6 @@ import com.l2jserver.gameserver.datatables.SkillTreesData;
 import com.l2jserver.gameserver.model.L2SkillLearn;
 import com.l2jserver.gameserver.model.base.AcquireSkillType;
 import com.l2jserver.gameserver.model.holders.ItemHolder;
-import com.l2jserver.gameserver.model.skills.Skill;
 import com.l2jserver.gameserver.model.skills.CommonSkill; // l2jtw add
 
 /**
@@ -115,7 +114,7 @@ public class ExAcquireSkillInfo extends L2GameServerPacket
 		writeD(_id);
 		writeD(_level);
 		writeQ(_spCost); // 603
-		writeH(lskill == null ? _level + 1 : lskill.getGetLevel()); //c4
+		writeH(lskill == null ? _level + 1 : lskill.getGetLevel()); // c4
 		writeH(0x00); // 603
 		
 		writeD(_reqs.size());
@@ -126,10 +125,10 @@ public class ExAcquireSkillInfo extends L2GameServerPacket
 		}
 		List<Integer> rskill = SkillReplaceTable.getInstance().getReplaceSkills(_id);
 		writeD(rskill.size());
-		for(int id : rskill)
+		for (int id : rskill)
 		{
 			writeD(id);
-			writeD(1);//skill level
+			writeD(1);// skill level
 		}
 	}
 }

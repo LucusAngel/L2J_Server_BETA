@@ -33,6 +33,7 @@ public class ExListPartyMatchingWaitingRoom extends L2GameServerPacket
 	// private final int _page;
 	private final int _minlvl;
 	private final int _maxlvl;
+	// FIXME: Unused
 	private final int _mode;
 	private final String _name; // 603
 	private final List<L2PcInstance> _members;
@@ -53,13 +54,8 @@ public class ExListPartyMatchingWaitingRoom extends L2GameServerPacket
 	{
 		writeC(0xFE);
 		writeH(0x36);
-		/* 603
-		if (_mode == 0)
-		{
-			writeD(0);
-			writeD(0);
-			return;
-		}
+		/*
+		 * 603 if (_mode == 0) { writeD(0); writeD(0); return; }
 		 */
 		
 		for (L2PcInstance cha : PartyMatchWaitingList.getInstance().getPlayers())
@@ -92,7 +88,7 @@ public class ExListPartyMatchingWaitingRoom extends L2GameServerPacket
 			writeD(member.getLevel());
 			writeD(0); // 603 : GS-comment-028.1
 			writeD(0); // 603 : GS-comment-028.2
-				//for{writeD(?);} // 603 : GS-comment-028.3
+			// for{writeD(?);} // 603 : GS-comment-028.3
 		}
 	}
 }

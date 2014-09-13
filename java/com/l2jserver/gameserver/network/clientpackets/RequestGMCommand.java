@@ -40,6 +40,7 @@ public final class RequestGMCommand extends L2GameClientPacket
 	
 	private String _targetName;
 	private int _command;
+	@SuppressWarnings("unused")
 	private int _unknown; // 603
 	
 	@Override

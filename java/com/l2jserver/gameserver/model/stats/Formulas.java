@@ -64,10 +64,8 @@ import com.l2jserver.gameserver.model.skills.funcs.formulas.FuncMAtkCritical;
 import com.l2jserver.gameserver.model.skills.funcs.formulas.FuncMAtkMod;
 import com.l2jserver.gameserver.model.skills.funcs.formulas.FuncMAtkSpeed;
 import com.l2jserver.gameserver.model.skills.funcs.formulas.FuncMDefMod;
-import com.l2jserver.gameserver.model.skills.funcs.formulas.FuncMaxCpMul;
 import com.l2jserver.gameserver.model.skills.funcs.formulas.FuncMaxHpMul;
 import com.l2jserver.gameserver.model.skills.funcs.formulas.FuncMaxMpMul;
-import com.l2jserver.gameserver.model.skills.funcs.formulas.FuncMoveSpeed;
 import com.l2jserver.gameserver.model.skills.funcs.formulas.FuncPAtkMod;
 import com.l2jserver.gameserver.model.skills.funcs.formulas.FuncPAtkSpeed;
 import com.l2jserver.gameserver.model.skills.funcs.formulas.FuncPDefMod;
@@ -120,7 +118,7 @@ public final class Formulas
 	{
 		Calculator[] std = new Calculator[Stats.NUM_STATS];
 		
-		//FIXME: Validate this!!! (Battlecruiser)
+		// FIXME: Validate this!!! (Battlecruiser)
 		
 		std[Stats.MAX_HP.ordinal()] = new Calculator();
 		// rocknow-close std[Stats.MAX_HP.ordinal()].addFunc(FuncMaxHpMul.getInstance());
@@ -199,7 +197,7 @@ public final class Formulas
 		if (cha.isPlayer())
 		{
 			cha.addStatFunc(FuncMaxHpMul.getInstance());
-			//603 cha.addStatFunc(FuncMaxCpMul.getInstance());
+			// 603 cha.addStatFunc(FuncMaxCpMul.getInstance());
 			cha.addStatFunc(FuncMaxMpMul.getInstance());
 			cha.addStatFunc(FuncPAtkMod.getInstance());
 			cha.addStatFunc(FuncMAtkMod.getInstance());
@@ -211,7 +209,7 @@ public final class Formulas
 			cha.addStatFunc(FuncAtkEvasion.getInstance());
 			cha.addStatFunc(FuncPAtkSpeed.getInstance());
 			cha.addStatFunc(FuncMAtkSpeed.getInstance());
-			//603 cha.addStatFunc(FuncMoveSpeed.getInstance());
+			// 603 cha.addStatFunc(FuncMoveSpeed.getInstance());
 			
 			cha.addStatFunc(FuncHenna.getInstance(Stats.STAT_STR));
 			cha.addStatFunc(FuncHenna.getInstance(Stats.STAT_DEX));

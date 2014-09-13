@@ -40,6 +40,7 @@ public final class RequestPetitionCancel extends L2GameClientPacket
 	private static final String _C__8A_REQUEST_PETITIONCANCEL = "[C] 8A RequestPetitionCancel";
 	
 	// private int _unknown;
+	@SuppressWarnings("unused")
 	private String _unk; // 603
 	
 	@Override

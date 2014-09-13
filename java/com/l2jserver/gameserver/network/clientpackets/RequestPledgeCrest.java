@@ -29,6 +29,7 @@ public final class RequestPledgeCrest extends L2GameClientPacket
 	private static final String _C__68_REQUESTPLEDGECREST = "[C] 68 RequestPledgeCrest";
 	
 	private int _crestId;
+	@SuppressWarnings("unused")
 	private int _unk; // 603
 	
 	@Override

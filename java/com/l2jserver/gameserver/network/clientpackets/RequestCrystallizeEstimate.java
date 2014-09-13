@@ -58,7 +58,7 @@ public class RequestCrystallizeEstimate extends L2GameClientPacket
 	{
 		if (products == null)
 		{
-			products = new FastList<CrystallizationItem>();
+			products = new FastList<>();
 		}
 		
 		L2PcInstance activeChar = getClient().getActiveChar();

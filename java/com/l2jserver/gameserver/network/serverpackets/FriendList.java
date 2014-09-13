@@ -89,7 +89,7 @@ public class FriendList extends L2GameServerPacket
 				continue;
 			}
 			// 603-End
-			if ((player1 != null) && player1.isOnline())
+			if (player1.isOnline())
 			{
 				online = true;
 			}

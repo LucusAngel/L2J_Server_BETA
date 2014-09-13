@@ -33,10 +33,11 @@ public final class PledgeShowMemberListUpdate extends L2GameServerPacket
 	private final int _level;
 	private final int _classId;
 	private final int _objectId;
-	/* 603
-	private final boolean _isOnline;
+	/*
+	 * 603 private final boolean _isOnline;
 	 */
 	private final int _isOnline;
+	// FIXME: Unused
 	private final int _race;
 	private final int _sex;
 	
@@ -88,19 +89,8 @@ public final class PledgeShowMemberListUpdate extends L2GameServerPacket
 		writeD(_level);
 		writeD(_classId);
 		writeD(_sex);
-		/* 603
-		writeD(_race);
-		if (_isOnline)
-		{
-			writeD(_objectId);
-			writeD(_pledgeType);
-		}
-		else
-		{
-			// when going offline send as 0
-			writeD(0);
-			writeD(0);
-		}
+		/*
+		 * 603 writeD(_race); if (_isOnline) { writeD(_objectId); writeD(_pledgeType); } else { // when going offline send as 0 writeD(0); writeD(0); }
 		 */
 		writeD(_objectId); // 603
 		writeD(_isOnline); // 603

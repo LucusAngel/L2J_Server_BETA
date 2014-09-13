@@ -25,7 +25,10 @@ public final class RequestChangeBookMarkSlot extends L2GameClientPacket
 {
 	private static final String _C__D0_51_05_REQUESCHANGEBOOKMARKSLOT = "[C] D0:51:05 RequestChangeBookMarkSlot";
 	
+	// FIXME: Validate this packet
+	@SuppressWarnings("unused")
 	private int _unk1; // 603
+	@SuppressWarnings("unused")
 	private int _unk2; // 603
 	
 	@Override
@@ -39,7 +42,7 @@ public final class RequestChangeBookMarkSlot extends L2GameClientPacket
 	@Override
 	protected void runImpl()
 	{
-		
+		// STUBBED
 	}
 	
 	@Override

@@ -29,6 +29,7 @@ public class RequestExOlympiadMatchListRefresh extends L2GameClientPacket
 {
 	private static final String _C__D0_88_REQUESTEXOLYMPIADMATCHLISTREFRESH = "[C] D0:88 RequestExOlympiadMatchListRefresh";
 	
+	@SuppressWarnings("unused")
 	private int _unk; // 603
 	
 	@Override

@@ -26,11 +26,9 @@ import com.l2jserver.gameserver.ai.CtrlEvent;
 import com.l2jserver.gameserver.ai.CtrlIntention;
 import com.l2jserver.gameserver.ai.NextAction;
 import com.l2jserver.gameserver.enums.PrivateStoreType;
-import com.l2jserver.gameserver.enums.Race;
 import com.l2jserver.gameserver.handler.IItemHandler;
 import com.l2jserver.gameserver.handler.ItemHandler;
 import com.l2jserver.gameserver.instancemanager.FortSiegeManager;
-import com.l2jserver.gameserver.model.PcCondOverride;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.effects.L2EffectType;
 import com.l2jserver.gameserver.model.holders.SkillHolder;
@@ -39,7 +37,6 @@ import com.l2jserver.gameserver.model.items.L2EtcItem;
 import com.l2jserver.gameserver.model.items.L2Item;
 import com.l2jserver.gameserver.model.items.L2Weapon;
 import com.l2jserver.gameserver.model.items.instance.L2ItemInstance;
-import com.l2jserver.gameserver.model.items.type.ArmorType;
 import com.l2jserver.gameserver.model.items.type.WeaponType;
 import com.l2jserver.gameserver.model.skills.Skill;
 import com.l2jserver.gameserver.network.SystemMessageId;
@@ -250,60 +247,16 @@ public final class UseItem extends L2GameClientPacket
 					}
 					
 					// Don't allow other Race to Wear Kamael exclusive Weapons.
-					/* 603
-					if (!item.isEquipped() && item.isWeapon() && !activeChar.canOverrideCond(PcCondOverride.ITEM_CONDITIONS))
-					{
-						L2Weapon wpn = (L2Weapon) item.getItem();
-						
-						switch (activeChar.getRace())
-						{
-							case KAMAEL:
-							{
-								switch (wpn.getItemType())
-								{
-									case NONE:
-										activeChar.sendPacket(SystemMessageId.CANNOT_EQUIP_ITEM_DUE_TO_BAD_CONDITION);
-										return;
-								}
-								break;
-							}
-							case HUMAN:
-							case DWARF:
-							case ELF:
-							case DARK_ELF:
-							case ORC:
-							{
-								switch (wpn.getItemType())
-								{
-									case RAPIER:
-									case CROSSBOW:
-									case ANCIENTSWORD:
-										activeChar.sendPacket(SystemMessageId.CANNOT_EQUIP_ITEM_DUE_TO_BAD_CONDITION);
-										return;
-								}
-								break;
-							}
-						}
-					}
+					/*
+					 * 603 if (!item.isEquipped() && item.isWeapon() && !activeChar.canOverrideCond(PcCondOverride.ITEM_CONDITIONS)) { L2Weapon wpn = (L2Weapon) item.getItem(); switch (activeChar.getRace()) { case KAMAEL: { switch (wpn.getItemType()) { case NONE:
+					 * activeChar.sendPacket(SystemMessageId.CANNOT_EQUIP_ITEM_DUE_TO_BAD_CONDITION); return; } break; } case HUMAN: case DWARF: case ELF: case DARK_ELF: case ORC: { switch (wpn.getItemType()) { case RAPIER: case CROSSBOW: case ANCIENTSWORD:
+					 * activeChar.sendPacket(SystemMessageId.CANNOT_EQUIP_ITEM_DUE_TO_BAD_CONDITION); return; } break; } } }
 					 */
 					break;
 				}
-				/* 603
-				case L2Item.SLOT_CHEST:
-				case L2Item.SLOT_BACK:
-				case L2Item.SLOT_GLOVES:
-				case L2Item.SLOT_FEET:
-				case L2Item.SLOT_HEAD:
-				case L2Item.SLOT_FULL_ARMOR:
-				case L2Item.SLOT_LEGS:
-				{
-					if ((activeChar.getRace() == Race.KAMAEL) && ((item.getItem().getItemType() == ArmorType.HEAVY) || (item.getItem().getItemType() == ArmorType.MAGIC)))
-					{
-						activeChar.sendPacket(SystemMessageId.CANNOT_EQUIP_ITEM_DUE_TO_BAD_CONDITION);
-						return;
-					}
-					break;
-				}
+				/*
+				 * 603 case L2Item.SLOT_CHEST: case L2Item.SLOT_BACK: case L2Item.SLOT_GLOVES: case L2Item.SLOT_FEET: case L2Item.SLOT_HEAD: case L2Item.SLOT_FULL_ARMOR: case L2Item.SLOT_LEGS: { if ((activeChar.getRace() == Race.KAMAEL) && ((item.getItem().getItemType() == ArmorType.HEAVY) ||
+				 * (item.getItem().getItemType() == ArmorType.MAGIC))) { activeChar.sendPacket(SystemMessageId.CANNOT_EQUIP_ITEM_DUE_TO_BAD_CONDITION); return; } break; }
 				 */
 				case L2Item.SLOT_DECO:
 				{

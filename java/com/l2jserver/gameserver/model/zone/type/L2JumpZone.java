@@ -18,18 +18,16 @@
  */
 package com.l2jserver.gameserver.model.zone.type;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.Future;
 
 import com.l2jserver.gameserver.ThreadPoolManager;
-import com.l2jserver.gameserver.instancemanager.JumpManager.Track;
 import com.l2jserver.gameserver.model.actor.L2Character;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.zone.L2ZoneType;
 import com.l2jserver.gameserver.model.zone.ZoneId;
 import com.l2jserver.gameserver.network.serverpackets.ExNotifyFlyMoveStart;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * L2JumpZone zones

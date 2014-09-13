@@ -35,6 +35,7 @@ public final class RequestExSetPledgeCrestLarge extends L2GameClientPacket
 	private static final String _C__D0_11_REQUESTEXSETPLEDGECRESTLARGE = "[C] D0:11 RequestExSetPledgeCrestLarge";
 	
 	private int _index; // 603
+	// FIXME: Unused
 	private int _total; // 603
 	private int _length;
 	private byte[] _data = null;
@@ -69,9 +70,11 @@ public final class RequestExSetPledgeCrestLarge extends L2GameClientPacket
 			return;
 		}
 		
-		if (_index > 0) // DeleteME: When support index 0/1/2/3/4
+		if (_index > 0)
+		{
 			return;
-			
+		}
+		
 		if ((_length < 0) || (_length > 2176))
 		{
 			activeChar.sendPacket(SystemMessageId.WRONG_SIZE_UPLOADED_CREST);

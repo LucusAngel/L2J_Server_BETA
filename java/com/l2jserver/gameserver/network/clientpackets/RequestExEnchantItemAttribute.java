@@ -37,6 +37,7 @@ public class RequestExEnchantItemAttribute extends L2GameClientPacket
 	private static final String _C__D0_35_REQUESTEXENCHANTITEMATTRIBUTE = "[C] D0:35 RequestExEnchantItemAttribute";
 	
 	private int _objectId;
+	@SuppressWarnings("unused")
 	private long _unk; // 603
 	
 	@Override

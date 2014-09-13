@@ -34,8 +34,6 @@ import com.l2jserver.gameserver.model.actor.instance.L2NpcInstance;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.actor.instance.L2VillageMasterInstance;
 import com.l2jserver.gameserver.model.base.AcquireSkillType;
-import com.l2jserver.gameserver.model.events.EventDispatcher;
-import com.l2jserver.gameserver.model.events.impl.character.player.OnPlayerSkillLearn;
 import com.l2jserver.gameserver.model.holders.ItemHolder;
 import com.l2jserver.gameserver.model.holders.SkillHolder;
 import com.l2jserver.gameserver.model.items.instance.L2ItemInstance;
@@ -100,17 +98,8 @@ public final class RequestAcquireSkill extends L2GameClientPacket
 			return;
 		}
 		
-		/* l2jtw start
-		final L2Npc trainer = activeChar.getLastFolkNPC();
-		if (!(trainer instanceof L2NpcInstance))
-		{
-			return;
-		}
-		
-		if (!trainer.canInteract(activeChar) && !activeChar.isGM())
-		{
-			return;
-		}
+		/*
+		 * l2jtw start final L2Npc trainer = activeChar.getLastFolkNPC(); if (!(trainer instanceof L2NpcInstance)) { return; } if (!trainer.canInteract(activeChar) && !activeChar.isGM()) { return; }
 		 */
 		final L2Npc trainer = null;
 		// l2jtw end
@@ -540,8 +529,8 @@ public final class RequestAcquireSkill extends L2GameClientPacket
 		}
 		
 		// Notify scripts of the skill learn.
-		/* l2jtw add
-		EventDispatcher.getInstance().notifyEventAsync(new OnPlayerSkillLearn(trainer, player, skill, _skillType), trainer);
+		/*
+		 * l2jtw add EventDispatcher.getInstance().notifyEventAsync(new OnPlayerSkillLearn(trainer, player, skill, _skillType), trainer);
 		 */
 	}
 	
@@ -552,7 +541,7 @@ public final class RequestAcquireSkill extends L2GameClientPacket
 	 */
 	private void showSkillList(L2Npc trainer, L2PcInstance player)
 	{
-		//FIXME: Refactor me (Battlecruiser)
+		// FIXME: Refactor me (Battlecruiser)
 		// l2jtw add start
 		if (trainer == null)
 		{

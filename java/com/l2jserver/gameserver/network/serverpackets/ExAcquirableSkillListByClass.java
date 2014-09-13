@@ -22,24 +22,21 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import com.l2jserver.gameserver.datatables.SkillReplaceTable;
 import com.l2jserver.gameserver.datatables.SkillData;
+import com.l2jserver.gameserver.datatables.SkillReplaceTable;
 import com.l2jserver.gameserver.datatables.SkillTreesData;
+import com.l2jserver.gameserver.enums.Race;
 import com.l2jserver.gameserver.model.L2SkillLearn;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
-import com.l2jserver.gameserver.enums.Race;
 import com.l2jserver.gameserver.model.holders.ItemHolder;
-import com.l2jserver.gameserver.model.holders.SkillHolder;
 import com.l2jserver.gameserver.model.skills.Skill;
 
 /**
- * 
  * @author mrTJO
  */
 public class ExAcquirableSkillListByClass extends L2GameServerPacket
 {
 	final L2PcInstance _activeChar;
-	
 	
 	public ExAcquirableSkillListByClass(L2PcInstance activeChar)
 	{
@@ -59,7 +56,7 @@ public class ExAcquirableSkillListByClass extends L2GameServerPacket
 				continue;
 			}
 			Skill skill = SkillData.getInstance().getSkill(lskill.getSkillId(), lskill.getSkillLevel());
-			if(skill != null)
+			if (skill != null)
 			{
 				final Skill oldSkill = _activeChar.getSkills().get(lskill.getSkillId());
 				if (oldSkill != null)
@@ -87,17 +84,17 @@ public class ExAcquirableSkillListByClass extends L2GameServerPacket
 			writeC(skill.getGetLevel()); // 603
 			writeC(0x00); // 603
 			writeC(skill.getRequiredItems().size()); // 603
-			for(ItemHolder item : skill.getRequiredItems())
+			for (ItemHolder item : skill.getRequiredItems())
 			{
 				writeD(item.getId());
 				writeQ(item.getCount());
 			}
 			List<Integer> rskill = SkillReplaceTable.getInstance().getReplaceSkills(skill.getSkillId());
 			writeC(rskill.size()); // 603
-			for(int id : rskill)
+			for (int id : rskill)
 			{
 				writeD(id);
-				writeH(1);//skill level
+				writeH(1);// skill level
 			}
 		}
 	}

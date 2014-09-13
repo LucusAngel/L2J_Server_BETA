@@ -18,8 +18,6 @@
  */
 package com.l2jserver.gameserver.datatables;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -76,7 +74,7 @@ public final class SkillData
 			// only non-enchanted skills
 			final int maxLvl = getMaxLevel(skillId);
 			if ((maxLvl > 0) || (skillLvl > maxLvl))
-			//L2JTW has just if (skillLvl > maxLvl)
+			// L2JTW has just if (skillLvl > maxLvl)
 			{
 				_skillMaxLevel.put(skillId, skillLvl);
 			}

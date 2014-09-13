@@ -26,6 +26,8 @@ import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
  */
 public class ExBrExtraUserInfo extends L2GameServerPacket
 {
+	
+	// FIXME: Unused packet?
 	/** Player object ID. */
 	private final int _charObjId;
 	/** Event abnormal visual effects map. */
@@ -44,10 +46,10 @@ public class ExBrExtraUserInfo extends L2GameServerPacket
 	@Override
 	protected final void writeImpl()
 	{
-		//603 writeC(0xFE);
-		//603 writeH(0xDB);
-		//603 writeD(_charObjId);
-		//603 writeD(_abnormalVisualEffectsEvent);
-		//603 writeC(_lectureMark);
+		// 603 writeC(0xFE);
+		// 603 writeH(0xDB);
+		// 603 writeD(_charObjId);
+		// 603 writeD(_abnormalVisualEffectsEvent);
+		// 603 writeC(_lectureMark);
 	}
 }

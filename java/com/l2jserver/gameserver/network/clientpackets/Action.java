@@ -67,14 +67,10 @@ public final class Action extends L2GameClientPacket
 		// 603-temp fix start
 		if ((activeChar.getActiveEnchantTimestamp() > 0) && ((System.currentTimeMillis() - activeChar.getActiveEnchantTimestamp()) < 100))
 		{
-			//sendPacket(ActionFailed.STATIC_PACKET);
+			// sendPacket(ActionFailed.STATIC_PACKET);
 			return;
 		}
-		else
-		{
-			activeChar.setActiveEnchantTimestamp(System.currentTimeMillis());
-		}
-		// 603-temp fix end
+		activeChar.setActiveEnchantTimestamp(System.currentTimeMillis());
 		
 		if (activeChar.inObserverMode())
 		{
@@ -118,7 +114,7 @@ public final class Action extends L2GameClientPacket
 			sendPacket(ActionFailed.STATIC_PACKET);
 			return;
 		}
-		//L2JTW: if (!obj.isTargetable())
+		// L2JTW: if (!obj.isTargetable())
 		if (!obj.isTargetable() && !activeChar.canOverrideCond(PcCondOverride.TARGET_ALL))
 		{
 			sendPacket(ActionFailed.STATIC_PACKET);

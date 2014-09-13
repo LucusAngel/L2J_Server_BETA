@@ -35,8 +35,9 @@ import com.l2jserver.gameserver.model.events.returns.ChatFilterReturn;
 import com.l2jserver.gameserver.model.items.instance.L2ItemInstance;
 import com.l2jserver.gameserver.network.SystemMessageId;
 import com.l2jserver.gameserver.network.serverpackets.ActionFailed;
-import com.l2jserver.gameserver.network.serverpackets.ExShowUsm; // 603
 import com.l2jserver.gameserver.util.Util;
+
+// 603
 
 /**
  * This class ...

@@ -53,6 +53,7 @@ public class RequestExAddEnchantScrollItem extends L2GameClientPacket
 		
 		final L2ItemInstance item = activeChar.getInventory().getItemByObjectId(_item);
 		final L2ItemInstance scroll = activeChar.getInventory().getItemByObjectId(_scroll);
+		// FIXME: Unused
 		final L2ItemInstance support = activeChar.getInventory().getItemByObjectId(activeChar.getActiveEnchantSupportItemId());
 		
 		if ((item == null) || (scroll == null))

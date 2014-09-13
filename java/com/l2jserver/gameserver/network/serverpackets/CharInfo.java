@@ -26,7 +26,6 @@ import com.l2jserver.gameserver.model.actor.L2Decoy;
 import com.l2jserver.gameserver.model.actor.instance.L2PcInstance;
 import com.l2jserver.gameserver.model.actor.templates.L2NpcTemplate;
 import com.l2jserver.gameserver.model.itemcontainer.Inventory;
-import com.l2jserver.gameserver.model.skills.AbnormalVisualEffect;
 import com.l2jserver.gameserver.model.zone.ZoneId;
 
 public class CharInfo extends L2GameServerPacket
@@ -60,15 +59,15 @@ public class CharInfo extends L2GameServerPacket
 		Inventory.PAPERDOLL_RHAND,
 		Inventory.PAPERDOLL_HAIR,
 		Inventory.PAPERDOLL_HAIR2,
-		//603 Inventory.PAPERDOLL_RBRACELET,
-		//603 Inventory.PAPERDOLL_LBRACELET,
-		//603 Inventory.PAPERDOLL_DECO1,
-		//603 Inventory.PAPERDOLL_DECO2,
-		//603 Inventory.PAPERDOLL_DECO3,
-		//603 Inventory.PAPERDOLL_DECO4,
-		//603 Inventory.PAPERDOLL_DECO5,
-		//603 Inventory.PAPERDOLL_DECO6,
-		//603 Inventory.PAPERDOLL_BELT
+	// 603 Inventory.PAPERDOLL_RBRACELET,
+	// 603 Inventory.PAPERDOLL_LBRACELET,
+	// 603 Inventory.PAPERDOLL_DECO1,
+	// 603 Inventory.PAPERDOLL_DECO2,
+	// 603 Inventory.PAPERDOLL_DECO3,
+	// 603 Inventory.PAPERDOLL_DECO4,
+	// 603 Inventory.PAPERDOLL_DECO5,
+	// 603 Inventory.PAPERDOLL_DECO6,
+	// 603 Inventory.PAPERDOLL_BELT
 	};
 	
 	public CharInfo(L2PcInstance cha)
@@ -136,25 +135,35 @@ public class CharInfo extends L2GameServerPacket
 			writeC(0x25);
 			writeC(0x00);
 			writeC(0xED);
-			if (template.getRHandId() > 0 || template.getChestId() > 0 || template.getLHandId() > 0)
+			if ((template.getRHandId() > 0) || (template.getChestId() > 0) || (template.getLHandId() > 0))
+			{
 				writeC(0xFE);
+			}
 			else
+			{
 				writeC(0xBE);
+			}
 			writeC(0x4E);
 			writeC(0xA2);
 			writeC(0x0C);
 			int len_poly_title = 0;
 			if (_activeChar.getAppearance().getVisibleTitle() != null)
+			{
 				len_poly_title = _activeChar.getAppearance().getVisibleTitle().length();
-			writeC(7 + len_poly_title*2);
+			}
+			writeC(7 + (len_poly_title * 2));
 			writeC(_activeChar.getKarma() < 0 ? 1 : 0);
 			writeH(0);
 			writeH(0);
 			writeS(_activeChar.getAppearance().getVisibleTitle());
-			if (template.getRHandId() > 0 || template.getChestId() > 0 || template.getLHandId() > 0)
+			if ((template.getRHandId() > 0) || (template.getChestId() > 0) || (template.getLHandId() > 0))
+			{
 				writeH(68);
+			}
 			else
+			{
 				writeH(56);
+			}
 			writeD(template.getId() + 1000000); // npctype id
 			writeD(_x);
 			writeD(_y);
@@ -162,9 +171,9 @@ public class CharInfo extends L2GameServerPacket
 			writeD(_heading);
 			writeD(_mAtkSpd);
 			writeD(_pAtkSpd);
-			putFloat((float)_moveMultiplier);
+			putFloat((float) _moveMultiplier);
 			putFloat(_attackSpeedMultiplier);
-			if (template.getRHandId() > 0 || template.getChestId() > 0 || template.getLHandId() > 0)
+			if ((template.getRHandId() > 0) || (template.getChestId() > 0) || (template.getLHandId() > 0))
 			{
 				writeD(template.getRHandId()); // right hand weapon
 				writeD(template.getChestId()); // chest
@@ -177,18 +186,14 @@ public class CharInfo extends L2GameServerPacket
 			writeC(0);
 			writeC(0);
 			writeH(0);
-			writeD((int)_activeChar.getCurrentHp());
+			writeD((int) _activeChar.getCurrentHp());
 			writeD(_activeChar.getMaxHp());
 			
-			writeC(
-			(_activeChar.isInCombat() ? 1 : 0) + 
-			(_activeChar.isAlikeDead() ? 2 : 0) +
-			(template.isTargetable() ? 4 : 0) + 
-			(template.isShowName() ? 8 : 0));
+			writeC((_activeChar.isInCombat() ? 1 : 0) + (_activeChar.isAlikeDead() ? 2 : 0) + (template.isTargetable() ? 4 : 0) + (template.isShowName() ? 8 : 0));
 			
 			java.util.List<Integer> el = _activeChar.getEffectIdList();
 			writeH(el.size());
-			for(int i : el)
+			for (int i : el)
 			{
 				writeH(i);
 			}
@@ -211,16 +216,16 @@ public class CharInfo extends L2GameServerPacket
 				writeD(_activeChar.getInventory().getPaperdollItemDisplayId(slot));
 			}
 			
-			//603 for (int slot : getPaperdollOrder())
-			//603 {
-			//603 	writeD(_activeChar.getInventory().getPaperdollAugmentationId(slot));
-			//603 }
+			// 603 for (int slot : getPaperdollOrder())
+			// 603 {
+			// 603 writeD(_activeChar.getInventory().getPaperdollAugmentationId(slot));
+			// 603 }
 			writeD(_activeChar.getInventory().getPaperdollAugmentationId(Inventory.PAPERDOLL_RHAND));
 			writeD(_activeChar.getInventory().getPaperdollAugmentationId(Inventory.PAPERDOLL_LHAND));
 			writeD(_activeChar.getInventory().getPaperdollAugmentationId(Inventory.PAPERDOLL_RHAND));
 			
 			writeC(_activeChar.getInventory().getTalismanSlots());
-			//603 writeD(_activeChar.getInventory().canEquipCloak() ? 1 : 0);
+			// 603 writeD(_activeChar.getInventory().canEquipCloak() ? 1 : 0);
 			writeD(0); // 603
 			writeD(0); // 603
 			writeD(0); // 603
@@ -238,7 +243,7 @@ public class CharInfo extends L2GameServerPacket
 			writeD(_mAtkSpd);
 			writeD(_pAtkSpd);
 			
-			//603 writeD(0x00); // ?
+			// 603 writeD(0x00); // ?
 			
 			writeH(_runSpd); // 603
 			writeH(_walkSpd); // 603
@@ -294,7 +299,7 @@ public class CharInfo extends L2GameServerPacket
 			
 			writeC(_activeChar.isInPartyMatchRoom() ? 1 : 0);
 			
-			//603 writeD(gmSeeInvis ? (_activeChar.getAbnormalVisualEffects() | AbnormalVisualEffect.STEALTH.getMask()) : _activeChar.getAbnormalVisualEffects());
+			// 603 writeD(gmSeeInvis ? (_activeChar.getAbnormalVisualEffects() | AbnormalVisualEffect.STEALTH.getMask()) : _activeChar.getAbnormalVisualEffects());
 			
 			writeC(_activeChar.isInsideZone(ZoneId.WATER) ? 1 : _activeChar.isFlyingMounted() ? 2 : 0);
 			
@@ -336,7 +341,7 @@ public class CharInfo extends L2GameServerPacket
 			writeC(0x01); // 603
 			
 			// T2.3
-			//603 writeD(_activeChar.getAbnormalVisualEffectSpecial());
+			// 603 writeD(_activeChar.getAbnormalVisualEffectSpecial());
 			writeD((int) _activeChar.getCurrentCp()); // 603
 			writeD(_activeChar.getMaxHp()); // 603
 			writeD((int) _activeChar.getCurrentHp()); // 603
@@ -345,11 +350,13 @@ public class CharInfo extends L2GameServerPacket
 			writeC(0); // 603
 			java.util.List<Integer> el = _activeChar.getEffectIdList();
 			if (gmSeeInvis && !el.contains(21))
-				el.add(21);
-			writeD(el.size());
-			for(int i : el)
 			{
-			   writeH(i); // 603
+				el.add(21);
+			}
+			writeD(el.size());
+			for (int i : el)
+			{
+				writeH(i); // 603
 			}
 			writeC(0); // 603
 			writeC(1); // 603
