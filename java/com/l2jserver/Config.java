@@ -1066,9 +1066,9 @@ public final class Config
 	/** Min Respawn Delay */
 	public static int MIN_RESPAWN_DELAY;
 	/** Update the status of non-selected target */
-	public static boolean Update_Others;
+	public static boolean UPDATE_NEARBY_STATUS;
 	/** Allow Auto Awaking */
-	public static boolean Auto_Awaking;
+	public static boolean AUTO_AWAKEN;
 	/** Max BOOKMARKSLOT  */
 	public static int MAX_BOOKMARKSLOT;
 	/** Custom Settings */ 
@@ -2740,8 +2740,8 @@ public final class Config
 			{
 				MIN_RESPAWN_DELAY = 2;
 			}
-			Update_Others = customSettings.getBoolean("UpdateOthers", true);
-			Auto_Awaking = customSettings.getBoolean("AutoAwaking", true);
+			UPDATE_NEARBY_STATUS = customSettings.getBoolean("UpdateOthers", true);
+			AUTO_AWAKEN = customSettings.getBoolean("AutoAwaking", true);
 			MAX_BOOKMARKSLOT = customSettings.getInt("MaxBookMarkSlot", 9);
 			MAX_BOOKMARKSLOT = (MAX_BOOKMARKSLOT / 3) * 3;
 			// Custom Settings Add By Tiger

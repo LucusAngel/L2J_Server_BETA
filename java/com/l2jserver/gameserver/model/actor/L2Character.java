@@ -690,7 +690,7 @@ public abstract class L2Character extends L2Object implements ISkillsHolder, IDe
 		// Go through the StatusListener
 		// Send the Server->Client packet StatusUpdate with current HP and MP
 		//FIXME: validate me (looks like HP bars on nearby characters, Battlecruiser)
-		if (Config.Update_Others) // by rocknow
+		if (Config.UPDATE_NEARBY_STATUS) // by rocknow
 		{
 			Set<L2Character> sentCharacter = new javolution.util.FastSet<>();
 			
