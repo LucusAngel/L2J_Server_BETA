@@ -61,19 +61,15 @@ public class PcStat extends PlayableStat
 	private int _maxCubicCount = 1;
 	/** Player's maximum talisman count. */
 	private final AtomicInteger _talismanSlots = new AtomicInteger();
-	/* 603
-	private boolean _cloakSlot = false;
+	/*
+	 * 603 private boolean _cloakSlot = false;
 	 */
 	private boolean _cloakSlot = true;
 	
 	public static final int VITALITY_LEVELS[] =
 	{
-		/* 603
-		240,
-		2000,
-		13000,
-		17000,
-		20000
+		/*
+		 * 603 240, 2000, 13000, 17000, 20000
 		 */
 		1,
 		35000,
@@ -282,11 +278,15 @@ public class PcStat extends PlayableStat
 			
 			L2ClassMasterInstance.showQuestionMark(getActiveChar());
 			// 603-Start
-			if (Config.Auto_Awaking && getLevel() > 84 && !getActiveChar().isAwaken() && !getActiveChar().isSubClassActive())
+			if (Config.AUTO_AWAKEN && (getLevel() > 84) && !getActiveChar().isAwaken() && !getActiveChar().isSubClassActive())
+			{
 				AwakingManager.getInstance().SendReqAwaking(getActiveChar());
-			else if (Config.Auto_Awaking && getLevel() > 84 && !getActiveChar().isAwaken() && getActiveChar().isSubClassActive() && getActiveChar().getAwakenSubClassCount() < 1)
+			}
+			else if (Config.AUTO_AWAKEN && (getLevel() > 84) && !getActiveChar().isAwaken() && getActiveChar().isSubClassActive() && (getActiveChar().getAwakenSubClassCount() < 1))
+			{
 				AwakingManager.getInstance().SendReqAwaking(getActiveChar());
-			// 603-End
+				// 603-End
+			}
 		}
 		
 		// Give AutoGet skills and all normal skills if Auto-Learn is activated.
@@ -451,7 +451,7 @@ public class PcStat extends PlayableStat
 	{
 		_cloakSlot = cloakSlot;
 		_cloakSlot = true; // 603 add
-		//FIXME: refactor me (Battlecruiser)
+		// FIXME: refactor me (Battlecruiser)
 	}
 	
 	@Override

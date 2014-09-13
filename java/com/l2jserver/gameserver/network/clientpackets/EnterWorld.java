@@ -61,43 +61,39 @@ import com.l2jserver.gameserver.model.entity.clanhall.SiegableHall;
 import com.l2jserver.gameserver.model.items.instance.L2ItemInstance;
 import com.l2jserver.gameserver.model.quest.Quest;
 import com.l2jserver.gameserver.model.quest.QuestState;
-import com.l2jserver.gameserver.model.skills.CommonSkill;
 import com.l2jserver.gameserver.model.zone.ZoneId;
 import com.l2jserver.gameserver.network.SystemMessageId;
 import com.l2jserver.gameserver.network.communityserver.CommunityServerThread;
 import com.l2jserver.gameserver.network.communityserver.writepackets.WorldInfo;
-import com.l2jserver.gameserver.network.serverpackets.ExLightingCandleEvent; // 603 //FE117
-import com.l2jserver.gameserver.network.serverpackets.ExBrPremiumState; // 603-Test //FEDA
-import com.l2jserver.gameserver.network.serverpackets.ExUnReadMailCount; // 603-Test //FE13C
-import com.l2jserver.gameserver.network.serverpackets.ExPledgeCount; // 603-Test //FE13D
-import com.l2jserver.gameserver.network.serverpackets.ExAdenaInvenCount; // 603-Test //FE13E
-import com.l2jserver.gameserver.network.serverpackets.ExPledgeWaitingListAlarm; // 603-Test //FE147
-import com.l2jserver.gameserver.network.serverpackets.UserInfo; // 603-Test //32
-import com.l2jserver.gameserver.network.serverpackets.ExAcquireAPSkillList; // 603-Test //FE15F
-import com.l2jserver.gameserver.network.serverpackets.ExPeriodicHenna; // 603-Test //FE164
-import com.l2jserver.gameserver.network.serverpackets.ExUserInfoInvenWeight; // 603-Test //FE166
-// import com.l2jserver.gameserver.network.serverpackets.ExBeautyItemList; // 603-Test //FE177
-import com.l2jserver.gameserver.network.serverpackets.ExCastleState; // 603 //FE12D
-import com.l2jserver.gameserver.network.serverpackets.ExVitalityEffectInfo; // 603 //FE118
-import com.l2jserver.gameserver.network.serverpackets.MagicAndSkillList; // 603 //40
-import com.l2jserver.gameserver.network.serverpackets.ExTutorialList; // 603 //FE6C
-import com.l2jserver.gameserver.network.serverpackets.ExBirthdayPopup; // 603 //FE8F
 import com.l2jserver.gameserver.network.serverpackets.Die;
 import com.l2jserver.gameserver.network.serverpackets.EtcStatusUpdate;
+import com.l2jserver.gameserver.network.serverpackets.ExAcquireAPSkillList; // 603-Test //FE15F
+import com.l2jserver.gameserver.network.serverpackets.ExAdenaInvenCount; // 603-Test //FE13E
 import com.l2jserver.gameserver.network.serverpackets.ExBasicActionList;
+import com.l2jserver.gameserver.network.serverpackets.ExBirthdayPopup; // 603 //FE8F
+import com.l2jserver.gameserver.network.serverpackets.ExBrPremiumState; // 603-Test //FEDA
+// import com.l2jserver.gameserver.network.serverpackets.ExBeautyItemList; // 603-Test //FE177
+import com.l2jserver.gameserver.network.serverpackets.ExCastleState; // 603 //FE12D
 import com.l2jserver.gameserver.network.serverpackets.ExGetBookMarkInfoPacket;
-import com.l2jserver.gameserver.network.serverpackets.ExNevitAdventPointInfoPacket;
-import com.l2jserver.gameserver.network.serverpackets.ExNevitAdventTimeChange;
+import com.l2jserver.gameserver.network.serverpackets.ExLightingCandleEvent; // 603 //FE117
 import com.l2jserver.gameserver.network.serverpackets.ExNoticePostArrived;
 import com.l2jserver.gameserver.network.serverpackets.ExNotifyPremiumItem;
+import com.l2jserver.gameserver.network.serverpackets.ExPeriodicHenna; // 603-Test //FE164
+import com.l2jserver.gameserver.network.serverpackets.ExPledgeCount; // 603-Test //FE13D
+import com.l2jserver.gameserver.network.serverpackets.ExPledgeWaitingListAlarm; // 603-Test //FE147
 import com.l2jserver.gameserver.network.serverpackets.ExShowContactList;
 import com.l2jserver.gameserver.network.serverpackets.ExShowScreenMessage;
 import com.l2jserver.gameserver.network.serverpackets.ExShowUsm; // 603
 import com.l2jserver.gameserver.network.serverpackets.ExStorageMaxCount;
+import com.l2jserver.gameserver.network.serverpackets.ExTutorialList; // 603 //FE6C
+import com.l2jserver.gameserver.network.serverpackets.ExUnReadMailCount; // 603-Test //FE13C
+import com.l2jserver.gameserver.network.serverpackets.ExUserInfoInvenWeight; // 603-Test //FE166
+import com.l2jserver.gameserver.network.serverpackets.ExVitalityEffectInfo; // 603 //FE118
 import com.l2jserver.gameserver.network.serverpackets.ExVoteSystemInfo;
 import com.l2jserver.gameserver.network.serverpackets.FriendList;
 import com.l2jserver.gameserver.network.serverpackets.HennaInfo;
 import com.l2jserver.gameserver.network.serverpackets.ItemList;
+import com.l2jserver.gameserver.network.serverpackets.MagicAndSkillList; // 603 //40
 import com.l2jserver.gameserver.network.serverpackets.NpcHtmlMessage;
 import com.l2jserver.gameserver.network.serverpackets.PledgeShowMemberListAll;
 import com.l2jserver.gameserver.network.serverpackets.PledgeShowMemberListUpdate;
@@ -108,6 +104,7 @@ import com.l2jserver.gameserver.network.serverpackets.ShortCutInit;
 import com.l2jserver.gameserver.network.serverpackets.SkillCoolTime;
 import com.l2jserver.gameserver.network.serverpackets.SystemMessage;
 import com.l2jserver.gameserver.network.serverpackets.TargetUnselected; // l2jtw add
+import com.l2jserver.gameserver.network.serverpackets.UserInfo; // 603-Test //32
 
 /**
  * Enter World Packet Handler
@@ -143,14 +140,8 @@ public class EnterWorld extends L2GameClientPacket
 		readD(); // Unknown Value
 		readB(new byte[32]); // Unknown Byte Array
 		readD(); // Unknown Value
-		/* 603
-		for (int i = 0; i < 5; i++)
-		{
-			for (int o = 0; o < 4; o++)
-			{
-				tracert[i][o] = readC();
-			}
-		}
+		/*
+		 * 603 for (int i = 0; i < 5; i++) { for (int o = 0; o < 4; o++) { tracert[i][o] = readC(); } }
 		 */
 	}
 	
@@ -327,8 +318,8 @@ public class EnterWorld extends L2GameClientPacket
 			sendPacket(new PledgeShowMemberListAll(activeChar.getClan(), activeChar));
 			activeChar.sendPacket(new PledgeSkillList(activeChar.getClan())); // 603
 			activeChar.sendPacket(new ExPledgeCount()); // 603
-			/* 603
-			sendPacket(new PledgeStatusChanged(activeChar.getClan()));
+			/*
+			 * 603 sendPacket(new PledgeStatusChanged(activeChar.getClan()));
 			 */
 			sendPacket(new PledgeStatusChanged(activeChar.getClan(), activeChar)); // 603
 			
@@ -356,27 +347,10 @@ public class EnterWorld extends L2GameClientPacket
 		}
 		
 		// Updating Seal of Strife Buff/Debuff
-		/* 603
-		if (SevenSigns.getInstance().isSealValidationPeriod() && (SevenSigns.getInstance().getSealOwner(SevenSigns.SEAL_STRIFE) != SevenSigns.CABAL_NULL))
-		{
-			int cabal = SevenSigns.getInstance().getPlayerCabal(activeChar.getObjectId());
-			if (cabal != SevenSigns.CABAL_NULL)
-			{
-				if (cabal == SevenSigns.getInstance().getSealOwner(SevenSigns.SEAL_STRIFE))
-				{
-					activeChar.addSkill(CommonSkill.THE_VICTOR_OF_WAR.getSkill());
-				}
-				else
-				{
-					activeChar.addSkill(CommonSkill.THE_VANQUISHED_OF_WAR.getSkill());
-				}
-			}
-		}
-		else
-		{
-			activeChar.removeSkill(CommonSkill.THE_VICTOR_OF_WAR.getSkill());
-			activeChar.removeSkill(CommonSkill.THE_VANQUISHED_OF_WAR.getSkill());
-		}
+		/*
+		 * 603 if (SevenSigns.getInstance().isSealValidationPeriod() && (SevenSigns.getInstance().getSealOwner(SevenSigns.SEAL_STRIFE) != SevenSigns.CABAL_NULL)) { int cabal = SevenSigns.getInstance().getPlayerCabal(activeChar.getObjectId()); if (cabal != SevenSigns.CABAL_NULL) { if (cabal ==
+		 * SevenSigns.getInstance().getSealOwner(SevenSigns.SEAL_STRIFE)) { activeChar.addSkill(CommonSkill.THE_VICTOR_OF_WAR.getSkill()); } else { activeChar.addSkill(CommonSkill.THE_VANQUISHED_OF_WAR.getSkill()); } } } else { activeChar.removeSkill(CommonSkill.THE_VICTOR_OF_WAR.getSkill());
+		 * activeChar.removeSkill(CommonSkill.THE_VANQUISHED_OF_WAR.getSkill()); }
 		 */
 		
 		if (Config.ENABLE_VITALITY && Config.RECOVER_VITALITY_ON_RECONNECT)
@@ -393,17 +367,17 @@ public class EnterWorld extends L2GameClientPacket
 		// 603-TEST activeChar.broadcastUserInfo();
 		
 		// 603 Test-Start
-		activeChar.sendPacket(new ExLightingCandleEvent()); //FE117
-		activeChar.sendPacket(new ExPeriodicHenna()); //FE164
-		activeChar.getMacros().sendUpdate(); //E8
-		sendPacket(new ExGetBookMarkInfoPacket(activeChar)); //FE85
-		activeChar.sendPacket(new ExAcquireAPSkillList()); //FE15F
-		sendPacket(new ItemList(activeChar, false)); //11
-		sendPacket(new ExAdenaInvenCount(activeChar)); //13E
-		sendPacket(new ShortCutInit(activeChar)); //45
-		activeChar.sendPacket(ExBasicActionList.STATIC_PACKET); //FE60
-		activeChar.sendPacket(new HennaInfo(activeChar)); //E5
-		activeChar.sendPacket(new ExCastleState(1)); //FE12D-1
+		activeChar.sendPacket(new ExLightingCandleEvent()); // FE117
+		activeChar.sendPacket(new ExPeriodicHenna()); // FE164
+		activeChar.getMacros().sendUpdate(); // E8
+		sendPacket(new ExGetBookMarkInfoPacket(activeChar)); // FE85
+		activeChar.sendPacket(new ExAcquireAPSkillList()); // FE15F
+		sendPacket(new ItemList(activeChar, false)); // 11
+		sendPacket(new ExAdenaInvenCount(activeChar)); // 13E
+		sendPacket(new ShortCutInit(activeChar)); // 45
+		activeChar.sendPacket(ExBasicActionList.STATIC_PACKET); // FE60
+		activeChar.sendPacket(new HennaInfo(activeChar)); // E5
+		activeChar.sendPacket(new ExCastleState(1)); // FE12D-1
 		activeChar.sendPacket(new ExCastleState(2));
 		activeChar.sendPacket(new ExCastleState(3));
 		activeChar.sendPacket(new ExCastleState(4));
@@ -411,25 +385,25 @@ public class EnterWorld extends L2GameClientPacket
 		activeChar.sendPacket(new ExCastleState(6));
 		activeChar.sendPacket(new ExCastleState(7));
 		activeChar.sendPacket(new ExCastleState(8));
-		activeChar.sendPacket(new ExCastleState(9)); //FE12D-9
-		activeChar.sendSkillList(); //5F
-		activeChar.sendPacket(new UserInfo(activeChar)); //32
-		activeChar.sendPacket(new ExUserInfoInvenWeight(activeChar)); //FE166
-		activeChar.sendPacket(new ExVitalityEffectInfo()); //FE118
-		activeChar.sendPacket(new QuestList()); //86
-		activeChar.sendPacket(new ExBrPremiumState(activeChar.getObjectId(), 1)); //FEDA
-		activeChar.sendPacket(new EtcStatusUpdate(activeChar)); //F9
-		activeChar.sendPacket(new MagicAndSkillList(activeChar)); //40 // 603
-		activeChar.sendPacket(new ExStorageMaxCount(activeChar)); //FE2F
-		sendPacket(new ExVoteSystemInfo(activeChar)); //FECA
-		activeChar.sendPacket(new ExPledgeWaitingListAlarm()); //FE147
+		activeChar.sendPacket(new ExCastleState(9)); // FE12D-9
+		activeChar.sendSkillList(); // 5F
+		activeChar.sendPacket(new UserInfo(activeChar)); // 32
+		activeChar.sendPacket(new ExUserInfoInvenWeight(activeChar)); // FE166
+		activeChar.sendPacket(new ExVitalityEffectInfo()); // FE118
+		activeChar.sendPacket(new QuestList()); // 86
+		activeChar.sendPacket(new ExBrPremiumState(activeChar.getObjectId(), 1)); // FEDA
+		activeChar.sendPacket(new EtcStatusUpdate(activeChar)); // F9
+		activeChar.sendPacket(new MagicAndSkillList(activeChar)); // 40 // 603
+		activeChar.sendPacket(new ExStorageMaxCount(activeChar)); // FE2F
+		sendPacket(new ExVoteSystemInfo(activeChar)); // FECA
+		activeChar.sendPacket(new ExPledgeWaitingListAlarm()); // FE147
 		// activeChar.sendPacket(new ExBeautyItemList()); //FE177
-		sendPacket(new SkillCoolTime(activeChar)); //C7
-		sendPacket(new FriendList(activeChar)); //75
-		activeChar.sendPacket(new ExTutorialList()); //6C // 603
-		activeChar.sendPacket(new QuestList()); //86
-		sendPacket(new ExShowContactList(activeChar)); //D4
-		activeChar.sendPacket(new ExUnReadMailCount()); //FE13C
+		sendPacket(new SkillCoolTime(activeChar)); // C7
+		sendPacket(new FriendList(activeChar)); // 75
+		activeChar.sendPacket(new ExTutorialList()); // 6C // 603
+		activeChar.sendPacket(new QuestList()); // 86
+		sendPacket(new ExShowContactList(activeChar)); // D4
+		activeChar.sendPacket(new ExUnReadMailCount()); // FE13C
 		// 603 Test-End
 		
 		// Send Macro List
@@ -498,9 +472,13 @@ public class EnterWorld extends L2GameClientPacket
 		if (activeChar.getOnlineTime() == 0)
 		{
 			if (activeChar.getRace() == Race.ERTHEIA)
+			{
 				activeChar.sendPacket(new ExShowUsm(ExShowUsm.ERTHEIA));
+			}
 			else
+			{
 				activeChar.sendPacket(new ExShowUsm(ExShowUsm.INTRO_2));
+			}
 		}
 		// 603-End
 		
@@ -529,12 +507,12 @@ public class EnterWorld extends L2GameClientPacket
 		{
 			if (Config.SERVER_VERSION != null)
 			{
-				activeChar.sendMessage(getText("TDJKVFcgU2VydmVyIFZlcnNpb246")+ "    " + Config.SERVER_VERSION);
+				activeChar.sendMessage(getText("TDJKVFcgU2VydmVyIFZlcnNpb246") + "    " + Config.SERVER_VERSION);
 			}
 			
 			if (Config.DATAPACK_VERSION != null)
 			{
-				activeChar.sendMessage(getText("TDJKVFcgRGF0YXBhY2sgVmVyc2lvbjo=")+ "  " + Config.DATAPACK_VERSION);
+				activeChar.sendMessage(getText("TDJKVFcgRGF0YXBhY2sgVmVyc2lvbjo=") + "  " + Config.DATAPACK_VERSION);
 			}
 		}
 		activeChar.sendMessage(getText("TDJKVFcgU2VydmVyIEVydGhlaWEgVGVzdA=="));
@@ -673,10 +651,14 @@ public class EnterWorld extends L2GameClientPacket
 			activeChar.sendPacket(ExNotifyPremiumItem.STATIC_PACKET);
 		}
 		// 603-Start
-		if (Config.Auto_Awaking && activeChar.getLevel() > 84 && !activeChar.isAwaken() && !activeChar.isSubClassActive())
+		if (Config.AUTO_AWAKEN && (activeChar.getLevel() > 84) && !activeChar.isAwaken() && !activeChar.isSubClassActive())
+		{
 			AwakingManager.getInstance().SendReqAwaking(activeChar);
-		else if (Config.Auto_Awaking && activeChar.getLevel() > 84 && !activeChar.isAwaken() && activeChar.isSubClassActive() && activeChar.getAwakenSubClassCount() < 1)
+		}
+		else if (Config.AUTO_AWAKEN && (activeChar.getLevel() > 84) && !activeChar.isAwaken() && activeChar.isSubClassActive() && (activeChar.getAwakenSubClassCount() < 1))
+		{
 			AwakingManager.getInstance().SendReqAwaking(activeChar);
+		}
 		AwakingManager.getInstance().AwakingRemoveSkills(activeChar);
 		activeChar.sendSkillList();
 		activeChar.broadcastPacket(new TargetUnselected(activeChar));
@@ -691,15 +673,12 @@ public class EnterWorld extends L2GameClientPacket
 		// l2jtw add start : GS-comment-021
 		if (activeChar.isTransformed())
 		{
-			if ((activeChar.getTransformationId() == 8 || 
-				activeChar.getTransformationId() == 9 || 
-				activeChar.getTransformationId() == 260) && 
-				(!activeChar.isInsideZone(ZoneId.LANDING)))
+			if (((activeChar.getTransformationId() == 8) || (activeChar.getTransformationId() == 9) || (activeChar.getTransformationId() == 260)) && (!activeChar.isInsideZone(ZoneId.LANDING)))
 			{
 				activeChar.stopTransformation(true);
 			}
 		}
-		activeChar.sendPacket(new UserInfo(activeChar)); //32
+		activeChar.sendPacket(new UserInfo(activeChar)); // 32
 		// l2jtw add end
 	}
 	
