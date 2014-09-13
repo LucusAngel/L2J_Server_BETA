@@ -428,7 +428,7 @@ public final class RequestActionUse extends L2GameClientPacket
 			case 83: // Token 2 Targeting
 			case 84: // Token 3 Targeting
 			case 85: // Token 4 Targeting
-				activeChar.sendMessage(243); // MessageTable.Messages[243]
+				activeChar.sendMessage("This action is not handled yet.");// TODO: handle it!
 				break;
 			case 87:
 				tryBroadcastSocial(28);
@@ -757,7 +757,7 @@ public final class RequestActionUse extends L2GameClientPacket
 				break;
 			case 1123:
 				useSkill(14767, true);
-			// 603-End
+				// 603-End
 			case 5000: // Baby Rudolph - Reindeer Scratch
 				useSkill(23155, true);
 				break;

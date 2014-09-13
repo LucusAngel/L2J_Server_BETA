@@ -18,7 +18,6 @@
  */
 package com.l2jserver.gameserver.model;
 
-
 import java.util.Vector;
 
 import com.l2jserver.gameserver.datatables.ItemTable;
@@ -34,15 +33,15 @@ import com.l2jserver.gameserver.network.serverpackets.SystemMessage;
  */
 public class L2CoreMessage
 {
-
-	//private static final Logger _log = Logger.getLogger(L2CoreMessage.class.getName());
+	
+	// private static final Logger _log = Logger.getLogger(L2CoreMessage.class.getName());
 	
 	int _mid;
-	String _language,_message,_extra;
+	String _language, _message, _extra;
 	Vector<String> value = new Vector<>();
 	Vector<String> extravalue = new Vector<>();
 	
-	public L2CoreMessage(int mid,String language, String message, String extra)
+	public L2CoreMessage(int mid, String language, String message, String extra)
 	{
 		
 		_mid = mid;
@@ -83,7 +82,7 @@ public class L2CoreMessage
 	public String getExtra(int num)
 	{
 		String[] text = _extra.split(";");
-		return text[num-1];
+		return text[num - 1];
 	}
 	
 	public void addString(String text)
@@ -113,7 +112,7 @@ public class L2CoreMessage
 	{
 		String text = ItemTable.getInstance().getTemplate(id).getName();
 		value.add(text);
-	}	
+	}
 	
 	public void addItemName(L2ItemInstance item)
 	{
@@ -124,7 +123,7 @@ public class L2CoreMessage
 	public void addExtra(int num)
 	{
 		String[] text = _extra.split(";");
-		extravalue.add(text[num-1]);
+		extravalue.add(text[num - 1]);
 	}
 	
 	public void addNumber(double num)
@@ -147,8 +146,8 @@ public class L2CoreMessage
 	
 	public String renderMsg()
 	{
-		int i=0;
-
+		int i = 0;
+		
 		for (String text : extravalue)
 		{
 			i++;
@@ -168,29 +167,11 @@ public class L2CoreMessage
 	
 	public void sendMessage(L2PcInstance player)
 	{
-		/*
-		int i=0;
-
-		for (String text : extravalue)
-		{
-			i++;
-			_message = _message.replace(MessageTable.extrafiller[i], text);
-		}
-		
-		i = 0;
-		
-		for (String text : value)
-		{
-			_message = _message.replace(MessageTable.filler[i], text);
-			i++;
-		}
-		 */
 		
 		SystemMessage sm = SystemMessage.getSystemMessage(SystemMessageId.S1);
 		sm.addString(renderMsg());
 		player.sendPacket(sm);
 		
 	}
-	
 	
 }
