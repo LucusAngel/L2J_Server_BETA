@@ -123,28 +123,6 @@ public class L2DatabaseFactory
 		}
 	}
 	
-	// GS-comment-001
-	/**
-	 * Prepared query select.
-	 * @param fields the fields
-	 * @param tableName the table name
-	 * @param whereClause the where clause
-	 * @param returnOnlyTopRecord the return only top record
-	 * @return the string
-	 */
-	@Deprecated
-	public final String prepQuerySelect(String[] fields, String tableName, String whereClause, boolean returnOnlyTopRecord)
-	{
-		String mySqlTop1 = "";
-		if (returnOnlyTopRecord)
-		{
-			
-			mySqlTop1 = " Limit 1 ";
-		}
-		String query = "SELECT " + safetyString(fields) + " FROM " + tableName + " WHERE " + whereClause + mySqlTop1;
-		return query;
-	}
-	
 	/**
 	 * Shutdown.
 	 */
@@ -166,48 +144,6 @@ public class L2DatabaseFactory
 		{
 			_log.log(Level.INFO, "", e);
 		}
-	}
-	
-	// GS-comment-001
-	/**
-	 * Safety string.
-	 * @param whatToCheck the what to check
-	 * @return the string
-	 */
-	@Deprecated
-	public final String safetyString(String... whatToCheck)
-	{
-		// NOTE: Use brace as a safety precaution just in case name is a reserved word
-		final char braceLeft;
-		final char braceRight;
-		
-		{
-			braceLeft = '`';
-			braceRight = '`';
-		}
-		
-		int length = 0;
-		
-		for (String word : whatToCheck)
-		{
-			length += word.length() + 4;
-		}
-		
-		final StringBuilder sbResult = new StringBuilder(length);
-		
-		for (String word : whatToCheck)
-		{
-			if (sbResult.length() > 0)
-			{
-				sbResult.append(", ");
-			}
-			
-			sbResult.append(braceLeft);
-			sbResult.append(word);
-			sbResult.append(braceRight);
-		}
-		
-		return sbResult.toString();
 	}
 	
 	/**
