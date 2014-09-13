@@ -23,6 +23,7 @@ import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
 import com.l2jserver.Config;
+import com.l2jserver.gameserver.datatables.MessageTable;
 import com.l2jserver.gameserver.network.serverpackets.KeyPacket;
 import com.l2jserver.gameserver.network.serverpackets.L2GameServerPacket;
 
@@ -36,7 +37,7 @@ public final class ProtocolVersion extends L2GameClientPacket
 	private static final Logger _logAccounting = Logger.getLogger("accounting");
 	
 	private int _version;
-	private int _support = 603; // Update by rocknow
+	private final int _support = 603; // Update by rocknow
 	
 	@Override
 	protected void readImpl()
@@ -59,33 +60,34 @@ public final class ProtocolVersion extends L2GameClientPacket
 			// this is just a ping attempt from the new C2 client
 			getClient().close((L2GameServerPacket) null);
 		}
-		//FIXME: validate me (Battlecruiser)
+		// FIXME: validate me (Battlecruiser)
 		// Update by rocknow-Start
 		else if (_version < _support)
 		{
 			LogRecord record = new LogRecord(Level.WARNING, "Older protocol");
-			record.setParameters(new Object[]{_version, getClient()});
+			record.setParameters(new Object[]
+			{
+				_version,
+				getClient()
+			});
 			_logAccounting.log(record);
-			_log.fine(getClient() + MessageTable.Messages[2].getExtra(1) +
-									MessageTable.Messages[2].getExtra(4) + 
-									MessageTable.Messages[2].getExtra(2) + _version + 
-									MessageTable.Messages[2].getExtra(3) +
-									MessageTable.Messages[2].getExtra(6));
-			KeyPacket pk = new KeyPacket(getClient().enableCrypt(),0);
+			// FIXME: recover from messageTable
+			_log.fine(getClient() + MessageTable.Messages[2].getExtra(1) + MessageTable.Messages[2].getExtra(4) + MessageTable.Messages[2].getExtra(2) + _version + MessageTable.Messages[2].getExtra(3) + MessageTable.Messages[2].getExtra(6));
+			KeyPacket pk = new KeyPacket(getClient().enableCrypt(), 0);
 			getClient().setProtocolOk(false);
 			getClient().close(pk);
 		}
 		else if (_version > _support)
 		{
 			LogRecord record = new LogRecord(Level.WARNING, "Newer protocol");
-			record.setParameters(new Object[]{_version, getClient()});
+			record.setParameters(new Object[]
+			{
+				_version,
+				getClient()
+			});
 			_logAccounting.log(record);
-			_log.fine(getClient() + MessageTable.Messages[2].getExtra(1) +
-									MessageTable.Messages[2].getExtra(5) + 
-									MessageTable.Messages[2].getExtra(2) + _version + 
-									MessageTable.Messages[2].getExtra(3) +
-									MessageTable.Messages[2].getExtra(6));
-			KeyPacket pk = new KeyPacket(getClient().enableCrypt(),0);
+			_log.fine(getClient() + MessageTable.Messages[2].getExtra(1) + MessageTable.Messages[2].getExtra(5) + MessageTable.Messages[2].getExtra(2) + _version + MessageTable.Messages[2].getExtra(3) + MessageTable.Messages[2].getExtra(6));
+			KeyPacket pk = new KeyPacket(getClient().enableCrypt(), 0);
 			getClient().setProtocolOk(false);
 			getClient().close(pk);
 		}
