@@ -1,4 +1,4 @@
-L2J_Server_BETA
+L2J_Server_EXPERIMENTAL
 ===============
 
 This is yet unofficial experimental branch of L2J Server.
